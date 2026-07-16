@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DU四方人員</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E7E9F0;
+  --panel:#FFFFFF;
+  --panel-2:#F7F8FC;
+  --ink:#131826;
+  --ink2:#525C72;
+  --ink3:#8992A6;
+  --line:#DCE0EB;
+  --rail:#131A2B;
+  --rail-2:#0D1220;
+  --green:#12775A;
+  --red:#B5364A;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'Noto Sans TC',system-ui,-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;
+  --disp:'Archivo','Noto Sans TC',system-ui,sans-serif;
+  /* 由 JS 依當前分類注入 */
+  --ac:#3B6FE0;
+  --ac-soft:#EAF0FD;
+  --ac-deep:#2C55B4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--sans);background:var(--bg);color:var(--ink);
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+
+.shell{display:grid;grid-template-columns:224px 1fr;height:100vh;overflow:hidden}
+.gate{
+  position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;
+  background:linear-gradient(160deg,var(--rail) 0%,#080B14 100%);
+}
+.gate.off{display:none}
+.gate-box{width:100%;max-width:290px;text-align:center}
+.gate-mark{
+  width:46px;height:46px;border-radius:12px;margin:0 auto 16px;display:grid;place-items:center;
+  background:#7B4FD4;color:#fff;font-family:var(--disp);font-weight:800;font-size:19px;
+  box-shadow:0 0 0 5px rgba(123,79,212,.2);
+}
+.gate-box h2{color:#fff;font-size:17px;font-weight:900;letter-spacing:.16em}
+.gate-sub{color:#6E778C;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;margin:5px 0 20px}
+.gate-box input{
+  width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+  border-radius:9px;padding:11px 14px;color:#fff;font-size:14px;outline:none;text-align:center;
+  letter-spacing:.12em;margin-bottom:9px;
+}
+.gate-box input:focus{border-color:#7B4FD4;background:rgba(255,255,255,.1)}
+.gate-box .btn{width:100%;background:#7B4FD4;border-color:#7B4FD4;padding:10px}
+.gate-box .btn:hover{background:#6A3EC4;border-color:#6A3EC4}
+.gate-err{color:#E8798A;font-size:12px;height:16px;margin-top:11px}
+
+/* ---------- 左欄 ---------- */
+.rail{
+  background:linear-gradient(180deg,var(--rail) 0%,var(--rail-2) 100%);
+  color:#C3C9D9;display:flex;flex-direction:column;overflow-y:auto;position:relative;
+}
+.rail::after{content:"";position:absolute;inset:0 0 0 auto;width:1px;background:rgba(255,255,255,.07)}
+.brand{padding:18px 16px 15px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.brand-mark{
+  width:30px;height:30px;border-radius:8px;flex:none;
+  background:var(--ac);display:grid;place-items:center;
+  font-family:var(--disp);font-weight:800;font-size:13px;color:#fff;
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--ac) 22%, transparent);
+  transition:background .25s,box-shadow .25s;
+}
+.brand h1{font-size:14px;font-weight:900;letter-spacing:.14em;color:#fff}
+.brand p{font-family:var(--mono);font-size:9.5px;color:#616B84;letter-spacing:.14em;margin-top:1px}
+.rail-label{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:#57607A;
+  padding:16px 16px 7px;
+}
+.cat-list{padding-bottom:8px;flex:1}
+.cat{
+  width:100%;display:flex;align-items:center;gap:9px;
+  padding:9px 14px 9px 7px;position:relative;cursor:pointer;
+  transition:background .14s,opacity .14s;
+}
+.cat:hover{background:rgba(255,255,255,.045)}
+.cat.on{background:linear-gradient(90deg,color-mix(in srgb,var(--ac) 28%,transparent),transparent 92%)}
+.cat.on::before{content:"";position:absolute;left:0;top:5px;bottom:5px;width:3px;background:var(--ac);border-radius:0 3px 3px 0}
+.grip{
+  flex:none;width:12px;padding:2px 0;font-size:12px;line-height:1;letter-spacing:-2px;
+  color:#464F66;opacity:0;cursor:grab;transition:.14s;touch-action:none;user-select:none;
+}
+.cat:hover .grip,.cat:focus-visible .grip{opacity:1}
+.grip:active{cursor:grabbing}
+.cat.dragging{opacity:.4}
+.cat.over{box-shadow:inset 0 2px 0 #fff}
+.cat.over-last{box-shadow:inset 0 -2px 0 #fff}
+body.dragging-on{cursor:grabbing;user-select:none}
+.chip{
+  width:29px;height:29px;flex:none;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.16);border-radius:8px;color:#8C94A9;
+  transition:.16s;background:rgba(255,255,255,.03);
+}
+.chip svg{width:15px;height:15px;display:block}
+.cat:hover .chip{color:#E2E6F0}
+.cat.on .chip{border-color:transparent;color:#fff}
+.cat-name{font-size:12.5px;font-weight:500;color:#C3C9D9;letter-spacing:.01em}
+.cat.on .cat-name{color:#fff;font-weight:700}
+.cat-name.editing{
+  background:rgba(255,255,255,.14);border-radius:4px;padding:1px 5px;
+  outline:1px solid #fff;cursor:text;min-width:52px;color:#fff;
+}
+.cat-edit{margin-left:auto;font-size:11px;color:#525B72;opacity:0;padding:0 2px;flex:none;transition:.14s}
+.cat:hover .cat-edit{opacity:1}
+.cat-edit:hover{color:#fff}
+.cat-count{
+  font-family:var(--mono);font-size:9.5px;color:#6B7490;flex:none;min-width:14px;text-align:right;
+  background:rgba(255,255,255,.06);border-radius:3px;padding:1px 4px;
+}
+.cat.on .cat-count{background:rgba(255,255,255,.18);color:#fff}
+.cat-add{
+  display:flex;align-items:center;gap:9px;width:calc(100% - 20px);margin:6px 10px 4px;
+  padding:8px 8px 8px 6px;border:1px dashed rgba(255,255,255,.18);border-radius:8px;
+  color:#6E7791;font-size:12px;transition:.14s;
+}
+.cat-add:hover{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.04)}
+.cat-add i{
+  width:29px;height:29px;flex:none;display:grid;place-items:center;font-style:normal;
+  font-size:15px;border-radius:8px;border:1px dashed rgba(255,255,255,.22);margin-left:12px;
+}
+.picker{display:flex;flex-wrap:wrap;gap:6px}
+.pk{
+  width:34px;height:34px;border:1px solid var(--line);border-radius:8px;
+  display:grid;place-items:center;color:var(--ink2);background:var(--panel-2);transition:.12s;
+}
+.pk svg{width:16px;height:16px}
+.pk:hover{border-color:var(--ink3)}
+.pk.on{border-color:var(--ac);background:var(--ac);color:#fff;box-shadow:0 0 0 3px var(--ac-soft)}
+.pk.tone{border:1px solid rgba(0,0,0,.12)}
+.pk.tone.on{box-shadow:0 0 0 3px rgba(0,0,0,.12);border-color:var(--ink)}
+.pk.tone::after{content:"";width:9px;height:9px;border-radius:50%;background:#fff;opacity:0}
+.pk.tone.on::after{opacity:1}
+.btn-del{color:var(--red);border-color:#EEDADF}
+.btn-del:hover{background:#FBEEF1;border-color:var(--red)}
+.rail-foot{padding:12px 16px 16px;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:6px}
+.rail-foot button{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:#7D869D;text-align:left;padding:2px 0}
+.rail-foot button:hover{color:#fff}
+
+/* ---------- 主區 ---------- */
+.main{display:flex;flex-direction:column;overflow:hidden;position:relative}
+.accent-bar{height:3px;background:var(--ac);flex:none;transition:background .25s}
+.topbar{background:var(--panel);border-bottom:1px solid var(--line);padding:15px 24px 0;flex:none}
+.topbar-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.cat-title{font-size:20px;font-weight:900;letter-spacing:.02em;line-height:1.25}
+.topbar-tools{margin-left:auto;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.search{display:flex;align-items:center;gap:6px;background:var(--panel-2);border:1px solid var(--line);border-radius:7px;padding:6px 10px}
+.search:focus-within{border-color:var(--ac)}
+.search input{background:none;border:none;outline:none;width:160px;font-size:13px}
+.search span{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.btn{border:1px solid var(--line);border-radius:7px;padding:6px 12px;font-size:12.5px;font-weight:500;background:var(--panel);transition:.14s}
+.btn:hover{border-color:var(--ink3);background:var(--panel-2)}
+.btn-solid{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn-solid:hover{background:var(--ac-deep);border-color:var(--ac-deep)}
+.btn-sm{padding:5px 10px;font-size:11.5px}
+
+
+/* 分頁軌道 */
+.tabrail{display:flex;gap:3px;margin-top:14px;overflow-x:auto;align-items:flex-end}
+.tab{
+  padding:8px 14px;border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0;
+  background:var(--panel-2);color:var(--ink2);font-size:12.5px;font-weight:500;white-space:nowrap;
+  position:relative;top:1px;display:flex;align-items:center;gap:8px;
+}
+.tab:hover{color:var(--ink)}
+.tab.on{background:var(--panel);color:var(--ink);font-weight:700}
+.tab.on::after{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;background:var(--ac);border-radius:2px 2px 0 0}
+.tab-x{font-family:var(--mono);font-size:10px;color:var(--ink3);opacity:0;transition:.14s}
+.tab:hover .tab-x{opacity:1}
+.tab-x:hover{color:var(--red)}
+.tab-add{padding:8px 12px;font-family:var(--mono);font-size:13px;color:var(--ac);font-weight:600}
+
+/* 內容 */
+.board{
+  flex:1;overflow-y:auto;padding:20px 24px 60px;
+  background-image:radial-gradient(circle, rgba(19,24,38,.06) 1px, transparent 1px);
+  background-size:22px 22px;
+}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;
+  overflow:hidden;position:relative;box-shadow:0 1px 2px rgba(19,24,38,.04);
+}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ac);transition:background .25s}
+.card-head{display:flex;align-items:center;gap:10px;padding:12px 15px 12px 18px;cursor:pointer;user-select:none}
+.card-head:hover{background:var(--panel-2)}
+.caret{font-family:var(--mono);font-size:9px;color:var(--ink3);transition:transform .18s;display:inline-block;flex:none}
+.card.collapsed .caret{transform:rotate(-90deg)}
+.card-title{font-size:13.5px;font-weight:700;letter-spacing:.02em}
+.card-meta{font-family:var(--mono);font-size:10.5px;color:var(--ink3);margin-left:auto;display:flex;gap:11px;align-items:center}
+.card-body{padding:0 15px 15px 18px}
+.card-body.plain{padding:15px 15px 15px 18px}
+.card.collapsed .card-body{display:none}
+
+/* 表格 */
+.tbl-wrap{border:1px solid var(--line);border-radius:7px;overflow:auto;max-height:58vh}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12px}
+thead th{
+  position:sticky;top:0;background:var(--rail);color:#AEB6C8;text-align:left;
+  padding:8px 11px;font-weight:500;white-space:nowrap;letter-spacing:.06em;font-size:10.5px;
+}
+tbody td{padding:7px 11px;border-bottom:1px solid #EEF0F6;white-space:nowrap;vertical-align:top}
+tbody tr:nth-child(even){background:#FBFBFE}
+tbody tr:hover{background:var(--ac-soft)}
+tbody tr:last-child td{border-bottom:none}
+.rownum{color:var(--ink3);font-size:10px;width:36px}
+td a{color:var(--ac)}
+
+/* 可編輯表格 */
+table.grid{border-collapse:separate;border-spacing:0;width:100%;font-family:var(--sans);font-size:12.5px}
+.grid thead th{background:var(--rail);color:#AEB6C8;font-size:10.5px;letter-spacing:.06em;font-weight:500;
+  padding:8px 10px;text-align:left;position:sticky;top:0;z-index:2}
+.grid tbody td{padding:7px 8px;border-bottom:1px solid #EEF0F6;vertical-align:top}
+.grid tbody tr:not(.editing){cursor:default}
+.grid tbody tr:not(.editing):hover{background:var(--panel-2)}
+.grid tbody tr.editing{background:var(--ac-soft);box-shadow:inset 3px 0 0 var(--ac)}
+.grid tbody tr.editing td{padding:6px 5px;border-bottom:1px solid var(--ac-soft)}
+.grid .gact{width:34px;text-align:right;white-space:nowrap}
+.grid .gact .x{font-family:var(--mono);font-size:11px;color:var(--ink3);opacity:0;padding:5px 4px;transition:.12s}
+.grid tbody tr:hover .gact .x,.grid tbody tr.editing .gact .x{opacity:1}
+.grid .gact .x:hover{color:var(--red)}
+.grid input,.grid select,.grid textarea{
+  width:100%;border:1px solid var(--line);border-radius:6px;padding:6px 7px;
+  background:#fff;font:inherit;outline:none;transition:.12s;
+}
+.grid input:focus,.grid select:focus,.grid textarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
+.grid textarea{resize:vertical;min-height:32px;line-height:1.6;font-family:var(--sans)}
+.rt-bar{display:flex;gap:3px;margin-bottom:5px;align-items:center;flex-wrap:wrap}
+.rt-bar button{font-size:10.5px;border:1px solid var(--line);border-radius:5px;padding:2px 8px;background:#fff;color:var(--ink2);transition:.12s}
+.rt-bar button:hover{border-color:var(--ink3);color:var(--ink)}
+.rt-sep{width:1px;height:13px;background:var(--line);margin:0 2px;flex:none}
+.rt-tog{display:inline-flex;align-items:center;gap:4px}
+.rt-tog .cv{font-size:8px;color:var(--ink3)}
+.swatch{width:11px;height:11px;border-radius:50%;border:1px solid rgba(0,0,0,.18);display:inline-block;flex:none}
+.swatch.sq{border-radius:3px}
+.rt-pop{
+  position:fixed;display:none;z-index:80;background:#fff;border:1px solid var(--line);
+  border-radius:9px;padding:7px;box-shadow:0 10px 30px rgba(19,24,38,.18);
+  grid-template-columns:repeat(5,1fr);gap:5px;
+}
+.rt-pop.on{display:grid}
+.rt-pop .dot{
+  width:19px;height:19px;padding:0;border-radius:50%;border:1px solid rgba(0,0,0,.14);
+  transition:transform .1s,box-shadow .1s;
+}
+.rt-pop .dot.sq{border-radius:5px}
+.rt-pop .dot:hover{transform:scale(1.18);box-shadow:0 0 0 2px rgba(0,0,0,.1);border-color:rgba(0,0,0,.32)}
+.rt{
+  min-height:96px;max-height:440px;overflow:auto;border:1px solid var(--line);border-radius:6px;
+  padding:9px 10px;background:#fff;outline:none;line-height:1.7;font-size:13px;white-space:pre-wrap;
+}
+.rt:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
+.rt:empty::before{content:attr(data-ph);color:var(--ink3)}
+.v-text b,.v-text strong{font-weight:700}
+.grid .c-date{width:128px}.grid .c-shift{width:94px}.grid .c-status{width:88px}.grid .c-state{width:100px}.grid .c-prog{width:100px}.grid .c-imgst{width:150px}.grid .c-ftype{width:150px}.grid .c-fill{width:120px}.grid .c-times{width:104px}
+.grid .c-merch{width:130px}.grid .c-oid4,.grid .c-oidm{width:150px}
+.grid .c-amt{width:120px}.grid .c-relday{width:128px}.grid .c-chan{width:104px}
+.grid.wide{min-width:1320px}
+.grid.wide .c-reason,.grid.wide .c-note{min-width:240px}.grid .c-img{width:206px}
+.grid input[type=date],.grid input.mono{font-family:var(--mono);font-size:11.5px}
+.sel{font-weight:600;cursor:pointer}
+.v-date,.v-mono{font-family:var(--mono);font-size:11.5px;color:var(--ink2)}
+.v-mono{color:var(--ink);letter-spacing:.02em}
+.v-num{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--ink)}
+.v-num i{font-style:normal;font-size:10px;color:var(--ink3);margin-left:3px}
+.grid input.num{font-size:13px;font-weight:600;text-align:right;padding-right:9px}
+.v-text{white-space:pre-wrap;line-height:1.7}
+.v-empty{color:#C3C9D6}
+.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:5px;padding:2px 9px}
+.selcell{display:flex;gap:4px;align-items:center}
+.selcell select{flex:1;min-width:0}
+.optbtn{border:1px solid var(--line);border-radius:5px;padding:5px 6px;font-size:11px;color:var(--ink3);background:#fff;flex:none;line-height:1}
+.optbtn:hover{border-color:var(--ac);color:var(--ac)}
+.optrow{display:flex;gap:8px;align-items:center;margin-bottom:7px}
+.optdot{width:24px;height:24px;border-radius:7px;border:1px solid rgba(0,0,0,.16);flex:none;transition:transform .1s}
+.optdot:hover{transform:scale(1.1)}
+.optrow input{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:13px;outline:none;background:var(--panel-2)}
+.optrow input:focus{border-color:var(--ac);background:#fff}
+.optrow .pill{flex:none;min-width:52px;text-align:center}
+.optdel{color:var(--ink3);font-family:var(--mono);font-size:11px;padding:4px;flex:none}
+.optdel:hover{color:var(--red)}
+.imgcell{display:flex;gap:6px;align-items:flex-start}
+.thumb{flex:none;width:34px;height:34px;border-radius:6px;border:1px solid var(--line);
+  background:var(--panel-2) center/cover no-repeat;display:grid;place-items:center;
+  font-size:11px;color:var(--ink3);overflow:hidden}
+a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
+.grid.gallery .c-img{width:auto}
+.grid.gallery .thumb{width:120px;height:120px;border-radius:9px;font-size:12px}
+.grid.gallery .imgcell{align-items:center}
+.grid.gallery .c-zone{width:120px}
+.grid.gallery .c-img{width:150px}
+.grid.gallery .c-desc{min-width:280px}
+#tools{display:contents}
+.grid-bar{display:flex;gap:8px;align-items:center;margin-bottom:11px;flex-wrap:wrap}
+.grid-bar .sp{flex:1}
+.total{display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--ink2);
+  border:1px solid var(--line);border-radius:7px;padding:4px 13px;background:#fff}
+.total b{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ac);letter-spacing:.01em}
+.segs{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:#fff}
+.seg{font-size:11.5px;padding:5px 12px;color:var(--ink2);border-right:1px solid var(--line);
+  display:inline-flex;align-items:center;gap:6px;transition:.12s}
+.seg:last-child{border-right:none}
+.seg:hover{background:var(--panel-2);color:var(--ink)}
+.seg em{font-style:normal;font-family:var(--mono);font-size:9.5px;color:var(--ink3)}
+.seg.on{background:var(--ac);color:#fff}
+.seg.on:hover{background:var(--ac-deep)}
+.seg.on em{color:rgba(255,255,255,.75)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:disabled:hover{border-color:var(--line);background:var(--panel)}
+.yseg{margin-bottom:14px}
+.yseg:last-child{margin-bottom:0}
+.yhead{
+  display:flex;align-items:center;gap:8px;width:100%;text-align:left;
+  padding:6px 4px 7px;border-bottom:1px solid var(--line);margin-bottom:8px;
+}
+.yhead:hover .ytitle{color:var(--ac)}
+.yhead .caret{font-family:var(--mono);font-size:9px;color:var(--ink3);transition:transform .18s;flex:none}
+.ytitle{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.1em;color:var(--ink);transition:color .12s}
+.ycount{font-family:var(--mono);font-size:9.5px;color:var(--ink3);background:var(--panel-2);
+  border:1px solid var(--line);border-radius:9px;padding:1px 7px}
+.yseg.closed .tbl-wrap{display:none}
+.yseg.closed .yhead{margin-bottom:0}
+.yseg.closed .caret{transform:rotate(-90deg)}
+.yempty{padding:20px 14px;color:var(--ink3);font-size:13px;text-align:right}
+.status{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px;letter-spacing:.05em}
+.st-ok{color:var(--green);background:#E4F2EC}
+.st-load{color:#9A6410;background:#FAF1E0}
+.st-err{color:var(--red);background:#F8E9EC}
+.empty{border:1px dashed var(--line);border-radius:10px;padding:44px 24px;text-align:center;background:var(--panel)}
+.empty h3{font-size:15px;font-weight:700;margin-bottom:5px}
+.empty p{color:var(--ink2);font-size:13px;margin-bottom:15px}
+
+/* 對話框 */
+.mask{position:fixed;inset:0;background:rgba(13,18,32,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+.mask.on{display:flex}
+.dialog{background:var(--panel);border-radius:12px;width:100%;max-width:452px;padding:22px;box-shadow:0 24px 64px rgba(0,0,0,.3);border-top:3px solid var(--ac)}
+.dialog h3{font-size:16px;font-weight:900}
+.dialog>p{font-size:12.5px;color:var(--ink2);margin:3px 0 16px}
+.field{margin-bottom:12px}
+.field label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--ink3);margin-bottom:5px}
+.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:7px;padding:9px 11px;font-size:13px;outline:none;background:var(--panel-2);font-family:inherit;resize:vertical}
+.field textarea{font-family:var(--mono);font-size:12px;line-height:1.7}
+.field input:focus,.field textarea:focus{border-color:var(--ac);background:#fff}
+.field .hint{font-size:11px;color:var(--ink3);margin-top:4px}
+.dialog-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(18px);
+  background:var(--rail);color:#fff;padding:9px 17px;border-radius:8px;font-size:13px;
+  opacity:0;pointer-events:none;transition:.2s;z-index:60;border-left:3px solid var(--ac);
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .rail{flex-direction:row;overflow-x:auto;align-items:center}
+  .brand,.rail-foot,.rail-label{display:none}
+  .cat-list{display:flex;padding:0}
+  .cat{width:auto;white-space:nowrap;padding:10px 12px}
+  .cat-name,.cat-count,.grip,.cat-edit{display:none}
+  .board,.topbar{padding-left:14px;padding-right:14px}
+  .search input{width:104px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <div class="gate-mark">D</div>
+    <h2>DU四方人員</h2>
+    <p class="gate-sub">輸入密碼進入</p>
+    <input type="password" id="gatePass" placeholder="密碼" autocomplete="current-password"
+           onkeydown="if(event.key==='Enter')tryGate()">
+    <button class="btn btn-solid" onclick="tryGate()">進入</button>
+    <p class="gate-err" id="gateErr"></p>
+  </div>
+</div>
+<div class="shell">
+  <nav class="rail">
+    <div class="brand">
+      <div class="brand-mark" id="brandMark">D</div>
+      <div>
+        <h1>DU四方人員</h1>
+        <p id="railStamp">— —</p>
+      </div>
+    </div>
+    <div class="rail-label">分類</div>
+    <div class="cat-list" id="catList"></div>
+    <button class="cat-add" onclick="openCatDialog()"><i>＋</i><span>新增分類</span></button>
+    <div class="rail-foot">
+      <button onclick="toggleAll()">▤ 全部收起／展開</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="accent-bar"></div>
+    <header class="topbar">
+      <div class="topbar-row">
+        <div class="cat-title" id="catTitle"></div>
+        <div class="topbar-tools">
+          <div class="search"><span>⌕</span>
+            <input id="q" placeholder="搜尋此分頁資料" oninput="renderBoard()">
+          </div>
+          <span id="tools"></span>
+          <button class="btn btn-solid" onclick="openTabDialog()">＋ 新增分頁</button>
+        </div>
+      </div>
+      <div class="tabrail" id="tabRail"></div>
+    </header>
+    <div class="board" id="board"></div>
+  </div>
+</div>
+
+<div class="mask" id="tabMask">
+  <div class="dialog">
+    <h3>新增分頁</h3>
+    <p id="dlgWhere">為此分類綁定 Google 試算表的工作表。每個分類各抓各的，彼此不會混到。</p>
+    <div class="field"><label>試算表網址</label>
+      <input id="fUrl" placeholder="https://docs.google.com/spreadsheets/d/...">
+      <div class="hint">留空＝用這個分類已設定的試算表。試算表需設為「知道連結的人可檢視」。</div>
+    </div>
+    <div class="field"><label>工作表名稱（每行一個，可一次建多頁）</label>
+      <textarea id="fSheets" rows="3" placeholder="工作表1&#10;工作表2"></textarea>
+      <div class="hint">要跟 Google 底下那排分頁標籤的字完全一樣。留空＝抓網址 #gid= 指到的那一頁。</div>
+    </div>
+    <div class="field"><label>顯示名稱（只填一個工作表時可用，留空＝同工作表名）</label>
+      <input id="fName" placeholder="例：2 月商戶名單">
+    </div>
+    <div class="dialog-foot">
+      <button class="btn" onclick="closeDialog('tabMask')">取消</button>
+      <button class="btn btn-solid" onclick="saveTab()">建立分頁</button>
+    </div>
+  </div>
+</div>
+<div class="mask" id="catMask">
+  <div class="dialog">
+    <h3 id="catDlgTitle">新增分類</h3>
+    <p>取個名字，挑一個圖示跟代表色。切到這一類時整個介面會換成它的顏色。</p>
+    <div class="field"><label>分類名稱</label><input id="cName" placeholder="例：四方對帳異常"></div>
+    <div class="field"><label>本類試算表網址（底下分頁共用）</label>
+      <input id="cUrl" placeholder="https://docs.google.com/spreadsheets/d/...">
+      <div class="hint">設一次就好。底下每個分頁會各自去抓與分頁同名的工作表。</div>
+    </div>
+    <div class="field"><label>圖示</label><div class="picker" id="iconPick"></div></div>
+    <div class="field"><label>代表色</label><div class="picker" id="tonePick"></div></div>
+    <div class="dialog-foot">
+      <button class="btn btn-del" id="catDel" onclick="delCat()">刪除分類</button>
+      <span style="flex:1"></span>
+      <button class="btn" onclick="closeDialog('catMask')">取消</button>
+      <button class="btn btn-solid" onclick="saveCat()">儲存</button>
+    </div>
+  </div>
+</div>
+<div class="mask" id="optMask">
+  <div class="dialog">
+    <h3 id="optTitle">編輯選項</h3>
+    <p>點左邊色塊換顏色，直接改字改名稱。只影響這一欄。</p>
+    <div id="optList"></div>
+    <button class="btn btn-sm" style="margin-top:4px" onclick="addOpt()">＋ 新增選項</button>
+    <div class="dialog-foot">
+      <button class="btn" onclick="closeDialog('optMask')">取消</button>
+      <button class="btn btn-solid" onclick="saveOpts()">儲存</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== 密碼 ===== */
+/* 要改密碼，改下面這行的引號內文字就好 */
+const GATE_PASS = 'du4444';
+const gateEl = () => document.getElementById('gate');
+function openGate(){
+  gateEl().classList.add('off');
+  try{ sessionStorage.setItem('gate.ok', '1') }catch(_){}
+}
+function tryGate(){
+  const el = document.getElementById('gatePass');
+  if(el.value === GATE_PASS) return openGate();
+  document.getElementById('gateErr').textContent = '密碼不對';
+  el.value = ''; el.focus();
+}
+try{ if(sessionStorage.getItem('gate.ok') === '1') gateEl().classList.add('off');
+     else document.getElementById('gatePass').focus(); }catch(_){}
+
+/* ===== 儲存：本機優先，環境不允許時退回記憶體 ===== */
+const mem = {};
+const store = {
+  get(k){ try{ return localStorage.getItem(k) ?? mem[k] ?? null }catch(e){ return mem[k] ?? null } },
+  set(k,v){ mem[k]=v; try{ localStorage.setItem(k,v) }catch(e){} }
+};
+
+/* ===== 圖示庫 ===== */
+const S = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ICON_LIB = {
+  bars:  S(`<line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3.4" height="6"/>
+            <rect x="10.8" y="7" width="3.4" height="11"/><rect x="15.6" y="14.5" width="3.4" height="3.5"/>`),
+  swap:  S(`<path d="M4 9h13"/><path d="M14 6l3 3-3 3"/><path d="M20 15H7"/><path d="M10 12l-3 3 3 3"/>`),
+  box:   S(`<path d="M3 8.2 12 4l9 4.2v7.6L12 20l-9-4.2z"/><path d="M3 8.2 12 12.4l9-4.2"/><path d="M12 12.4V20"/>`),
+  key:   S(`<circle cx="8" cy="12" r="3.4"/><path d="M11.4 12H21"/><path d="M17.6 12v3.2"/><path d="M20.4 12v2.4"/>`),
+  cloud: S(`<path d="M7.2 18.5A3.7 3.7 0 0 1 7 11.1a5 5 0 0 1 9.6-1.4A3.9 3.9 0 0 1 17 18.5z"/>`),
+  coins: S(`<ellipse cx="12" cy="7" rx="7.4" ry="3"/><path d="M4.6 7v10c0 1.7 3.3 3 7.4 3s7.4-1.3 7.4-3V7"/>
+            <path d="M4.6 12c0 1.7 3.3 3 7.4 3s7.4-1.3 7.4-3"/>`),
+  doc:   S(`<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6"/><path d="M9 16h6"/>`),
+  flag:  S(`<path d="M6 21V4"/><path d="M6 4h11l-2 3.5L17 11H6z"/>`),
+  clock: S(`<circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/>`),
+  shield:S(`<path d="M12 3.5 19 6v5.5c0 4-3 7.3-7 9-4-1.7-7-5-7-9V6z"/><path d="M9.2 12.2l2 2 3.6-4"/>`),
+  users: S(`<circle cx="9.5" cy="9" r="3"/><path d="M4 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/>
+            <path d="M16 6.6a3 3 0 0 1 0 5.8"/><path d="M17.5 14.4c1.6.7 2.7 2.3 3 4.6"/>`),
+  tag:   S(`<path d="M4 11.4V5a1 1 0 0 1 1-1h6.4a1 1 0 0 1 .7.3l7.6 7.6a1 1 0 0 1 0 1.4l-6.4 6.4a1 1 0 0 1-1.4 0L4.3 12.1a1 1 0 0 1-.3-.7z"/>
+            <circle cx="8.4" cy="8.4" r="1.3"/>`),
+  bolt:  S(`<path d="M13.5 3 5 13.6h6L10.5 21 19 10.4h-6z"/>`),
+  pin:   S(`<path d="M12 21s6.5-6 6.5-10.4A6.5 6.5 0 0 0 5.5 10.6C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.4" r="2.4"/>`)
+};
+const icon = k => ICON_LIB[k] || ICON_LIB.doc;
+
+/* ===== 色盤 ===== */
+const TONES = [
+  ['#3B6FE0','#EAF0FD','#2A52AE'], ['#7B4FD4','#F0EAFC','#5F39AC'],
+  ['#11876F','#E3F3EF','#0B6754'], ['#BB3C63','#FBE9EF','#94284A'],
+  ['#0E82AA','#E2F2F8','#0A6486'], ['#A6701A','#F9F0DF','#805411'],
+  ['#4B5A75','#EDEFF4','#33415A'], ['#C24E23','#FBEDE6','#993B18'],
+  ['#5C8B1E','#EFF5E3','#456A13'], ['#8C3FA0','#F5E9F8','#6C2C7D']
+];
+
+/* ===== 預設分類 ===== */
+const DEFAULT = [
+  {id:'du', sid:'', code:'DU', tone:TONES[0], icon:'bars',  name:'DU三方使用狀況', tabs:[]},
+  {id:'fr', code:'FR', tone:TONES[1], icon:'swap',  name:'FOUUR交接記錄💜', sid:'', tabs:[
+    {id:'fr01', name:'固定事项', kind:'grid', cols:'base', rows:[], co1:false},
+    {id:'fr02', name:'外部交接', kind:'grid', cols:'base', rows:[], co1:false},
+    {id:'fr03', name:'商户汇率变动', kind:'grid', cols:'rate', rows:[], co1:false},
+    {id:'fr04', name:'特殊单', kind:'grid', cols:'case', rows:[], co1:false},
+    {id:'fr05', name:'⚠️骗单未给收支区⚠️', kind:'grid', cols:'fraud', rows:[], co1:false},
+    {id:'fr06', name:'不乖关禁闭', kind:'grid', cols:'jail', rows:[], co1:false},
+    {id:'fr07', name:'追款记录', kind:'grid', cols:'chase', rows:[], co1:false},
+    {id:'fr08', name:'资金担保', kind:'grid', cols:'guar', rows:[], co1:false},
+    {id:'fr09', name:'假流水单记录', kind:'grid', cols:'fake', rows:[], co1:false},
+    {id:'fr10', name:'假回单记录', sheet:'假回单记录', sid:'', gid:'', co1:false},
+    {id:'fr11', name:'风险图档', kind:'grid', cols:'risk', rows:[], co1:false},
+    {id:'fr12', name:'新宝⭐限制支出', kind:'grid', cols:'limit', rows:[], co1:false}
+  ]},
+  {id:'rs', sid:'', code:'RS', tone:TONES[2], icon:'box',   name:'四方殘留暫存',   tabs:[]},
+  {id:'ma', sid:'', code:'MA', tone:TONES[3], icon:'key',   name:'四方商戶帳密',   tabs:[]},
+  {id:'lk', sid:'', code:'LK', tone:TONES[4], icon:'cloud', name:'所需雲端連結',   tabs:[]},
+  {id:'vc', sid:'', code:'VC', tone:TONES[5], icon:'coins', name:'VCOTC四方餘額', tabs:[]}
+];
+
+let cats = load();
+let curCat = cats[0].id;
+let curTab = null;
+const cache = {};
+
+function codeOf(name){
+  const m = String(name).match(/[A-Za-z]{2,}/);
+  if(m) return m[0].slice(0,2).toUpperCase();
+  const s = String(name).replace(/[\s\p{Emoji_Presentation}]/gu,'');
+  return s.slice(0,2) || '··';
+}
+function normalize(saved){
+  if(!Array.isArray(saved) || !saved.length) return structuredClone(DEFAULT);
+  return saved.filter(s => s && s.id).map(s => {
+    const d = DEFAULT.find(x => x.id === s.id);
+    const name = (s.name || '').trim() || d?.name || '未命名分類';
+    return {
+      id:   s.id,
+      name,
+      code: s.code || d?.code || codeOf(name),
+      tone: Array.isArray(s.tone) ? s.tone : (d?.tone || TONES[0]),
+      icon: s.icon || d?.icon || 'doc',
+      sid:  s.sid || '',
+      tabs: (s.tabs || []).map(t => ({...t, rows: t.rows || (t.kind === 'grid' ? [] : undefined)}))
+    };
+  });
+}
+/* ===== 設定檔版本：舊檔自動升級，不清掉既有資料 ===== */
+const SCHEMA = 13;
+function migrate(list){
+  DEFAULT.forEach(d => {
+    let c = list.find(x => x.id === d.id);
+    if(!c){ list.push(structuredClone(d)); return }
+    (d.tabs || []).forEach((dt, idx) => {
+      const ex = c.tabs.find(t => t.id === dt.id);
+      if(!ex){ c.tabs.splice(idx, 0, structuredClone(dt)); return }
+      if(dt.kind && ex.kind !== dt.kind){          // 試算表分頁 → 可編輯表格
+        ex.kind = dt.kind; ex.rows = ex.rows || [];
+        delete ex.sheet; delete ex.sid; delete ex.gid;
+      }
+      if(dt.cols && ex.cols !== dt.cols) ex.cols = dt.cols;
+      if(ex.name === '🚨支付宝风险图档') ex.name = '风险图档';
+    });
+  });
+  // 舊版一列只有一個 r.html，搬到各自欄位
+  list.forEach(c => (c.tabs || []).forEach(t => {
+    if(t.kind !== 'grid') return;
+    const rk = (COLS[t.cols] || COLS.base).find(f => f.type === 'rich');
+    (t.rows || []).forEach(r => {
+      if(r.html != null){
+        if(rk) r[rk.key + '_h'] = r.html;
+        delete r.html;
+      }
+    });
+  }));
+  return list;
+}
+function load(){
+  try{
+    const raw = store.get('console.v2');
+    if(!raw) return structuredClone(DEFAULT);
+    const obj = JSON.parse(raw);
+    const arr = Array.isArray(obj) ? obj : (obj.cats || []);
+    const v   = Array.isArray(obj) ? 0 : (obj.v || 0);
+    let list = normalize(arr);
+    if(v < SCHEMA) list = migrate(list);
+    return list;
+  }catch(e){ return structuredClone(DEFAULT) }
+}
+function save(){
+  store.set('console.v2', JSON.stringify({v:SCHEMA, cats:
+    cats.map(c => ({id:c.id, name:c.name, code:c.code, tone:c.tone, icon:c.icon, sid:c.sid || '', tabs:c.tabs}))
+  }));
+  stamp();
+}
+function stamp(){
+  const n = new Date(), p = x => String(x).padStart(2,'0');
+  document.getElementById('railStamp').textContent =
+    `${p(n.getMonth()+1)}/${p(n.getDate())} ${p(n.getHours())}:${p(n.getMinutes())} 已存`;
+}
+const cat = () => cats.find(c => c.id === curCat);
+const tab = () => cat().tabs.find(t => t.id === curTab);
+
+/* ===== Google 試算表 ===== */
+function parseUrl(url, gidIn){
+  const id = (url.match(/\/d\/([a-zA-Z0-9-_]+)/) || [])[1];
+  const gid = gidIn && gidIn.trim() ? gidIn.trim() : (url.match(/[#&?]gid=(\d+)/) || [])[1] || '0';
+  return {id, gid};
+}
+/* 每個分頁指向自己的工作表：優先用工作表名稱，其次 gid */
+function srcQuery(t){
+  return t.sheet ? 'sheet=' + encodeURIComponent(t.sheet) : 'gid=' + (t.gid || '0');
+}
+function srcLabel(t){
+  return t.sheet ? '工作表 ' + t.sheet : 'gid ' + (t.gid || '0');
+}
+/* 分頁自己的試算表；沒填就用所屬分類的 */
+function ownerCat(t){ return cats.find(c => c.tabs.some(x => x.id === t.id)) }
+function tabSid(t){ return t.sid || ownerCat(t)?.sid || '' }
+async function pull(t){
+  const sid = tabSid(t);
+  if(!sid){ cache[t.id] = {status:'nosrc'}; renderBoard(); return }
+  cache[t.id] = {status:'load'};
+  renderBoard();
+  try{
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${sid}/gviz/tq?tqx=out:json&${srcQuery(t)}`);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const txt = await res.text();
+    const m = txt.match(/setResponse\(([\s\S]*)\)/);
+    if(!m) throw new Error('讀不到資料，請確認試算表已開放檢視');
+    const j = JSON.parse(m[1]);
+    if(j.status === 'error'){
+      const msg = j.errors?.[0]?.detailed_message || j.errors?.[0]?.message || '試算表回傳錯誤';
+      throw new Error(t.sheet ? `找不到工作表「${t.sheet}」，請確認名稱與 Google 分頁標籤一致` : msg);
+    }
+    const cols = j.table.cols.map((c,i) => (c.label||'').trim() || String.fromCharCode(65+i));
+    let rows = j.table.rows.map(r => r.c.map(c => c ? (c.f ?? c.v ?? '') : ''));
+    if(cols.every((c,i) => c === String.fromCharCode(65+i)) && rows.length){
+      const head = rows.shift();
+      head.forEach((h,i) => { if(String(h).trim()) cols[i] = String(h).trim() });
+    }
+    rows = rows.filter(r => r.some(v => String(v).trim() !== ''));
+    cache[t.id] = {status:'ok', cols, rows, at:new Date()};
+  }catch(e){
+    cache[t.id] = {status:'err', err:e.message};
+  }
+  renderBoard();
+}
+
+/* ===== 可編輯表格分頁 ===== */
+const O = (v, c) => ({v, c});
+const F = {
+  date:  {key:'date',   label:'日期', type:'date'},
+  shift: {key:'shift',  label:'班別', type:'select', opts:[O('早','#B45309'), O('中','#1D4ED8'), O('晚','#6D28D9')]},
+  onoff: {key:'status', label:'狀態', type:'select', opts:[O('开','#12775A'), O('关','#B5364A')]},
+  text:  {key:'text',   label:'內容', type:'rich'},
+  img:   {key:'img',    label:'圖檔', type:'img'}
+};
+F.state = {key:'state', label:'狀態', type:'select', opts:[O('待处理','#B45309'), O('已结案','#12775A')]};
+F.order = {key:'order', label:'訂單編號', type:'rich'};
+F.prog  = {key:'prog',  label:'進度', type:'select', opts:[O('待处理','#B45309'), O('已结案','#12775A')]};
+F.item  = {key:'item',  label:'事項', type:'rich'};
+F.chase = {key:'chase', label:'追款', type:'rich'};
+F.merch = {key:'merch',  label:'商戶名',  type:'text'};
+F.oid4  = {key:'oid4',   label:'四方單號', type:'text'};
+F.oidm  = {key:'oidm',   label:'商戶單號', type:'text'};
+F.amt   = {key:'amt',    label:'金額',    type:'num', money:true};
+F.chan  = {key:'chan',   label:'渠道',    type:'text'};
+F.relday= {key:'relday', label:'解除日',  type:'date'};
+F.desc  = {key:'desc',   label:'說明',    type:'rich'};
+F.zone  = {key:'zone',   label:'分區', type:'select', opts:[
+  O('支付宝','#1D4ED8'), O('银行卡','#15803D')]};
+F.reason= {key:'reason', label:'擔保原因', type:'rich'};
+F.note  = {key:'note',   label:'備註',    type:'rich'};
+F.imgst = {key:'imgst', label:'圖檔狀態', type:'select', opts:[
+  O('图档在异常','#C62828'), O('图档在云端','#15803D')]};
+F.ftype = {key:'ftype', label:'類型', type:'select', opts:[
+  O('骗单','#C62828'), O('疑虑','#1D4ED8'), O('错误支付','#B45309'), O('回单不清晰','#15803D'),
+  O('回单不完整','#6D28D9'), O('验证交易失败','#6C7488'), O('追款','#BE185D'), O('状态不明','#0E7490')]};
+F.fill  = {key:'fill',  label:'補入', type:'select', opts:[
+  O('已补入','#C62828'), O('未补入','#6C7488')]};
+F.times = {key:'times', label:'追款次數', type:'num', unit:'次'};
+const COLS = {
+  base: [F.date, F.shift, F.text, F.img],                 // 固定事项 / 外部交接
+  rate: [F.date, F.shift, F.onoff, F.text, F.img],        // 商户汇率变动
+  case: [F.date, F.shift, F.state, F.text],               // 特殊单
+  fraud:[F.date, F.shift, F.state, F.order],              // ⚠️骗单未给收支区⚠️
+  jail: [F.date, F.shift, F.prog,  F.item],               // 不乖关禁闭
+  chase:[F.date, F.shift, F.chase, F.times],              // 追款记录
+  guar: [F.date, F.merch, F.oid4, F.oidm, F.amt, F.chan, F.reason, F.img, F.note], // 资金担保
+  fake: [F.date, F.text, F.imgst, F.ftype, F.fill],       // 假流水单记录
+  limit:[F.date, F.shift, F.amt, F.relday, F.img, F.note], // 新宝⭐限制支出
+  risk: [F.zone, F.img, F.desc]                           // 风险图档
+};
+const GALLERY = { risk: true };                           // 圖片放大顯示的版型
+const SUM_OF = { limit: F.amt };                          // 哪些版型上方要加總
+const FILTER_OF = { case: F.state, fraud: F.state, jail: F.prog, risk: F.zone };  // 哪些版型上方要有切換器
+const filterOf = t => FILTER_OF[t.cols];
+const optsOf = (t, f) => (t.opts && t.opts[f.key]) || f.opts || [];
+const sumOf = t => SUM_OF[t.cols];
+const colsOf = t => COLS[t.cols] || COLS.base;
+const findTab = tid => cats.flatMap(c => c.tabs).find(x => x.id === tid);
+const clone = v => JSON.parse(JSON.stringify(v));
+
+let editRow = null;    // 正在編輯的列
+let beforeRows = null; // 進入編輯前的整頁快照
+const undoStack = {};  // 每個分頁各自的上一步
+
+function pushUndo(tid, rows){
+  (undoStack[tid] ||= []).push(clone(rows));
+  if(undoStack[tid].length > 30) undoStack[tid].shift();
+}
+function driveThumb(u){
+  const m = String(u).match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?[^]*id=)([A-Za-z0-9-_]+)/);
+  return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w400` : u;
+}
+
+/* --- 唯讀列 --- */
+function readCell(t, f, r){
+  const v = r[f.key] || '';
+  if(f.type === 'date')   return `<span class="v-date">${v ? esc(v) : '—'}</span>`;
+  if(f.type === 'text')   return v ? `<span class="v-mono">${esc(v)}</span>` : '<span class="v-empty">—</span>';
+  if(f.type === 'num'){
+    if(v === '' || v == null) return '<span class="v-empty">—</span>';
+    const shown = f.money ? Number(v).toLocaleString('zh-TW') : esc(v);
+    return `<span class="v-num">${shown}${f.unit?`<i>${f.unit}</i>`:''}</span>`;
+  }
+  if(f.type === 'select'){
+    if(!v) return '<span class="v-empty">—</span>';
+    const o = optsOf(t, f).find(x => x.v === v), c = o ? o.c : '#6C7488';
+    return `<span class="pill" style="background:${c}1F;color:${c}">${esc(v)}</span>`;
+  }
+  if(f.type === 'rich')   return `<div class="v-text">${r[f.key + '_h'] || (v ? esc(v) : '<span class="v-empty">—</span>')}</div>`;
+  if(f.type === 'img')    return v
+    ? `<a class="thumb" href="${esc(v)}" target="_blank" rel="noopener" style="background-image:url('${esc(driveThumb(v))}')"></a>`
+    : '<span class="v-empty">—</span>';
+  return esc(v);
+}
+function rowRead(t, r){
+  return `<tr ondblclick="gridEdit('${t.id}','${r.id}')" title="按兩下修改這則">
+    ${colsOf(t).map(f => `<td class="c-${f.key}">${readCell(t, f, r)}</td>`).join('')}
+    <td class="gact"><button class="x" title="刪除這則" onclick="event.stopPropagation();gridDel('${t.id}','${r.id}')">✕</button></td>
+  </tr>`;
+}
+
+/* --- 編輯列 --- */
+function editCell(t, f, r){
+  const v = r[f.key] || '';
+  if(f.type === 'date') return `<input type="date" id="e_date" value="${esc(v)}"
+      onkeydown="gridKey(event,'${t.id}')" oninput="gridSet('${t.id}','${r.id}','${f.key}',this.value)">`;
+  if(f.type === 'num') return `<input type="number" min="0" step="${f.money?'0.01':'1'}" class="mono num" placeholder="0" value="${esc(v)}"
+      onkeydown="gridKey(event,'${t.id}')" oninput="gridSet('${t.id}','${r.id}','${f.key}',this.value)">`;
+  if(f.type === 'text') return `<input type="text" class="mono" placeholder="${f.label}" value="${esc(v)}"
+      onkeydown="gridKey(event,'${t.id}')" oninput="gridSet('${t.id}','${r.id}','${f.key}',this.value)">`;
+  if(f.type === 'select'){
+    const list = optsOf(t, f), o = list.find(x => x.v === v);
+    return `<div class="selcell">
+      <select class="sel" style="${o?`background:${o.c}1F;color:${o.c}`:''}" onkeydown="gridKey(event,'${t.id}')"
+        onchange="gridSet('${t.id}','${r.id}','${f.key}',this.value);selTone(this,'${t.id}','${f.key}')">
+        <option value=""${v?'':' selected'}>—</option>
+        ${list.map(x => `<option${v===x.v?' selected':''}>${esc(x.v)}</option>`).join('')}
+      </select>
+      <button class="optbtn" title="編輯這欄的選項" onclick="openOpts('${t.id}','${f.key}')">⚙</button>
+    </div>`;
+  }
+  if(f.type === 'img') return `<div class="imgcell">
+      <a class="thumb" id="th_${r.id}" ${v?`href="${esc(v)}" target="_blank" rel="noopener"`:''}
+         style="${v?`background-image:url('${esc(driveThumb(v))}')`:''}">${v?'':'圖'}</a>
+      <input type="url" placeholder="貼圖片或雲端硬碟網址" value="${esc(v)}"
+        onkeydown="gridKey(event,'${t.id}')" oninput="gridSet('${t.id}','${r.id}','${f.key}',this.value)"
+        onchange="gridThumb('${r.id}',this.value)">
+    </div>`;
+  if(f.type === 'rich'){
+    const k = f.key;
+    return `
+      <div class="rt-bar">
+        <button onmousedown="event.preventDefault()" onclick="rt('bold','${k}')" title="粗體"><b>B</b></button>
+        <button onmousedown="event.preventDefault()" onclick="rt('under','${k}')" title="底線"><u>U</u></button>
+        <span class="rt-sep"></span>
+        <button class="rt-tog" onmousedown="event.preventDefault()" onclick="rtPop('color','${k}',event)" title="文字顏色">
+          <span class="swatch" id="sw-color-${k}" style="background:${lastColor}"></span>字<b class="cv">▾</b></button>
+        <button class="rt-tog" onmousedown="event.preventDefault()" onclick="rtPop('mark','${k}',event)" title="螢光底色">
+          <span class="swatch sq" id="sw-mark-${k}" style="background:${lastMark}"></span>光<b class="cv">▾</b></button>
+        <span class="rt-sep"></span>
+        <button onmousedown="event.preventDefault()" onclick="rt('clear','${k}')" title="清掉格式">清除</button>
+        <div class="rt-pop" id="pop-color-${k}">${TEXT_COLORS.map(([hex,nm]) =>
+          `<button class="dot" style="background:${hex}" title="${nm}" onmousedown="event.preventDefault()" onclick="pickColor('${hex}','${k}')"></button>`).join('')}</div>
+        <div class="rt-pop" id="pop-mark-${k}">${MARK_COLORS.map(([hex,nm]) =>
+          `<button class="dot sq" style="background:${hex}" title="${nm}" onmousedown="event.preventDefault()" onclick="pickMark('${hex}','${k}')"></button>`).join('')}</div>
+      </div>
+      <div class="rt" id="e_${k}" contenteditable="true" data-ph="${f.label}"
+        onkeydown="rtKey(event,'${t.id}')" oninput="rtSync('${k}')"
+        onpaste="event.preventDefault();document.execCommand('insertText',false,(event.clipboardData||window.clipboardData).getData('text'))"
+      >${r[k + '_h'] || esc(v)}</div>`;
+  }
+  return '';
+}
+function rowEdit(t, r){
+  return `<tr class="editing" onfocusout="gridBlur(event)">
+    ${colsOf(t).map(f => `<td class="c-${f.key}">${editCell(t, f, r)}</td>`).join('')}
+    <td class="gact"><button class="x" title="刪除這則" onclick="gridDel('${t.id}','${r.id}')">✕</button></td>
+  </tr>`;
+}
+
+const yearOf = r => String(r.date || '').slice(0,4) || '未填日期';
+const segSel = {};
+const curSeg = t => segSel[t.id] || '全部';
+function setSeg(tid, v){ segSel[tid] = v; renderBoard() }
+function toggleYear(tid, y){
+  const t = findTab(tid);
+  t.ycl ||= [];
+  const i = t.ycl.indexOf(y);
+  i < 0 ? t.ycl.push(y) : t.ycl.splice(i, 1);
+  save(); renderBoard();
+}
+function gridView(t, q){
+  const all  = t.rows || [];
+  const cols = colsOf(t);
+  const keys = cols.map(f => f.key);
+  const fl   = filterOf(t), seg = curSeg(t);
+  const rows = all.filter(r => r.id === editRow ||
+    ((!fl || seg === '全部' || (r[fl.key] || '') === seg) &&
+     (!q || keys.some(k => String(r[k]||'').toLowerCase().includes(q)))));
+
+  const wide    = cols.length >= 7 ? ' wide' : '';
+  const gal     = GALLERY[t.cols] ? ' gallery' : '';
+  const hasDate = cols.some(f => f.type === 'date');
+  const head    = `<thead><tr>${cols.map(f => `<th>${f.label}</th>`).join('')}<th></th></tr></thead>`;
+  const undoN   = (undoStack[t.id] || []).length;
+
+  const sf    = sumOf(t);
+  const total = sf ? all.reduce((n, r) => n + (Number(r[sf.key]) || 0), 0) : null;
+  const totalBox = sf ? `<div class="total">總金額<b>${total.toLocaleString('zh-TW')}</b></div>` : '';
+  const segs = fl ? `<div class="segs">
+      ${['全部', ...optsOf(t, fl).map(o => o.v)].map(v => `<button class="seg ${seg===v?'on':''}" onclick="setSeg('${t.id}','${v}')">${v}<em>${
+        v==='全部' ? all.length : all.filter(r => (r[fl.key]||'') === v).length}</em></button>`).join('')}
+    </div>` : '';
+  const bar = `<div class="grid-bar">${totalBox}${segs}<span class="sp"></span>
+      <button class="btn btn-sm btn-solid" ${editRow?'disabled':''} onclick="gridAdd('${t.id}')">＋ 新增一則</button>
+      <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步${undoN?` (${undoN})`:''}</button>
+    </div>`;
+  const emptyMsg = () => `<div class="yempty">${q ? '這個關鍵字沒有符合的則。'
+      : (fl && seg !== '全部' ? '「' + seg + '」目前沒有資料。' : '還沒有資料，按上面「＋ 新增一則」開始記。')}</div>`;
+  const table = list => `<div class="tbl-wrap"><table class="grid${wide}${gal}">${head}
+      <tbody>${list.map(r => r.id === editRow ? rowEdit(t,r) : rowRead(t,r)).join('')}</tbody>
+    </table></div>`;
+
+  // 沒有日期欄的版型：不分年份
+  if(!hasDate) return bar + (rows.length ? table(rows) : emptyMsg());
+
+  const groups = {};
+  rows.forEach(r => (groups[yearOf(r)] ||= []).push(r));
+  const years = Object.keys(groups).sort((a,b) =>
+    a === '未填日期' ? 1 : b === '未填日期' ? -1 : b.localeCompare(a));
+
+  const body = years.length ? years.map(y => {
+    const openForEdit = groups[y].some(r => r.id === editRow);
+    const closed = !openForEdit && (t.ycl || []).includes(y);
+    return `<section class="yseg ${closed?'closed':''}">
+      <button class="yhead" onclick="toggleYear('${t.id}','${y}')">
+        <span class="caret">▼</span><span class="ytitle">${y}</span>
+        <span class="ycount">${groups[y].length}</span>
+      </button>
+      ${table(groups[y])}
+    </section>`;
+  }).join('') : emptyMsg();
+
+  return bar + body;
+}
+
+function gridSet(tid, rid, field, val){
+  const r = (findTab(tid).rows || []).find(x => x.id === rid);
+  if(r){ r[field] = val; save() }
+}
+function gridThumb(rid, url){
+  const el = document.getElementById('th_' + rid);
+  if(!el) return;
+  if(url){ el.style.backgroundImage = `url('${driveThumb(url)}')`; el.textContent = ''; el.href = url; el.target = '_blank'; }
+  else { el.style.backgroundImage = ''; el.textContent = '圖'; el.removeAttribute('href'); }
+}
+function gridAdd(tid){
+  const t = findTab(tid);
+  beforeRows = clone(t.rows || []);
+  const r = {id:'r' + Date.now()};
+  colsOf(t).forEach(f => r[f.key] = f.type === 'date' ? new Date().toISOString().slice(0,10) : '');
+  (t.rows ||= []).unshift(r);
+  editRow = r.id;
+  renderBoard();
+  setTimeout(() => document.getElementById('e_date')?.focus(), 30);
+}
+function caretEnd(el){
+  const r = document.createRange(); r.selectNodeContents(el); r.collapse(false);
+  const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+}
+function gridEdit(tid, rid){
+  if(editRow === rid) return;
+  if(editRow) commitEdit();
+  const t = findTab(tid);
+  beforeRows = clone(t.rows || []);
+  editRow = rid;
+  renderBoard();
+  setTimeout(() => {
+    const el = document.getElementById('e_text');
+    if(el){ el.focus(); caretEnd(el) }
+  }, 30);
+}
+function commitEdit(){
+  if(!editRow) return;
+  const t = cats.flatMap(c => c.tabs).find(x => (x.rows || []).some(r => r.id === editRow));
+  if(t){
+    const cur = t.rows.find(x => x.id === editRow);
+    colsOf(t).filter(f => f.type === 'rich').forEach(f => {
+      rtSync(f.key);
+      if(cur && cur[f.key + '_h']) cur[f.key + '_h'] = sanitizeHtml(cur[f.key + '_h']);
+    });
+    if(beforeRows && JSON.stringify(beforeRows) !== JSON.stringify(t.rows)) pushUndo(t.id, beforeRows);
+  }
+  editRow = null; beforeRows = null; save();
+}
+function gridDone(){ commitEdit(); renderBoard() }
+function gridBlur(e){
+  const tr = e.currentTarget;
+  setTimeout(() => {
+    const a = document.activeElement;
+    if(editRow && a && a !== document.body && !tr.contains(a)){ commitEdit(); renderBoard() }
+  }, 120);
+}
+/* 按在捲軸上不算「點別處」，否則一拖就結束編輯 */
+function onScrollbar(e){
+  const el = e.target;
+  if(!el || !el.getBoundingClientRect || el.nodeType !== 1) return false;
+  const r = el.getBoundingClientRect();
+  return e.clientX > r.left + el.clientWidth || e.clientY > r.top + el.clientHeight;
+}
+/* 點編輯列以外的地方 → 直接完成。不依賴焦點，雙擊進來的也適用 */
+document.addEventListener('pointerdown', e => {
+  if(onScrollbar(e)) return;
+  if(popOpen && !(e.target.closest && e.target.closest('.rt-pop,.rt-tog'))) closePop();
+  if(!editRow) return;
+  if(e.target.closest && e.target.closest('tr.editing')) return;
+  const headBtn = e.target.closest && e.target.closest('.grid-bar button');
+  commitEdit();
+  if(!headBtn) renderBoard();
+}, true);
+function gridCancel(tid){
+  const t = findTab(tid);
+  if(beforeRows) t.rows = beforeRows;
+  editRow = null; beforeRows = null;
+  renderBoard();
+}
+function gridDel(tid, rid){
+  const t = findTab(tid);
+  pushUndo(tid, t.rows);
+  t.rows = t.rows.filter(r => r.id !== rid);
+  save(); renderBoard(); toast('已刪除，可按「上一步」救回');
+}
+function gridUndo(tid){
+  const st = undoStack[tid];
+  if(!st || !st.length) return toast('沒有可以復原的動作');
+  const t = findTab(tid);
+  t.rows = st.pop();
+  editRow = null; beforeRows = null;
+  save(); renderBoard(); toast('已回到上一步');
+}
+/* 單行欄位：Enter ＝ 完成 */
+function gridKey(e, tid){
+  if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); gridCancel(tid); return }
+  if(e.key === 'Enter'){ e.preventDefault(); e.target.blur(); gridDone() }
+}
+/* 內容格：Enter ＝ 換行，完全不碰它；Ctrl+Enter 才收工 */
+function rtKey(e, tid){
+  if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); gridCancel(tid); return }
+  if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); e.target.blur(); gridDone() }
+}
+/* --- 內容標重點：粗體 / 紅字 / 螢光 --- */
+const RT_OK = {B:1,STRONG:1,I:1,EM:1,U:1,BR:1,SPAN:1,DIV:1,P:1,FONT:1};
+function sanitizeHtml(html){
+  const box = document.createElement('div');
+  box.innerHTML = html;
+  (function walk(node){
+    [...node.childNodes].forEach(n => {
+      if(n.nodeType === 3) return;
+      if(n.nodeType !== 1){ n.remove(); return }
+      if(!RT_OK[n.tagName]){ n.replaceWith(...n.childNodes); return }
+      const color = n.getAttribute('color') || n.style?.color || '';
+      const bg    = n.style?.backgroundColor || '';
+      [...n.attributes].forEach(a => n.removeAttribute(a.name));
+      if(n.tagName === 'FONT'){
+        const sp = document.createElement('span');
+        if(color) sp.style.color = color;
+        sp.append(...n.childNodes); n.replaceWith(sp); return walk(sp);
+      }
+      if(color) n.style.color = color;
+      if(bg) n.style.backgroundColor = bg;
+      walk(n);
+    });
+  })(box);
+  return box.innerHTML;
+}
+function rtSync(key){
+  const el = document.getElementById('e_' + key); if(!el) return;
+  const t = tab(); if(!t) return;
+  const r = (t.rows || []).find(x => x.id === editRow); if(!r) return;
+  r[key + '_h'] = el.innerHTML;
+  r[key] = el.innerText;
+  save();
+}
+const TEXT_COLORS = [
+  ['#C62828','紅'], ['#C2410C','橘'], ['#B45309','土黃'], ['#15803D','綠'],
+  ['#0E7490','青'], ['#1D4ED8','藍'], ['#6D28D9','紫'], ['#BE185D','桃'], ['#131826','黑']
+];
+const MARK_COLORS = [
+  ['#FFF07A','黃'], ['#FED7AA','橘'], ['#BBF7D0','綠'],
+  ['#BFDBFE','藍'], ['#E9D5FF','紫'], ['#FBCFE8','粉']
+];
+function rtCmd(key, fn){
+  const el = document.getElementById('e_' + key); if(!el) return;
+  el.focus();
+  try{ document.execCommand('styleWithCSS', false, true) }catch(_){}
+  fn();
+  rtSync(key);
+}
+function rt(cmd, key){
+  rtCmd(key, () => {
+    if(cmd === 'bold')  document.execCommand('bold');
+    if(cmd === 'under') document.execCommand('underline');
+    if(cmd === 'clear') document.execCommand('removeFormat');
+  });
+}
+function rtColor(hex, key){ rtCmd(key, () => document.execCommand('foreColor', false, hex)) }
+function rtMark(hex, key){ rtCmd(key, () => document.execCommand('hiliteColor', false, hex)) }
+let lastColor = '#C62828', lastMark = '#FFF07A', popOpen = null;
+function rtPop(kind, key, ev){
+  ev.preventDefault(); ev.stopPropagation();
+  const id = kind + '-' + key;
+  if(popOpen === id) return closePop();
+  closePop();
+  const b = ev.currentTarget.getBoundingClientRect();
+  const el = document.getElementById('pop-' + id);
+  el.classList.add('on');
+  el.style.left = Math.min(b.left, innerWidth - el.offsetWidth - 12) + 'px';
+  el.style.top  = (b.bottom + 5) + 'px';
+  popOpen = id;
+}
+function closePop(){
+  document.querySelectorAll('.rt-pop').forEach(p => p.classList.remove('on'));
+  popOpen = null;
+}
+function pickColor(hex, key){ lastColor = hex; document.getElementById('sw-color-' + key).style.background = hex; rtColor(hex, key); closePop() }
+function pickMark(hex, key){ lastMark = hex; document.getElementById('sw-mark-' + key).style.background = hex; rtMark(hex, key); closePop() }
+function autoGrow(el){ el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px' }
+
+/* ===== 下拉選項：可改名、換色、增刪 ===== */
+const OPT_PALETTE = TEXT_COLORS.map(x => x[0]).concat(['#6C7488','#BE185D','#0E7490']);
+let optCtx = null;
+function selTone(el, tid, key){
+  const t = findTab(tid), f = colsOf(t).find(x => x.key === key);
+  const o = optsOf(t, f).find(x => x.v === el.value);
+  el.style.background = o ? o.c + '1F' : '';
+  el.style.color = o ? o.c : '';
+}
+function openOpts(tid, key){
+  const t = findTab(tid), f = colsOf(t).find(x => x.key === key);
+  optCtx = {tid, key, label:f.label, list:clone(optsOf(t, f))};
+  document.getElementById('optTitle').textContent = `「${f.label}」的選項`;
+  renderOptList();
+  document.getElementById('optMask').classList.add('on');
+}
+function renderOptList(){
+  document.getElementById('optList').innerHTML = optCtx.list.map((o,i) => `
+    <div class="optrow">
+      <button class="optdot" style="background:${o.c}" title="點一下換顏色" onclick="cycleOpt(${i})"></button>
+      <input value="${esc(o.v)}" placeholder="選項名稱" oninput="optCtx.list[${i}].v=this.value">
+      <span class="pill" style="background:${o.c}1F;color:${o.c}">${esc(o.v) || '預覽'}</span>
+      <button class="optdel" title="刪掉" onclick="delOpt(${i})">✕</button>
+    </div>`).join('') || '<p style="color:var(--ink3);font-size:12.5px;padding:6px 0">還沒有選項。</p>';
+}
+function cycleOpt(i){
+  const cur = OPT_PALETTE.indexOf(optCtx.list[i].c);
+  optCtx.list[i].c = OPT_PALETTE[(cur + 1) % OPT_PALETTE.length];
+  renderOptList();
+}
+function addOpt(){ optCtx.list.push({v:'', c:OPT_PALETTE[optCtx.list.length % OPT_PALETTE.length]}); renderOptList() }
+function delOpt(i){ optCtx.list.splice(i, 1); renderOptList() }
+function saveOpts(){
+  const t = findTab(optCtx.tid);
+  (t.opts ||= {})[optCtx.key] = optCtx.list.filter(o => o.v.trim()).map(o => ({v:o.v.trim(), c:o.c}));
+  save(); renderBoard(); closeDialog('optMask'); toast('選項已更新');
+}
+
+/* ===== 畫面 ===== */
+function applyTone(){
+  const [a, soft, deep] = cat().tone;
+  const r = document.documentElement.style;
+  r.setProperty('--ac', a); r.setProperty('--ac-soft', soft); r.setProperty('--ac-deep', deep);
+  document.getElementById('brandMark').textContent = cat().code[0];
+}
+function renderRail(){
+  document.getElementById('catList').innerHTML = cats.map(c => `
+    <div class="cat ${c.id===curCat?'on':''}" data-id="${c.id}" tabindex="0"
+         style="${c.id===curCat?`--ac:${c.tone[0]}`:''}"
+         onclick="goCat('${c.id}')" onkeydown="catKey(event,'${c.id}')">
+      <span class="grip" title="拖曳排序" aria-hidden="true"
+            onpointerdown="gripDown(event,'${c.id}')" onclick="event.stopPropagation()">⋮⋮</span>
+      <span class="chip" style="${c.id===curCat?`background:${c.tone[0]}`:''}">${icon(c.icon)}</span>
+      <span class="cat-name" ondblclick="rename(event,'${c.id}')">${esc(c.name)}</span>
+      <button class="cat-edit" title="分類設定" onclick="event.stopPropagation();openCatDialog('${c.id}')">✎</button>
+      <span class="cat-count">${c.tabs.length}</span>
+    </div>`).join('');
+}
+function renderTabs(){
+  const c = cat();
+  document.getElementById('catTitle').textContent = c.name;
+  document.getElementById('tabRail').innerHTML =
+    c.tabs.map(t => `
+      <button class="tab ${t.id===curTab?'on':''}" onclick="goTab('${t.id}')">${esc(t.name)}
+        <span class="tab-x" onclick="event.stopPropagation();delTab('${t.id}')">✕</span>
+      </button>`).join('') +
+    `<button class="tab-add" onclick="openTabDialog()">＋</button>`;
+}
+function renderBoard(){
+  const c = cat(), b = document.getElementById('board');
+  if(!c.tabs.length){
+    b.innerHTML = `<div class="empty"><h3>${esc(c.name)} 還沒有分頁</h3>
+      <p>建一個分頁，綁上這一類要看的 Google 試算表。</p>
+      <button class="btn btn-solid" onclick="openTabDialog()">＋ 新增分頁</button></div>`;
+    return;
+  }
+  const t = tab();
+  if(!t){ curTab = c.tabs[0].id; return renderBoard(); }
+  const q = document.getElementById('q').value.trim().toLowerCase();
+
+  if(t.kind === 'grid'){
+    b.innerHTML = `<section class="card"><div class="card-body plain">${gridView(t, q)}</div></section>`;
+    renderTools();
+    return;
+  }
+
+  const d = cache[t.id] || {status:'idle'};
+  let table = '';
+  if(d.status === 'nosrc') table = `<p style="padding:18px 0;font-size:13px;color:var(--ink2)">
+      這一類還沒綁試算表。設定一次，底下每個分頁就會各自去抓同名的工作表。<br>
+      <button class="btn btn-sm btn-solid" style="margin-top:9px" onclick="openCatDialog('${c.id}')">設定本類試算表</button></p>`;
+  else if(d.status === 'load') table = `<p style="color:var(--ink2);padding:22px 0">載入中…</p>`;
+  else if(d.status === 'err') table = `<p style="color:var(--red);padding:18px 0;font-size:13px">${esc(d.err)}<br>
+    <span style="color:var(--ink3)">試算表需設為「知道連結的人可檢視」。</span></p>`;
+  else if(d.status === 'ok'){
+    const rows = q ? d.rows.filter(r => r.some(v => String(v).toLowerCase().includes(q))) : d.rows;
+    table = !rows.length
+      ? `<p style="color:var(--ink3);padding:18px 0;font-size:13px">${q ? '這個關鍵字沒有符合的列。' : '這份工作表是空的。'}</p>`
+      : `<div class="tbl-wrap"><table>
+          <thead><tr><th class="rownum">#</th>${d.cols.map(x => `<th>${esc(x)}</th>`).join('')}</tr></thead>
+          <tbody>${rows.map((r,i) => `<tr><td class="rownum">${i+1}</td>${
+            d.cols.map((_,j) => `<td>${link(r[j] ?? '')}</td>`).join('')}</tr>`).join('')}
+          </tbody></table></div>`;
+  } else table = `<p style="color:var(--ink3);padding:18px 0;font-size:13px">尚未載入，按上方「重新載入」抓取。</p>`;
+
+  const badge = d.status === 'ok' ? `<span class="status st-ok">${d.rows.length} 列</span>`
+    : d.status === 'load' ? `<span class="status st-load">載入中</span>`
+    : d.status === 'err' ? `<span class="status st-err">失敗</span>` : '';
+
+  b.innerHTML = `
+    <section class="card ${t.co1?'collapsed':''}">
+      <div class="card-head" onclick="fold('co1')">
+        <span class="caret">▼</span><span class="card-title">${esc(t.name)}</span>
+        <span class="card-meta">${badge}${d.at?`<span>${d.at.toLocaleTimeString('zh-TW',{hour12:false})} 更新</span>`:''}<span>${esc(srcLabel(t))}</span>${tabSid(t)?`<span>表 …${esc(tabSid(t).slice(-6))}</span>`:''}</span>
+      </div>
+      <div class="card-body">${table}</div>
+    </section>
+    `;
+  renderTools();
+}
+function renderTools(){
+  const el = document.getElementById('tools');
+  const t = tab();
+  if(!t){ el.innerHTML = ''; return }
+  if(t.kind === 'grid'){
+    el.innerHTML = '';
+  }else{
+    el.innerHTML = `<button class="btn" onclick="reloadCurrent()">重新載入</button>`;
+  }
+}
+function render(){ applyTone(); renderRail(); renderTabs(); renderBoard(); }
+
+/* ===== 操作 ===== */
+function goCat(id){ commitEdit(); curCat = id; curTab = cat().tabs[0]?.id || null; document.getElementById('q').value=''; render(); autoPull(); }
+function goTab(id){ commitEdit(); curTab = id; document.getElementById('q').value=''; renderTabs(); renderBoard(); autoPull(); }
+function autoPull(){ const t = tab(); if(t && t.kind !== 'grid' && !cache[t.id]) pull(t) }
+function repullCat(id){ const c = cats.find(x=>x.id===id); c.tabs.forEach(t => delete cache[t.id]); const t = tab(); if(t && t.kind !== 'grid') pull(t) }
+function fold(k){ tab()[k] = !tab()[k]; save(); renderBoard() }
+function toggleAll(){
+  const t = tab(); if(!t) return;
+  const v = !t.co1;
+  cats.forEach(c => c.tabs.forEach(x => { x.co1 = v }));
+  save(); renderBoard(); toast(v ? '全部收起' : '全部展開');
+}
+function reloadCurrent(){ const t = tab(); if(!t) return; if(t.kind === 'grid') return toast('這是可編輯表格，資料就在本機，不用重新載入'); pull(t) }
+
+function openTabDialog(){
+  ['fName','fUrl','fSheets'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('dlgWhere').textContent =
+    `新的分頁會建在「${cat().name}」底下，只抓你在這裡指定的工作表，不會跟其他分類混到。`;
+  document.getElementById('tabMask').classList.add('on');
+  setTimeout(() => document.getElementById('fUrl').focus(), 40);
+}
+function closeDialog(id){ document.getElementById(id).classList.remove('on') }
+function saveTab(){
+  const url = document.getElementById('fUrl').value.trim();
+  const dispName = document.getElementById('fName').value.trim();
+  const sheets = document.getElementById('fSheets').value.split('\n').map(s => s.trim()).filter(Boolean);
+  const c = cat();
+  const {id, gid} = parseUrl(url, '');
+  if(url && !id) return toast('這串網址找不到試算表 ID');
+  if(!url && !c.sid) return toast('請貼試算表網址，或先到分類設定綁一份');
+  const sid = id || '';           // 空字串＝沿用分類的試算表
+  const eff = sid || c.sid;
+
+  const made = [];
+  let dup = 0;
+  const push = (sheet, g, name) => {
+    if(c.tabs.some(t => (tabSid(t) === eff) && (sheet ? t.sheet === sheet : (!t.sheet && t.gid === g)))){ dup++; return }
+    const t = {id:'t' + Date.now() + '_' + made.length, name, sid, gid:g, sheet, co1:false};
+    c.tabs.push(t); made.push(t);
+  };
+
+  if(sheets.length) sheets.forEach(s => push(s, '', (sheets.length === 1 && dispName) ? dispName : s));
+  else push('', gid, dispName || ('工作表 gid ' + gid));
+
+  if(!made.length) return toast(dup ? '這個分類已經有同樣的工作表了' : '沒有建立任何分頁');
+
+  curTab = made[0].id;
+  save(); render();
+  made.forEach(t => pull(t));
+  closeDialog('tabMask');
+  toast(`已建立 ${made.length} 個分頁${dup ? `，略過 ${dup} 個重複` : ''}`);
+}
+function delTab(id){
+  const t = cat().tabs.find(x => x.id === id);
+  if(!confirm(`刪除分頁「${t.name}」？這一頁的設定會消失。`)) return;
+  cat().tabs = cat().tabs.filter(x => x.id !== id);
+  if(curTab === id) curTab = cat().tabs[0]?.id || null;
+  save(); render();
+}
+
+/* ===== 分類：新增 / 編輯 / 刪除 ===== */
+let dlgCat = null, dlgIcon = 'doc', dlgTone = 0;
+function openCatDialog(id){
+  dlgCat = id || null;
+  const c = id ? cats.find(x => x.id === id) : null;
+  document.getElementById('catDlgTitle').textContent = c ? '編輯分類' : '新增分類';
+  document.getElementById('cName').value = c ? c.name : '';
+  document.getElementById('cUrl').value = c && c.sid ? 'https://docs.google.com/spreadsheets/d/' + c.sid + '/edit' : '';
+  dlgIcon = c ? c.icon : 'doc';
+  const ti = c ? TONES.findIndex(t => t[0] === c.tone[0]) : cats.length % TONES.length;
+  dlgTone = ti < 0 ? 0 : ti;
+  document.getElementById('catDel').style.display = (c && cats.length > 1) ? '' : 'none';
+  renderPickers();
+  document.getElementById('catMask').classList.add('on');
+  setTimeout(() => document.getElementById('cName').focus(), 40);
+}
+function renderPickers(){
+  document.getElementById('iconPick').innerHTML = Object.keys(ICON_LIB).map(k =>
+    `<button class="pk ${k===dlgIcon?'on':''}" title="${k}" onclick="dlgIcon='${k}';renderPickers()">${ICON_LIB[k]}</button>`).join('');
+  document.getElementById('tonePick').innerHTML = TONES.map((t,i) =>
+    `<button class="pk tone ${i===dlgTone?'on':''}" style="background:${t[0]}" onclick="dlgTone=${i};renderPickers()"></button>`).join('');
+}
+function saveCat(){
+  const n = document.getElementById('cName').value.trim();
+  const u = document.getElementById('cUrl').value.trim();
+  if(!n) return toast('請填分類名稱');
+  const sid = u ? (parseUrl(u,'').id || '') : '';
+  if(u && !sid) return toast('這串網址找不到試算表 ID');
+  if(dlgCat){
+    const c = cats.find(x => x.id === dlgCat);
+    const changed = c.sid !== sid;
+    c.name = n; c.icon = dlgIcon; c.tone = TONES[dlgTone]; c.code = codeOf(n); c.sid = sid;
+    save(); render(); closeDialog('catMask');
+    if(changed) repullCat(c.id);
+    return toast(changed && sid ? '試算表已綁定，開始抓資料' : '分類已更新');
+  }
+  const c = {id:'c' + Date.now(), name:n, code:codeOf(n), tone:TONES[dlgTone], icon:dlgIcon, sid, tabs:[]};
+  cats.push(c); curCat = c.id; curTab = null;
+  save(); render(); closeDialog('catMask'); toast('分類已新增');
+}
+function delCat(){
+  const c = cats.find(x => x.id === dlgCat);
+  if(!confirm(`刪除分類「${c.name}」？底下 ${c.tabs.length} 個分頁會一起刪掉。`)) return;
+  cats = cats.filter(x => x.id !== dlgCat);
+  if(curCat === dlgCat){ curCat = cats[0].id; curTab = cats[0].tabs[0]?.id || null }
+  save(); render(); autoPull(); closeDialog('catMask'); toast('分類已刪除');
+}
+
+/* ===== 快速改名（雙擊名稱） ===== */
+function rename(ev, id){
+  ev.stopPropagation();
+  const el = document.querySelector(`.cat[data-id="${id}"] .cat-name`);
+  const orig = el.textContent;
+  el.contentEditable = 'true'; el.classList.add('editing');
+  el.onclick = e => e.stopPropagation();
+  el.focus();
+  const r = document.createRange(); r.selectNodeContents(el);
+  const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  const done = keep => {
+    el.contentEditable = 'false'; el.classList.remove('editing');
+    const v = el.textContent.trim();
+    if(keep && v && v !== orig){ const c=cats.find(c=>c.id===id); c.name=v; c.code=codeOf(v); save(); render(); toast('名稱已更新'); }
+    else el.textContent = orig;
+  };
+  el.onblur = () => done(true);
+  el.onkeydown = e => {
+    e.stopPropagation();
+    if(e.key === 'Enter'){ e.preventDefault(); el.onblur = null; done(true); el.blur(); }
+    if(e.key === 'Escape'){ e.preventDefault(); el.onblur = null; done(false); el.blur(); }
+  };
+}
+
+/* ===== 拖曳排序（指標事件，預覽也能用） ===== */
+let drag = null;
+const clearMarks = () => document.querySelectorAll('.cat').forEach(x => x.classList.remove('over','over-last'));
+function gripDown(ev, id){
+  ev.preventDefault(); ev.stopPropagation();
+  const row = document.querySelector(`.cat[data-id="${id}"]`);
+  row.classList.add('dragging'); document.body.classList.add('dragging-on');
+  drag = {target:null, after:false};
+  const move = e => {
+    clearMarks(); drag.target = null;
+    for(const r of document.querySelectorAll('.cat')){
+      if(r.dataset.id === id) continue;
+      const b = r.getBoundingClientRect();
+      if(e.clientY >= b.top && e.clientY <= b.bottom){
+        const after = (e.clientY - b.top) > b.height / 2;
+        r.classList.add(after ? 'over-last' : 'over');
+        drag.target = r.dataset.id; drag.after = after;
+        break;
+      }
+    }
+  };
+  const up = () => {
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+    document.removeEventListener('pointercancel', up);
+    row.classList.remove('dragging'); document.body.classList.remove('dragging-on'); clearMarks();
+    if(drag && drag.target) reorder(id, drag.target, drag.after);
+    drag = null;
+  };
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+  document.addEventListener('pointercancel', up);
+}
+function reorder(id, targetId, after){
+  const from = cats.findIndex(c => c.id === id);
+  const [moved] = cats.splice(from, 1);
+  const to = cats.findIndex(c => c.id === targetId);
+  cats.splice(after ? to + 1 : to, 0, moved);
+  save(); renderRail(); toast('順序已更新');
+}
+function catKey(e, id){
+  if(e.altKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')){
+    e.preventDefault();
+    const i = cats.findIndex(c => c.id === id), j = e.key === 'ArrowUp' ? i-1 : i+1;
+    if(j < 0 || j >= cats.length) return;
+    [cats[i], cats[j]] = [cats[j], cats[i]];
+    save(); renderRail();
+    document.querySelector(`.cat[data-id="${id}"]`).focus();
+    return;
+  }
+  if(e.key === 'Enter') goCat(id);
+}
+
+
+/* ===== 工具 ===== */
+function esc(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) }
+function link(v){
+  const s = esc(v);
+  return /^https?:\/\//i.test(String(v).trim())
+    ? `<a href="${s}" target="_blank" rel="noopener">${s.length>50 ? s.slice(0,50)+'…' : s}</a>` : s;
+}
+let tmr;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(tmr); tmr = setTimeout(() => el.classList.remove('on'), 1900);
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeDialog('tabMask'); closeDialog('catMask'); closeDialog('optMask') } });
+['tabMask','catMask','optMask'].forEach(id => document.getElementById(id).addEventListener('click', e => { if(e.target.id === id) closeDialog(id) }));
+
+save(); render(); autoPull();
+</script>
+</body>
+</html>
