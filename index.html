@@ -265,7 +265,7 @@ table.grid{border-collapse:separate;border-spacing:0;width:100%;font-family:var(
 .rt:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 .rt:empty::before{content:attr(data-ph);color:var(--ink3)}
 .v-text b,.v-text strong{font-weight:700}
-.grid .c-date{width:128px}.grid .c-shift{width:94px}.grid .c-status{width:88px}.grid .c-state{width:100px}.grid .c-prog{width:100px}.grid .c-imgst{width:150px}.grid .c-ftype{width:150px}.grid .c-fill{width:120px}.grid .c-times{width:104px}
+.grid .c-date{width:128px}.grid .c-shift{width:94px}.grid .c-status{width:88px}.grid .c-state{width:100px}.grid .c-prog{width:100px}.grid .c-imgst{width:150px}.grid .c-ftype{width:150px}.grid .c-fill{width:120px}.grid .c-refill{width:120px}.grid .c-times{width:104px}
 .grid .c-merch{width:130px}.grid .c-oid4,.grid .c-oidm{width:150px}
 .grid .c-amt{width:120px}.grid .c-relday{width:128px}.grid .c-chan{width:104px}
 .grid.wide{min-width:1320px}
@@ -551,7 +551,7 @@ const DEFAULT = [
     {id:'fr07', name:'追款记录', kind:'grid', cols:'chase', rows:[], co1:false},
     {id:'fr08', name:'资金担保', kind:'grid', cols:'guar', rows:[], co1:false},
     {id:'fr09', name:'假流水单记录', kind:'grid', cols:'fake', rows:[], co1:false},
-    {id:'fr10', name:'假回单记录', sheet:'假回单记录', sid:'', gid:'', co1:false},
+    {id:'fr10', name:'假回单记录', kind:'grid', cols:'back', rows:[], co1:false},
     {id:'fr11', name:'风险图档', kind:'grid', cols:'risk', rows:[], co1:false},
     {id:'fr12', name:'新宝⭐限制支出', kind:'grid', cols:'limit', rows:[], co1:false}
   ]},
@@ -589,7 +589,7 @@ function normalize(saved){
   });
 }
 /* ===== 設定檔版本：舊檔自動升級，不清掉既有資料 ===== */
-const SCHEMA = 13;
+const SCHEMA = 14;
 function migrate(list){
   DEFAULT.forEach(d => {
     let c = list.find(x => x.id === d.id);
@@ -722,6 +722,10 @@ F.ftype = {key:'ftype', label:'類型', type:'select', opts:[
   O('回单不完整','#6D28D9'), O('验证交易失败','#6C7488'), O('追款','#BE185D'), O('状态不明','#0E7490')]};
 F.fill  = {key:'fill',  label:'補入', type:'select', opts:[
   O('已补入','#C62828'), O('未补入','#6C7488')]};
+F.imgstB= {key:'imgst', label:'圖檔狀態', type:'select', opts:[
+  O('图档在异常','#C62828'), O('图档在云端','#1D4ED8')]};
+F.refill= {key:'refill', label:'補回', type:'select', opts:[
+  O('已补回','#C62828'), O('未补回','#6C7488')]};
 F.times = {key:'times', label:'追款次數', type:'num', unit:'次'};
 const COLS = {
   base: [F.date, F.shift, F.text, F.img],                 // 固定事项 / 外部交接
@@ -732,6 +736,7 @@ const COLS = {
   chase:[F.date, F.shift, F.chase, F.times],              // 追款记录
   guar: [F.date, F.merch, F.oid4, F.oidm, F.amt, F.chan, F.reason, F.img, F.note], // 资金担保
   fake: [F.date, F.text, F.imgst, F.ftype, F.fill],       // 假流水单记录
+  back: [F.date, F.shift, F.text, F.imgstB, F.refill, F.note], // 假回单记录
   limit:[F.date, F.shift, F.amt, F.relday, F.img, F.note], // 新宝⭐限制支出
   risk: [F.zone, F.img, F.desc]                           // 风险图档
 };
