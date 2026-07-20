@@ -104,16 +104,17 @@ input,textarea{font:inherit;color:inherit}
 body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
 .chip{
   width:29px;height:29px;flex:none;display:grid;place-items:center;
-  border:1px solid rgba(255,255,255,.16);border-radius:8px;color:#8C94A9;
-  transition:.16s;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.14);border-radius:8px;
+  color:var(--chipc,#9AA2B6);transition:.16s;
+  background:color-mix(in srgb, var(--chipc,#6C7488) 15%, transparent);
 }
 .chip svg{width:16px;height:16px;display:block}
 .emo{font-size:15px;line-height:1;display:block}
 .ct-ic .emo{font-size:16px}
 .pk .emo{font-size:16px}
 .pk.emoji{font-size:16px}
-.cat:hover .chip{color:#E2E6F0}
-.cat.on .chip{border-color:transparent;color:#fff}
+.cat:hover .chip{color:#fff;background:color-mix(in srgb, var(--chipc,#6C7488) 30%, transparent)}
+.cat.on .chip{border-color:transparent;color:#fff;background:var(--chipc)}
 .cat-name{font-size:12.5px;font-weight:500;color:#C3C9D9;letter-spacing:.01em}
 .cat.on .cat-name{color:#fff;font-weight:700}
 .cat-name.editing{
@@ -168,7 +169,7 @@ body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
   box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 6%, transparent);
   transition:.25s;
 }
-.ct-ic svg{width:16px;height:16px}
+.ct-ic svg{width:17px;height:17px;display:block}
 .cat-title:hover .ct-ic{transform:rotate(-6deg)}
 .cat-title span{font-size:19px;font-weight:900;letter-spacing:.05em;color:var(--ink)}
 .topbar-tools{position:absolute;right:0;top:50%;transform:translateY(-50%);display:flex;gap:7px;align-items:center}
@@ -233,6 +234,22 @@ body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
 .card.collapsed .card-body{display:none}
 
 /* 表格 */
+
+/* 嵌入頁 */
+.embed-wrap{display:flex;flex-direction:column;height:calc(100vh - 172px);min-height:420px;
+  border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
+.embed-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+.embed-url{font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:min(52vw,560px)}
+.embed-bar .sp{flex:1}
+.embed-bar a.btn{text-decoration:none;display:inline-flex;align-items:center}
+.embed-hint{padding:9px 12px;font-size:11.5px;color:var(--ink3);background:#FFFBEB;border-bottom:1px solid #F5E6B8}
+.embed-frame{flex:1;width:100%;border:none;background:#fff}
+.embed-wrap.bare{border:none;border-radius:0;height:calc(100vh - 150px);background:#fff}
+.embed-wrap.bare .embed-hint{position:absolute;left:50%;top:40px;transform:translateX(-50%);z-index:2;
+  background:#FFFBEB;border:1px solid #F5E6B8;border-radius:8px;padding:7px 13px;font-size:11.5px;
+  box-shadow:0 4px 14px rgba(0,0,0,.06);white-space:nowrap}
+.embed-wrap.bare .embed-hint a{color:var(--ac);font-weight:700;margin-left:5px}
 
 /* 抓試算表的分頁用的表格 */
 .tbl-wrap{border:1px solid var(--line);border-radius:7px;overflow:auto;max-height:58vh}
@@ -642,7 +659,9 @@ const TONES = [
   ['#11876F','#E3F3EF','#0B6754'], ['#BB3C63','#FBE9EF','#94284A'],
   ['#0E82AA','#E2F2F8','#0A6486'], ['#A6701A','#F9F0DF','#805411'],
   ['#4B5A75','#EDEFF4','#33415A'], ['#C24E23','#FBEDE6','#993B18'],
-  ['#5C8B1E','#EFF5E3','#456A13'], ['#8C3FA0','#F5E9F8','#6C2C7D']
+  ['#5C8B1E','#EFF5E3','#456A13'], ['#8C3FA0','#F5E9F8','#6C2C7D'],
+  {ac:'#0EA5A5', deep:'#0B7C7C', soft:'#0EA5A50F'},   // 通道開關 · 青
+  {ac:'#E4572E', deep:'#B8431F', soft:'#E4572E0F'}    // 四方助手 · 磚紅
 ];
 
 const DU_ROWS = [
@@ -755,7 +774,13 @@ const DEFAULT = [
   {id:'rs', sid:'', code:'RS', tone:TONES[2], icon:'💸',   name:'四方殘留暫存',   tabs:[]},
   {id:'ma', sid:'', code:'MA', tone:TONES[3], icon:'drop',   name:'四方商戶帳密',   tabs:[]},
   {id:'lk', sid:'', code:'LK', tone:TONES[4], icon:'cloudy', name:'所需雲端連結',   tabs:[]},
-  {id:'vc', sid:'', code:'VC', tone:TONES[5], icon:'vlogo', name:'VCOTC四方餘額', tabs:[]}
+  {id:'vc', sid:'', code:'VC', tone:TONES[5], icon:'vlogo', name:'VCOTC四方餘額', tabs:[]},
+  {id:'sw', code:'SW', tone:TONES[6], icon:'🔀', name:'通道開關', tabs:[
+    {id:'sw01', name:'四方通道開關', kind:'embed', bare:true, url:'https://du-channel-switch.pages.dev/'}
+  ]},
+  {id:'as', code:'AS', tone:TONES[7], icon:'🤖', name:'四方助手', tabs:[
+    {id:'as01', name:'四方助手後台', kind:'embed', bare:true, url:'https://sifangassistant.nexa-matrix.com/'}
+  ]}
 ];
 
 let cats = load();
@@ -786,7 +811,7 @@ function normalize(saved){
   });
 }
 /* ===== 設定檔版本：舊檔自動升級，不清掉既有資料 ===== */
-const SCHEMA = 20;
+const SCHEMA = 22;
 function migrate(list){
   DEFAULT.forEach(d => {
     let c = list.find(x => x.id === d.id);
@@ -824,6 +849,19 @@ function load(){
     const v   = Array.isArray(obj) ? 0 : (obj.v || 0);
     let list = normalize(arr);
     if(v < SCHEMA) list = migrate(list);
+    if(v < 22){                       // 通道開關換 Cloudflare Pages 網址
+      const sw = list.find(c => c.id === 'sw')?.tabs?.find(t => t.id === 'sw01');
+      if(sw && sw.url && sw.url.includes('github.io')) sw.url = 'https://du-channel-switch.pages.dev/';
+    }
+    if(v < 21){                       // 加入 通道開關 / 四方助手
+      const ext = [
+        {id:'sw', code:'SW', tone:TONES[6], icon:'🔀', name:'通道開關', tabs:[
+          {id:'sw01', name:'四方通道開關', kind:'embed', bare:true, url:'https://du-channel-switch.pages.dev/'}]},
+        {id:'as', code:'AS', tone:TONES[7], icon:'🤖', name:'四方助手', tabs:[
+          {id:'as01', name:'四方助手後台', kind:'embed', bare:true, url:'https://sifangassistant.nexa-matrix.com/'}]}
+      ];
+      ext.forEach(e => { if(!list.some(c => c.id === e.id)) list.push(e) });
+    }
     if(v < 20){                       // 換圖示
       const m = {du:'eye', fr:'💡', rs:'💸', ma:'drop', lk:'cloudy', vc:'vlogo'};
       list.forEach(c => { if(m[c.id]) c.icon = m[c.id] });
@@ -1490,6 +1528,18 @@ function saveOpts(){
   closeDialog('optMask'); toast('選項已更新');
 }
 
+/* ===== 嵌入頁 ===== */
+function embedOk(tid){
+  const h = document.getElementById('hint_' + tid);
+  if(h) h.style.display = 'none';
+}
+function reloadEmbed(tid){
+  const f = document.getElementById('if_' + tid);
+  const h = document.getElementById('hint_' + tid);
+  if(h) h.style.display = '';
+  if(f) f.src = f.src;
+}
+
 /* ===== 自訂欄位 ===== */
 const FTYPES = [
   {v:'text',   l:'文字',    d:'可換行，長短皆可'},
@@ -1568,7 +1618,7 @@ function renderRail(){
          onclick="goCat('${c.id}')" onkeydown="catKey(event,'${c.id}')">
       <span class="grip" title="拖曳排序" aria-hidden="true"
             onpointerdown="gripDown(event,'${c.id}')" onclick="event.stopPropagation()">⋮⋮</span>
-      <span class="chip" style="${c.id===curCat?`background:${c.tone[0]}`:''}">${icon(c.icon)}</span>
+      <span class="chip" style="--chipc:${c.tone[0]}">${icon(c.icon)}</span>
       <span class="cat-name" ondblclick="rename(event,'${c.id}')">${esc(c.name)}</span>
       <button class="cat-edit" title="分類設定" onclick="event.stopPropagation();openCatDialog('${c.id}')">✎</button>
       <span class="cat-count">${c.tabs.length}</span>
@@ -1706,6 +1756,36 @@ function renderBoard(){
   if(t.kind === 'grid'){
     b.innerHTML = `<section class="card"><div class="card-body plain">${gridView(t, q)}</div></section>`;
     document.querySelectorAll('.rc textarea').forEach(autoGrow);
+    renderTools();
+    return;
+  }
+
+  if(t.kind === 'embed'){
+    const u = t.url || '';
+    if(!u){
+      b.innerHTML = `<div class="empty"><h3>${esc(t.name)}</h3>
+        <p>這個分頁還沒設定網址。</p>
+        <button class="btn btn-solid" onclick="openTabDialog('${t.id}')">設定網址</button></div>`;
+      renderTools(); return;
+    }
+    const frame = `<iframe id="if_${t.id}" class="embed-frame" src="${esc(u)}"
+        onload="embedOk('${t.id}')" referrerpolicy="no-referrer"
+        allow="clipboard-read; clipboard-write"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-top-navigation-by-user-activation"></iframe>`;
+    b.innerHTML = t.bare
+      ? `<div class="embed-wrap bare">
+          <div class="embed-hint" id="hint_${t.id}">載入中…若一直空白，代表這個網站不允許被內嵌。<a href="${esc(u)}" target="_blank" rel="noopener">改用新分頁開啟 ↗</a></div>
+          ${frame}
+        </div>`
+      : `<div class="embed-wrap">
+          <div class="embed-bar">
+            <span class="embed-url" title="${esc(u)}">${esc(u)}</span><span class="sp"></span>
+            <button class="btn btn-sm" onclick="reloadEmbed('${t.id}')">↻ 重新整理</button>
+            <a class="btn btn-sm" href="${esc(u)}" target="_blank" rel="noopener">↗ 開新分頁</a>
+          </div>
+          <div class="embed-hint" id="hint_${t.id}">載入中…若一直空白，代表這個網站不允許被內嵌，請按「↗ 開新分頁」。</div>
+          ${frame}
+        </div>`;
     renderTools();
     return;
   }
