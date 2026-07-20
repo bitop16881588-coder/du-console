@@ -216,6 +216,8 @@ body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
 
 /* 内容 */
 .board.board-embed{padding:0;background:none;overflow:hidden}
+.main-embed .topbar{padding:0}
+.main-embed .tabrow{padding-left:14px}
 .board{
   flex:1;overflow-y:auto;padding:20px 24px 60px;
   background-image:radial-gradient(circle, rgba(19,24,38,.06) 1px, transparent 1px);
@@ -2115,6 +2117,7 @@ function renderBoard(){
 
   if(t.kind === 'grid'){
     b.classList.remove('board-embed');
+    document.querySelector('.main')?.classList.remove('main-embed');
     b.innerHTML = `<section class="card"><div class="card-body plain">${gridView(t, q)}</div></section>`;
     document.querySelectorAll('.rc textarea').forEach(autoGrow);
     renderTools();
@@ -2135,6 +2138,7 @@ function renderBoard(){
         allow="clipboard-read; clipboard-write"
         sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-top-navigation-by-user-activation"></iframe>`;
     b.classList.toggle('board-embed', !!t.bare);
+    document.querySelector('.main')?.classList.toggle('main-embed', !!t.bare);
     b.innerHTML = t.bare
       ? `<div class="embed-wrap bare">
           <div class="embed-hint" id="hint_${t.id}">载入中…若一直空白，代表这个网站不允许被内嵌。<a href="${esc(u)}" target="_blank" rel="noopener">改用新分页开启 ↗</a></div>
