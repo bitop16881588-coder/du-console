@@ -1861,11 +1861,15 @@ function cardRead(t, r){
   return `<article class="rc" data-id="${r.id}"${tone} onpointerdown="cardGrip(event,'${t.id}','${r.id}')"
            title="${key && r[key.key] ? esc(key.label + '：' + r[key.key]) : '点开看内容'}">
     <span class="rc-g" aria-hidden="true">⋮⋮</span>
-    <h4 class="${title && title.type==='date'?'as-date':''}" title="点一下复制名称" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();copyText('${esc(head).replace(/'/g,"\\'")}',event)">${esc(head)}</h4>
+    <h4 class="${title && title.type==='date'?'as-date':''}" title="点一下复制名称" data-copy="${esc(head)}" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();copyFromEl(this)">${esc(head)}</h4>
     <button class="rc-x" title="删除这则" onclick="event.stopPropagation();gridDel('${t.id}','${r.id}')">✕</button>
   </article>`;
 }
 
+function copyFromEl(el){
+  const txt = el.getAttribute('data-copy') || el.textContent.trim();
+  copyText(txt, {currentTarget: el});
+}
 function copyText(txt, ev){
   const done = () => {
     if(ev){ const el = ev.currentTarget; el.classList.add('copied'); setTimeout(()=>el.classList.remove('copied'), 900); }
