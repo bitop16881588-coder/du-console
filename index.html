@@ -230,6 +230,9 @@ body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
 .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ac);transition:background .25s}
 .card-head{display:flex;align-items:center;gap:10px;padding:12px 15px 12px 18px;cursor:pointer;user-select:none}
 .card-head:hover{background:var(--panel-2)}
+.rc h4{cursor:pointer;transition:.12s;border-radius:5px}
+.rc h4:hover{background:color-mix(in srgb,var(--ac) 12%,transparent)}
+.rc h4.copied{background:#d1f0dd;color:#0a6b43}
 .caret{font-family:var(--mono);font-size:9px;color:var(--ink3);transition:transform .18s;display:inline-block;flex:none}
 .card.collapsed .caret{transform:rotate(-90deg)}
 .card-title{font-size:13.5px;font-weight:700;letter-spacing:.02em}
@@ -315,6 +318,10 @@ body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
 .cloud-hd{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:6px}
 .cloud-steps{font-size:11.5px;color:var(--ink3);background:var(--panel-2);border-radius:8px;padding:8px 11px;margin-bottom:8px;line-height:1.6}
 .cloud-cols{font-size:12px;color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,transparent);border-radius:8px;padding:7px 11px;margin-bottom:10px;font-weight:700}
+.cloud-file{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;border:2px dashed var(--line);
+  border-radius:10px;padding:18px;cursor:pointer;transition:.15s;background:var(--panel-2)}
+.cloud-file:hover{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 6%,transparent)}
+.cloud-file span{font-size:13px;font-weight:600;color:var(--ink3)}
 .cloud-url{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:12.5px;background:var(--panel);color:var(--ink);font-family:var(--mono)}
 .cloud-url:focus{border-color:var(--ac);outline:none}
 .cloud-opt{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2);margin:9px 0;cursor:pointer}
@@ -788,91 +795,706 @@ const TONES = [
 ];
 
 const DU_ROWS = [
-  {"id": "du01", "grp": "一般", "nm": "JJ数字人民币"},
-  {"id": "du02", "grp": "一般", "nm": "JJ抖音红包"},
-  {"id": "du03", "grp": "一般", "nm": "JJ微信扫码"},
-  {"id": "du04", "grp": "一般", "nm": "JJ卡转卡"},
-  {"id": "du05", "grp": "一般", "nm": "JJ支付宝"},
-  {"id": "du06", "grp": "一般", "nm": "NEW版-水果店-EBPAY"},
-  {"id": "du07", "grp": "一般", "nm": "NEW版-气象站-EBPAY"},
-  {"id": "du08", "grp": "一般", "nm": "EBPAY"},
-  {"id": "du09", "grp": "一般", "nm": "M PAY支付"},
-  {"id": "du10", "grp": "一般", "nm": "购宝钱包"},
-  {"id": "du11", "grp": "一般", "nm": "OKPAY"},
-  {"id": "du12", "grp": "一般", "nm": "K豆"},
-  {"id": "du13", "grp": "一般", "nm": "808 PAY"},
-  {"id": "du14", "grp": "一般", "nm": "CBPAY"},
-  {"id": "du15", "grp": "一般", "nm": "JDPAY"},
-  {"id": "du16", "grp": "一般", "nm": "TOPAY"},
-  {"id": "du17", "grp": "一般", "nm": "WFPAY卡转卡"},
-  {"id": "du18", "grp": "一般", "nm": "WFPAY支付宝扫码"},
-  {"id": "du19", "grp": "一般", "nm": "WFPAY微信扫码"},
-  {"id": "du20", "grp": "一般", "nm": "WFPAY抖音"},
-  {"id": "du21", "grp": "归属四方三方", "nm": "全通支付"},
-  {"id": "du22", "grp": "归属四方三方", "nm": "乐支付宝"},
-  {"id": "du23", "grp": "归属四方三方", "nm": "和奕"},
-  {"id": "du24", "grp": "归属四方三方", "nm": "和奕支付宝"},
-  {"id": "du25", "grp": "归属四方三方", "nm": "环宇纯代付"},
-  {"id": "du26", "grp": "归属四方三方", "nm": "新宝支付小额卡卡"},
-  {"id": "du27", "grp": "归属四方三方", "nm": "新宝支付宝"},
-  {"id": "du28", "grp": "归属四方三方", "nm": "新宝支付宝(小额)"},
-  {"id": "du29", "grp": "归属四方三方", "nm": "新宝支付 - 支付宝原生H5"},
-  {"id": "du30", "grp": "归属四方三方", "nm": "乐力付-支付宝个码"},
-  {"id": "du31", "grp": "归属四方三方", "nm": "新宝微信"},
-  {"id": "du32", "grp": "归属四方三方", "nm": "GOSM米多支付宝"},
-  {"id": "du33", "grp": "归属四方三方", "nm": "GOSM米多多微信"},
-  {"id": "du34", "grp": "归属四方三方", "nm": "VCOTC支付宝"},
-  {"id": "du35", "grp": "归属四方三方", "nm": "志-乐力付"},
-  {"id": "du36", "grp": "归属四方三方", "nm": "88支付-神来付"},
-  {"id": "du37", "grp": "归属四方三方", "nm": "四方新宝卡转云"},
-  {"id": "du38", "grp": "归属四方三方", "nm": "米多多支付宝"},
-  {"id": "du39", "grp": "归属四方三方", "nm": "码上代收付"},
-  {"id": "du40", "grp": "归属四方三方", "nm": "码上支付宝（NEW）"},
-  {"id": "du41", "grp": "归属四方三方", "nm": "码上支付宝(新人层)"},
-  {"id": "du42", "grp": "归属四方三方", "nm": "码上支付代收（只收不出）"},
-  {"id": "du43", "grp": "归属四方三方", "nm": "码上小额卡卡"},
-  {"id": "du44", "grp": "归属四方三方", "nm": "心碎支付宝"},
-  {"id": "du45", "grp": "归属四方三方", "nm": "ZCPAY"},
-  {"id": "du46", "grp": "归属四方三方", "nm": "草东支付"},
-  {"id": "du47", "grp": "归属四方三方", "nm": "大洋支付"},
-  {"id": "du48", "grp": "归属四方三方", "nm": "福气支付"},
-  {"id": "du49", "grp": "归属四方三方", "nm": "新宝银联"},
-  {"id": "du50", "grp": "归属四方三方", "nm": "OnePay银联"},
-  {"id": "du51", "grp": "归属四方三方", "nm": "onepay数字人民币"},
-  {"id": "du52", "grp": "归属四方三方", "nm": "ONE小额卡卡"},
-  {"id": "du53", "grp": "归属四方三方", "nm": "Onepay-手机银行H5"},
-  {"id": "du54", "grp": "归属四方三方", "nm": "宝诺银联扫码"},
-  {"id": "du55", "grp": "归属四方三方", "nm": "宝诺原生支付宝H5"},
-  {"id": "du56", "grp": "归属四方三方", "nm": "Onepay小荷包"},
-  {"id": "du57", "grp": "归属四方三方", "nm": "宝诺支付宝小荷包"},
-  {"id": "du58", "grp": "归属四方三方", "nm": "宝诺数字人民币"},
-  {"id": "du59", "grp": "归属四方三方", "nm": "宝诺手机银行H5"},
-  {"id": "du60", "grp": "归属四方三方", "nm": "宝诺支付宝UID"},
-  {"id": "du61", "grp": "归属四方三方", "nm": "福气银联"},
-  {"id": "du62", "grp": "归属四方三方", "nm": "福气手机支付H5"},
-  {"id": "du63", "grp": "归属四方三方", "nm": "闽通纯代付"},
-  {"id": "du64", "grp": "归属四方三方", "nm": "狐狸纯代付"},
-  {"id": "du65", "grp": "归属四方三方", "nm": "EDPAY"},
-  {"id": "du66", "grp": "归属四方三方", "nm": "凌霄支付宝纯代付"},
-  {"id": "du67", "grp": "归属四方三方", "nm": "凌霄支付 手机银行H5"},
-  {"id": "du68", "grp": "归属四方三方", "nm": "ED支付-小额卡卡"},
-  {"id": "du69", "grp": "归属四方三方", "nm": "XQ支付"},
-  {"id": "du70", "grp": "归属四方三方", "nm": "siango pay"},
-  {"id": "du71", "grp": "归属四方三方", "nm": "SIANGO PAY支付宝金条原生H5"},
-  {"id": "du72", "grp": "归属四方三方", "nm": "SIANGO PAY 支付宝"},
-  {"id": "du73", "grp": "归属四方三方", "nm": "HCPAY"},
-  {"id": "du74", "grp": "归属四方三方", "nm": "KW支付宝"},
-  {"id": "du75", "grp": "归属四方三方", "nm": "TKPay支付宝"},
-  {"id": "du76", "grp": "归属四方三方", "nm": "XQ支付（红喜鹊卡转卡）"},
-  {"id": "du77", "grp": "归属四方三方", "nm": "XQ支付（红喜鹊支转支）"},
-  {"id": "du78", "grp": "归属四方三方", "nm": "新宝-数字人民币"},
-  {"id": "du79", "grp": "归属四方三方", "nm": "XPAY支付宝（扫码转帐）"},
-  {"id": "du80", "grp": "停用", "nm": "皇冠支付宝扫码"},
-  {"id": "du81", "grp": "停用", "nm": "J支付宝"},
-  {"id": "du82", "grp": "停用", "nm": "纵横支付(守恒支付)-小额卡卡"},
-  {"id": "du83", "grp": "停用", "nm": "ROG数字人民币"},
-  {"id": "du84", "grp": "停用", "nm": "中联支付-卡密"},
-  {"id": "du85", "grp": "停用", "nm": "红喜鹊支付转卡"}
+  {
+    "id": "du001",
+    "grp": "一般",
+    "nm": "JJ数字人民币"
+  },
+  {
+    "id": "du002",
+    "grp": "一般",
+    "nm": "JJ抖音红包"
+  },
+  {
+    "id": "du003",
+    "grp": "一般",
+    "nm": "JJ微信扫码"
+  },
+  {
+    "id": "du004",
+    "grp": "一般",
+    "nm": "JJ卡转卡"
+  },
+  {
+    "id": "du005",
+    "grp": "一般",
+    "nm": "JJ支付宝"
+  },
+  {
+    "id": "du006",
+    "grp": "一般",
+    "nm": "NEW版-水果店-EBPAY"
+  },
+  {
+    "id": "du007",
+    "grp": "一般",
+    "nm": "NEW版-气象站-EBPAY"
+  },
+  {
+    "id": "du008",
+    "grp": "停用",
+    "nm": "EBPAY"
+  },
+  {
+    "id": "du009",
+    "grp": "一般",
+    "nm": "M PAY支付"
+  },
+  {
+    "id": "du010",
+    "grp": "一般",
+    "nm": "购宝钱包"
+  },
+  {
+    "id": "du011",
+    "grp": "一般",
+    "nm": "OKPAY"
+  },
+  {
+    "id": "du012",
+    "grp": "一般",
+    "nm": "K豆"
+  },
+  {
+    "id": "du013",
+    "grp": "一般",
+    "nm": "808 PAY"
+  },
+  {
+    "id": "du014",
+    "grp": "一般",
+    "nm": "CBPAY"
+  },
+  {
+    "id": "du015",
+    "grp": "一般",
+    "nm": "JDPAY"
+  },
+  {
+    "id": "du016",
+    "grp": "一般",
+    "nm": "TOPAY"
+  },
+  {
+    "id": "du017",
+    "grp": "一般",
+    "nm": "WFPAY卡转卡"
+  },
+  {
+    "id": "du018",
+    "grp": "一般",
+    "nm": "WFPAY支付宝扫码"
+  },
+  {
+    "id": "du019",
+    "grp": "一般",
+    "nm": "WFPAY微信扫码"
+  },
+  {
+    "id": "du020",
+    "grp": "一般",
+    "nm": "WFPAY抖音"
+  },
+  {
+    "id": "du021",
+    "grp": "四方三方",
+    "nm": "全通支付"
+  },
+  {
+    "id": "du022",
+    "grp": "四方三方",
+    "nm": "乐支付宝"
+  },
+  {
+    "id": "du023",
+    "grp": "四方三方",
+    "nm": "和奕"
+  },
+  {
+    "id": "du024",
+    "grp": "四方三方",
+    "nm": "和奕支付宝"
+  },
+  {
+    "id": "du025",
+    "grp": "四方三方",
+    "nm": "环宇纯代付"
+  },
+  {
+    "id": "du026",
+    "grp": "四方三方",
+    "nm": "新宝支付小额卡卡"
+  },
+  {
+    "id": "du027",
+    "grp": "四方三方",
+    "nm": "新宝支付宝"
+  },
+  {
+    "id": "du028",
+    "grp": "四方三方",
+    "nm": "新宝支付宝(小额)"
+  },
+  {
+    "id": "du029",
+    "grp": "四方三方",
+    "nm": "新宝支付 - 支付宝原生H5"
+  },
+  {
+    "id": "du030",
+    "grp": "四方三方",
+    "nm": "乐力付-支付宝个码"
+  },
+  {
+    "id": "du031",
+    "grp": "四方三方",
+    "nm": "新宝微信"
+  },
+  {
+    "id": "du032",
+    "grp": "四方三方",
+    "nm": "GOSM米多支付宝"
+  },
+  {
+    "id": "du033",
+    "grp": "四方三方",
+    "nm": "GOSM米多多微信"
+  },
+  {
+    "id": "du034",
+    "grp": "四方三方",
+    "nm": "VCOTC支付宝"
+  },
+  {
+    "id": "du035",
+    "grp": "四方三方",
+    "nm": "志-乐力付"
+  },
+  {
+    "id": "du036",
+    "grp": "四方三方",
+    "nm": "88支付-神来付"
+  },
+  {
+    "id": "du037",
+    "grp": "四方三方",
+    "nm": "四方新宝卡转云"
+  },
+  {
+    "id": "du038",
+    "grp": "停用",
+    "nm": "米多多支付宝"
+  },
+  {
+    "id": "du039",
+    "grp": "四方三方",
+    "nm": "码上代收付"
+  },
+  {
+    "id": "du040",
+    "grp": "四方三方",
+    "nm": "码上支付宝（NEW）"
+  },
+  {
+    "id": "du041",
+    "grp": "四方三方",
+    "nm": "码上支付宝(新人层)"
+  },
+  {
+    "id": "du042",
+    "grp": "四方三方",
+    "nm": "码上支付代收（只收不出）"
+  },
+  {
+    "id": "du043",
+    "grp": "四方三方",
+    "nm": "码上小额卡卡"
+  },
+  {
+    "id": "du044",
+    "grp": "四方三方",
+    "nm": "心碎支付宝"
+  },
+  {
+    "id": "du045",
+    "grp": "四方三方",
+    "nm": "ZCPAY"
+  },
+  {
+    "id": "du046",
+    "grp": "停用",
+    "nm": "草东支付"
+  },
+  {
+    "id": "du047",
+    "grp": "四方三方",
+    "nm": "大洋支付"
+  },
+  {
+    "id": "du048",
+    "grp": "四方三方",
+    "nm": "福气支付"
+  },
+  {
+    "id": "du049",
+    "grp": "四方三方",
+    "nm": "新宝银联"
+  },
+  {
+    "id": "du050",
+    "grp": "四方三方",
+    "nm": "OnePay银联"
+  },
+  {
+    "id": "du051",
+    "grp": "四方三方",
+    "nm": "onepay数字人民币"
+  },
+  {
+    "id": "du052",
+    "grp": "四方三方",
+    "nm": "ONE小额卡卡"
+  },
+  {
+    "id": "du053",
+    "grp": "四方三方",
+    "nm": "Onepay-手机银行H5"
+  },
+  {
+    "id": "du054",
+    "grp": "四方三方",
+    "nm": "宝诺银联扫码"
+  },
+  {
+    "id": "du055",
+    "grp": "四方三方",
+    "nm": "宝诺原生支付宝H5"
+  },
+  {
+    "id": "du056",
+    "grp": "四方三方",
+    "nm": "Onepay小荷包"
+  },
+  {
+    "id": "du057",
+    "grp": "四方三方",
+    "nm": "宝诺支付宝小荷包"
+  },
+  {
+    "id": "du058",
+    "grp": "四方三方",
+    "nm": "宝诺数字人民币"
+  },
+  {
+    "id": "du059",
+    "grp": "四方三方",
+    "nm": "宝诺手机银行H5"
+  },
+  {
+    "id": "du060",
+    "grp": "四方三方",
+    "nm": "宝诺支付宝UID"
+  },
+  {
+    "id": "du061",
+    "grp": "四方三方",
+    "nm": "福气银联"
+  },
+  {
+    "id": "du062",
+    "grp": "四方三方",
+    "nm": "福气手机支付H5"
+  },
+  {
+    "id": "du063",
+    "grp": "四方三方",
+    "nm": "凌霄支付宝纯代付"
+  },
+  {
+    "id": "du064",
+    "grp": "四方三方",
+    "nm": "凌霄支付 手机银行H5"
+  },
+  {
+    "id": "du065",
+    "grp": "四方三方",
+    "nm": "ED支付-小额卡卡"
+  },
+  {
+    "id": "du066",
+    "grp": "四方三方",
+    "nm": "XQ支付"
+  },
+  {
+    "id": "du067",
+    "grp": "四方三方",
+    "nm": "siango pay"
+  },
+  {
+    "id": "du068",
+    "grp": "四方三方",
+    "nm": "SIANGO PAY支付宝金条原生H5"
+  },
+  {
+    "id": "du069",
+    "grp": "四方三方",
+    "nm": "SIANGO PAY 支付宝"
+  },
+  {
+    "id": "du070",
+    "grp": "四方三方",
+    "nm": "HCPAY"
+  },
+  {
+    "id": "du071",
+    "grp": "四方三方",
+    "nm": "KW支付宝"
+  },
+  {
+    "id": "du072",
+    "grp": "四方三方",
+    "nm": "TKPay支付宝"
+  },
+  {
+    "id": "du073",
+    "grp": "四方三方",
+    "nm": "XQ支付（红喜鹊卡转卡）"
+  },
+  {
+    "id": "du074",
+    "grp": "四方三方",
+    "nm": "XQ支付（红喜鹊支转支）"
+  },
+  {
+    "id": "du075",
+    "grp": "四方三方",
+    "nm": "新宝-數字人民幣"
+  },
+  {
+    "id": "du076",
+    "grp": "四方三方",
+    "nm": "XPAY支付宝（扫码轉帳）"
+  },
+  {
+    "id": "du077",
+    "grp": "停用",
+    "nm": "皇冠支付宝扫码"
+  },
+  {
+    "id": "du078",
+    "grp": "停用",
+    "nm": "J支付宝"
+  },
+  {
+    "id": "du079",
+    "grp": "停用",
+    "nm": "縱橫支付(守恒支付)-小额卡卡"
+  },
+  {
+    "id": "du080",
+    "grp": "停用",
+    "nm": "ROG数字人民币"
+  },
+  {
+    "id": "du081",
+    "grp": "停用",
+    "nm": "中联支付-卡密"
+  },
+  {
+    "id": "du082",
+    "grp": "停用",
+    "nm": "红喜鹊支付转卡"
+  },
+  {
+    "id": "du083",
+    "grp": "BB纯代付通道",
+    "nm": "闽通纯代付"
+  },
+  {
+    "id": "du084",
+    "grp": "BB纯代付通道",
+    "nm": "狐狸纯代付"
+  },
+  {
+    "id": "du085",
+    "grp": "BB纯代付通道",
+    "nm": "EDPAY"
+  },
+  {
+    "id": "du086",
+    "grp": "停用",
+    "nm": "新宝支付"
+  },
+  {
+    "id": "du087",
+    "grp": "停用",
+    "nm": "EBPAY水果店"
+  },
+  {
+    "id": "du088",
+    "grp": "停用",
+    "nm": "EZpay"
+  },
+  {
+    "id": "du089",
+    "grp": "停用",
+    "nm": "新宝卡转云"
+  },
+  {
+    "id": "du090",
+    "grp": "停用",
+    "nm": "志-樂力代收付"
+  },
+  {
+    "id": "du091",
+    "grp": "停用",
+    "nm": "点我支付"
+  },
+  {
+    "id": "du092",
+    "grp": "停用",
+    "nm": "SH系列"
+  },
+  {
+    "id": "du093",
+    "grp": "停用",
+    "nm": "米多多支付"
+  },
+  {
+    "id": "du094",
+    "grp": "停用",
+    "nm": "豆豆支付"
+  },
+  {
+    "id": "du095",
+    "grp": "停用",
+    "nm": "尖端银联快捷"
+  },
+  {
+    "id": "du096",
+    "grp": "停用",
+    "nm": "大圣"
+  },
+  {
+    "id": "du097",
+    "grp": "停用",
+    "nm": "穩贏支付"
+  },
+  {
+    "id": "du098",
+    "grp": "停用",
+    "nm": "新皇冠"
+  },
+  {
+    "id": "du099",
+    "grp": "停用",
+    "nm": "UH-支付宝"
+  },
+  {
+    "id": "du100",
+    "grp": "停用",
+    "nm": "联聚支付"
+  },
+  {
+    "id": "du101",
+    "grp": "停用",
+    "nm": "金汇丰"
+  },
+  {
+    "id": "du102",
+    "grp": "停用",
+    "nm": "KYPAY"
+  },
+  {
+    "id": "du103",
+    "grp": "停用",
+    "nm": "KH卡转卡"
+  },
+  {
+    "id": "du104",
+    "grp": "停用",
+    "nm": "Rj卡转卡"
+  },
+  {
+    "id": "du105",
+    "grp": "停用",
+    "nm": "赫旭代收付"
+  },
+  {
+    "id": "du106",
+    "grp": "停用",
+    "nm": "兆丰金支付"
+  },
+  {
+    "id": "du107",
+    "grp": "停用",
+    "nm": "豹-聚合支付"
+  },
+  {
+    "id": "du108",
+    "grp": "停用",
+    "nm": "PK系列"
+  },
+  {
+    "id": "du109",
+    "grp": "停用",
+    "nm": "SDDPAY"
+  },
+  {
+    "id": "du110",
+    "grp": "停用",
+    "nm": "鸿运支付"
+  },
+  {
+    "id": "du111",
+    "grp": "停用",
+    "nm": "SKY-恒星代收付"
+  },
+  {
+    "id": "du112",
+    "grp": "停用",
+    "nm": "O-青-東日代收付"
+  },
+  {
+    "id": "du113",
+    "grp": "停用",
+    "nm": "德意志代收付"
+  },
+  {
+    "id": "du114",
+    "grp": "停用",
+    "nm": "iPay代收付"
+  },
+  {
+    "id": "du115",
+    "grp": "停用",
+    "nm": "Waterpay"
+  },
+  {
+    "id": "du116",
+    "grp": "停用",
+    "nm": "LH联合代收付"
+  },
+  {
+    "id": "du117",
+    "grp": "停用",
+    "nm": "汇通"
+  },
+  {
+    "id": "du118",
+    "grp": "停用",
+    "nm": "新-皇冠代收付"
+  },
+  {
+    "grp": "四方三方",
+    "nm": "玮创纯代付（网银+支付宝）",
+    "id": "du119"
+  },
+  {
+    "grp": "四方三方",
+    "nm": "守恒支付-小额卡卡",
+    "id": "du120"
+  },
+  {
+    "grp": "四方三方",
+    "nm": "凌霄支付",
+    "id": "du121"
+  },
+  {
+    "grp": "四方三方",
+    "nm": "GOSM（卡转卡）",
+    "id": "du122"
+  },
+  {
+    "grp": "四方三方",
+    "nm": "米多GOSM（支付宝转帐与扫马）",
+    "id": "du123"
+  },
+  {
+    "grp": "停用",
+    "nm": "iPay代收付-01-RMB",
+    "id": "du124"
+  },
+  {
+    "grp": "代收付",
+    "nm": "笔-嘉达支付代收付",
+    "id": "du125"
+  },
+  {
+    "grp": "代收付",
+    "nm": "胡-HE支付Hpay",
+    "id": "du126"
+  },
+  {
+    "grp": "代收付",
+    "nm": "鸭-宏洋国际",
+    "id": "du127"
+  },
+  {
+    "grp": "代收付",
+    "nm": "BBPAY支付-01",
+    "id": "du128"
+  },
+  {
+    "grp": "代收付",
+    "nm": "水-永恒水世界",
+    "id": "du129"
+  },
+  {
+    "grp": "代收付",
+    "nm": "胡-永恒富友支付日升2",
+    "id": "du130"
+  },
+  {
+    "grp": "代收付",
+    "nm": "胡-HE支付",
+    "id": "du131"
+  },
+  {
+    "grp": "代收付",
+    "nm": "阿尔法",
+    "id": "du132"
+  },
+  {
+    "grp": "代收付",
+    "nm": "不二家",
+    "id": "du133"
+  },
+  {
+    "grp": "代收付",
+    "nm": "青海-正永恒网关",
+    "id": "du134"
+  },
+  {
+    "grp": "代收付",
+    "nm": "捷宝",
+    "id": "du135"
+  },
+  {
+    "grp": "代收付",
+    "nm": "EASYPAY",
+    "id": "du136"
+  },
+  {
+    "grp": "代收付",
+    "nm": "太极",
+    "id": "du137"
+  },
+  {
+    "grp": "代收付",
+    "nm": "威力付",
+    "id": "du138"
+  },
+  {
+    "grp": "代收付",
+    "nm": "SFpay",
+    "id": "du139"
+  },
+  {
+    "grp": "代收付",
+    "nm": "加宝二支付宝H5",
+    "id": "du140"
+  }
 ];
 
 /* ===== 预设分类 ===== */
@@ -936,7 +1558,7 @@ function normalize(saved){
   });
 }
 /* ===== 设定档版本：旧档自动升级，不清掉既有资料 ===== */
-const SCHEMA = 25;
+const SCHEMA = 30;
 function migrate(list){
   DEFAULT.forEach(d => {
     let c = list.find(x => x.id === d.id);
@@ -974,6 +1596,47 @@ function load(){
     const v   = Array.isArray(obj) ? 0 : (obj.v || 0);
     let list = normalize(arr);
     if(v < SCHEMA) list = migrate(list);
+    if(v < 30){                       // 补入 xlsx 缺少的商户
+      const du = list.find(c => c.id === 'du');
+      if(du && du.tabs[0]){
+        const add = [{"grp": "四方三方", "nm": "玮创纯代付（网银+支付宝）", "id": "du119"}, {"grp": "四方三方", "nm": "守恒支付-小额卡卡", "id": "du120"}, {"grp": "四方三方", "nm": "凌霄支付", "id": "du121"}, {"grp": "四方三方", "nm": "GOSM（卡转卡）", "id": "du122"}, {"grp": "四方三方", "nm": "米多GOSM（支付宝转帐与扫马）", "id": "du123"}, {"grp": "停用", "nm": "iPay代收付-01-RMB", "id": "du124"}, {"grp": "代收付", "nm": "笔-嘉达支付代收付", "id": "du125"}, {"grp": "代收付", "nm": "胡-HE支付Hpay", "id": "du126"}, {"grp": "代收付", "nm": "鸭-宏洋国际", "id": "du127"}, {"grp": "代收付", "nm": "BBPAY支付-01", "id": "du128"}, {"grp": "代收付", "nm": "水-永恒水世界", "id": "du129"}, {"grp": "代收付", "nm": "胡-永恒富友支付日升2", "id": "du130"}, {"grp": "代收付", "nm": "胡-HE支付", "id": "du131"}, {"grp": "代收付", "nm": "阿尔法", "id": "du132"}, {"grp": "代收付", "nm": "不二家", "id": "du133"}, {"grp": "代收付", "nm": "青海-正永恒网关", "id": "du134"}, {"grp": "代收付", "nm": "捷宝", "id": "du135"}, {"grp": "代收付", "nm": "EASYPAY", "id": "du136"}, {"grp": "代收付", "nm": "太极", "id": "du137"}, {"grp": "代收付", "nm": "威力付", "id": "du138"}, {"grp": "代收付", "nm": "SFpay", "id": "du139"}, {"grp": "代收付", "nm": "加宝二支付宝H5", "id": "du140"}];
+        const ex = new Set((du.tabs[0].rows||[]).map(r => r.nm));
+        add.forEach(a => { if(!ex.has(a.nm)) du.tabs[0].rows.push({id:'du'+Date.now()+Math.random().toString(36).slice(2,5), grp:a.grp, nm:a.nm}); });
+      }
+    }
+    if(v < 29){                       // 新增 xlsx 停用商户
+      const du = list.find(c => c.id === 'du');
+      if(du && du.tabs[0]){
+        const stop = ["新宝支付", "EBPAY", "EBPAY水果店", "草东支付", "J支付宝", "皇冠支付宝扫码", "EZpay", "新宝卡转云", "米多多支付宝", "志-樂力代收付", "点我支付", "SH系列", "米多多支付", "豆豆支付", "尖端银联快捷", "大圣", "穩贏支付", "新皇冠", "UH-支付宝", "联聚支付", "金汇丰", "KYPAY", "KH卡转卡", "Rj卡转卡", "赫旭代收付", "兆丰金支付", "豹-聚合支付", "PK系列", "SDDPAY", "鸿运支付", "SKY-恒星代收付", "O-青-東日代收付", "德意志代收付", "iPay代收付", "Waterpay", "LH联合代收付", "汇通", "新-皇冠代收付"];
+        const ex = new Set((du.tabs[0].rows||[]).map(r => r.nm));
+        stop.forEach(nm => {
+          if(ex.has(nm)){ du.tabs[0].rows.forEach(r => { if(r.nm===nm) r.grp='停用'; }); }
+          else du.tabs[0].rows.push({id:'du'+Date.now()+Math.random().toString(36).slice(2,5), grp:'停用', nm});
+        });
+      }
+    }
+    if(v < 28){                       // BB纯代付通道 改成分组
+      const du = list.find(c => c.id === 'du');
+      if(du){
+        // 若之前建了 du02 分页，把它併回总整理并设组名
+        const bb = du.tabs.find(t => t.id === 'du02');
+        if(bb){
+          const moved = (bb.rows||[]).map(r => ({...r, grp:'BB纯代付通道'}));
+          du.tabs = du.tabs.filter(t => t.id !== 'du02');
+          if(du.tabs[0]) du.tabs[0].rows = [...(du.tabs[0].rows||[]), ...moved];
+        }else{
+          // 没建过分页：直接把这几个的组名改掉
+          const names = ['闽通纯代付','狐狸纯代付','EDPAY'];
+          (du.tabs[0]?.rows||[]).forEach(r => { if(names.includes(r.nm)) r.grp = 'BB纯代付通道'; });
+        }
+      }
+    }
+    if(v < 26){                       // DU 名称以 xlsx 总整理为准
+      const du = list.find(c => c.id === 'du');
+      if(du && du.tabs[0]){
+        du.tabs[0].rows = [{"id": "du001", "grp": "一般", "nm": "JJ数字人民币"}, {"id": "du002", "grp": "一般", "nm": "JJ抖音红包"}, {"id": "du003", "grp": "一般", "nm": "JJ微信扫码"}, {"id": "du004", "grp": "一般", "nm": "JJ卡转卡"}, {"id": "du005", "grp": "一般", "nm": "JJ支付宝"}, {"id": "du006", "grp": "一般", "nm": "NEW版-水果店-EBPAY"}, {"id": "du007", "grp": "一般", "nm": "NEW版-气象站-EBPAY"}, {"id": "du008", "grp": "一般", "nm": "EBPAY"}, {"id": "du009", "grp": "一般", "nm": "M PAY支付"}, {"id": "du010", "grp": "一般", "nm": "购宝钱包"}, {"id": "du011", "grp": "一般", "nm": "OKPAY"}, {"id": "du012", "grp": "一般", "nm": "K豆"}, {"id": "du013", "grp": "一般", "nm": "808 PAY"}, {"id": "du014", "grp": "一般", "nm": "CBPAY"}, {"id": "du015", "grp": "一般", "nm": "JDPAY"}, {"id": "du016", "grp": "一般", "nm": "TOPAY"}, {"id": "du017", "grp": "一般", "nm": "WFPAY卡转卡"}, {"id": "du018", "grp": "一般", "nm": "WFPAY支付宝扫码"}, {"id": "du019", "grp": "一般", "nm": "WFPAY微信扫码"}, {"id": "du020", "grp": "一般", "nm": "WFPAY抖音"}, {"id": "du021", "grp": "四方三方", "nm": "全通支付"}, {"id": "du022", "grp": "四方三方", "nm": "乐支付宝"}, {"id": "du023", "grp": "四方三方", "nm": "和奕"}, {"id": "du024", "grp": "四方三方", "nm": "和奕支付宝"}, {"id": "du025", "grp": "四方三方", "nm": "环宇纯代付"}, {"id": "du026", "grp": "四方三方", "nm": "新宝支付小额卡卡"}, {"id": "du027", "grp": "四方三方", "nm": "新宝支付宝"}, {"id": "du028", "grp": "四方三方", "nm": "新宝支付宝(小额)"}, {"id": "du029", "grp": "四方三方", "nm": "新宝支付 - 支付宝原生H5"}, {"id": "du030", "grp": "四方三方", "nm": "乐力付-支付宝个码"}, {"id": "du031", "grp": "四方三方", "nm": "新宝微信"}, {"id": "du032", "grp": "四方三方", "nm": "GOSM米多支付宝"}, {"id": "du033", "grp": "四方三方", "nm": "GOSM米多多微信"}, {"id": "du034", "grp": "四方三方", "nm": "VCOTC支付宝"}, {"id": "du035", "grp": "四方三方", "nm": "志-乐力付"}, {"id": "du036", "grp": "四方三方", "nm": "88支付-神来付"}, {"id": "du037", "grp": "四方三方", "nm": "四方新宝卡转云"}, {"id": "du038", "grp": "四方三方", "nm": "米多多支付宝"}, {"id": "du039", "grp": "四方三方", "nm": "码上代收付"}, {"id": "du040", "grp": "四方三方", "nm": "码上支付宝（NEW）"}, {"id": "du041", "grp": "四方三方", "nm": "码上支付宝(新人层)"}, {"id": "du042", "grp": "四方三方", "nm": "码上支付代收（只收不出）"}, {"id": "du043", "grp": "四方三方", "nm": "码上小额卡卡"}, {"id": "du044", "grp": "四方三方", "nm": "心碎支付宝"}, {"id": "du045", "grp": "四方三方", "nm": "ZCPAY"}, {"id": "du046", "grp": "四方三方", "nm": "草东支付"}, {"id": "du047", "grp": "四方三方", "nm": "大洋支付"}, {"id": "du048", "grp": "四方三方", "nm": "福气支付"}, {"id": "du049", "grp": "四方三方", "nm": "新宝银联"}, {"id": "du050", "grp": "四方三方", "nm": "OnePay银联"}, {"id": "du051", "grp": "四方三方", "nm": "onepay数字人民币"}, {"id": "du052", "grp": "四方三方", "nm": "ONE小额卡卡"}, {"id": "du053", "grp": "四方三方", "nm": "Onepay-手机银行H5"}, {"id": "du054", "grp": "四方三方", "nm": "宝诺银联扫码"}, {"id": "du055", "grp": "四方三方", "nm": "宝诺原生支付宝H5"}, {"id": "du056", "grp": "四方三方", "nm": "Onepay小荷包"}, {"id": "du057", "grp": "四方三方", "nm": "宝诺支付宝小荷包"}, {"id": "du058", "grp": "四方三方", "nm": "宝诺数字人民币"}, {"id": "du059", "grp": "四方三方", "nm": "宝诺手机银行H5"}, {"id": "du060", "grp": "四方三方", "nm": "宝诺支付宝UID"}, {"id": "du061", "grp": "四方三方", "nm": "福气银联"}, {"id": "du062", "grp": "四方三方", "nm": "福气手机支付H5"}, {"id": "du063", "grp": "四方三方", "nm": "闽通纯代付"}, {"id": "du064", "grp": "四方三方", "nm": "狐狸纯代付"}, {"id": "du065", "grp": "四方三方", "nm": "EDPAY"}, {"id": "du066", "grp": "四方三方", "nm": "凌霄支付宝纯代付"}, {"id": "du067", "grp": "四方三方", "nm": "凌霄支付 手机银行H5"}, {"id": "du068", "grp": "四方三方", "nm": "ED支付-小额卡卡"}, {"id": "du069", "grp": "四方三方", "nm": "XQ支付"}, {"id": "du070", "grp": "四方三方", "nm": "siango pay"}, {"id": "du071", "grp": "四方三方", "nm": "SIANGO PAY支付宝金条原生H5"}, {"id": "du072", "grp": "四方三方", "nm": "SIANGO PAY 支付宝"}, {"id": "du073", "grp": "四方三方", "nm": "HCPAY"}, {"id": "du074", "grp": "四方三方", "nm": "KW支付宝"}, {"id": "du075", "grp": "四方三方", "nm": "TKPay支付宝"}, {"id": "du076", "grp": "四方三方", "nm": "XQ支付（红喜鹊卡转卡）"}, {"id": "du077", "grp": "四方三方", "nm": "XQ支付（红喜鹊支转支）"}, {"id": "du078", "grp": "四方三方", "nm": "新宝-數字人民幣"}, {"id": "du079", "grp": "四方三方", "nm": "XPAY支付宝（扫码轉帳）"}, {"id": "du080", "grp": "停用", "nm": "皇冠支付宝扫码"}, {"id": "du081", "grp": "停用", "nm": "J支付宝"}, {"id": "du082", "grp": "停用", "nm": "縱橫支付(守恒支付)-小额卡卡"}, {"id": "du083", "grp": "停用", "nm": "ROG数字人民币"}, {"id": "du084", "grp": "停用", "nm": "中联支付-卡密"}, {"id": "du085", "grp": "停用", "nm": "红喜鹊支付转卡"}];
+      }
+    }
     if(v < 25){                       // VCOTC 两分页合并成一个
       const vc = list.find(c => c.id === 'vc');
       if(vc && vc.tabs.length >= 2){
@@ -1119,7 +1782,7 @@ F.imgstB= {key:'imgst', label:'图档状态', type:'select', opts:[
 F.refill= {key:'refill', label:'补回', type:'select', opts:[
   O('已补回','#C62828'), O('未补回','#6C7488')]};
 F.grp   = {key:'grp',   label:'群组', type:'select', opts:[
-  O('一般','#4B5A75'), O('归属四方三方','#1D4ED8'), O('停用','#B5364A')]};
+  O('一般','#4B5A75'), O('四方三方','#1D4ED8'), O('BB纯代付通道','#0F9488'), O('代收付','#B45309'), O('停用','#B5364A')]};
 F.nm    = {key:'nm',    label:'名称', type:'text'};
 F.cut   = {key:'cut',   label:'日切时间', type:'text'};
 F.place = {key:'place', label:'放置金额', type:'text'};
@@ -1198,9 +1861,26 @@ function cardRead(t, r){
   return `<article class="rc" data-id="${r.id}"${tone} onpointerdown="cardGrip(event,'${t.id}','${r.id}')"
            title="${key && r[key.key] ? esc(key.label + '：' + r[key.key]) : '点开看内容'}">
     <span class="rc-g" aria-hidden="true">⋮⋮</span>
-    <h4 class="${title && title.type==='date'?'as-date':''}">${esc(head)}</h4>
+    <h4 class="${title && title.type==='date'?'as-date':''}" title="点一下复制名称" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();copyText('${esc(head).replace(/'/g,"\\'")}',event)">${esc(head)}</h4>
     <button class="rc-x" title="删除这则" onclick="event.stopPropagation();gridDel('${t.id}','${r.id}')">✕</button>
   </article>`;
+}
+
+function copyText(txt, ev){
+  const done = () => {
+    if(ev){ const el = ev.currentTarget; el.classList.add('copied'); setTimeout(()=>el.classList.remove('copied'), 900); }
+    toast('已复制：' + txt);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt, done));
+  }else fallbackCopy(txt, done);
+}
+function fallbackCopy(txt, cb){
+  const ta = document.createElement('textarea');
+  ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); cb&&cb(); }catch(e){ toast('复制失败'); }
+  document.body.removeChild(ta);
 }
 
 /* ===== 卡片拖曳排序 ===== */
@@ -1440,7 +2120,7 @@ function gridView(t, q){
   const bar = `<div class="grid-bar">${totalBox}${segsHTML(t)}<span class="sp"></span>
       <button class="btn btn-sm btn-solid" ${editRow?'disabled':''} onclick="gridAdd('${t.id}')">＋ 新增一则</button>
       <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
-      <button class="btn btn-sm" onclick="openCloud('${t.id}')">☁ 汇入云端</button>
+      <button class="btn btn-sm" onclick="openCloud('${t.id}')">📥 汇入 CSV</button>
       <button class="btn btn-sm btn-danger" onclick="clearPage('${t.id}')">🗑 清空本页</button>
     </div>`;
   const emptyMsg = () => `<div class="yempty">${q ? '这个关键字没有符合的则。'
@@ -1491,7 +2171,7 @@ function gridView(t, q){
       <button class="btn btn-sm btn-solid" onclick="openMulti('${t.id}')">＋ 新增</button>
       <button class="btn btn-sm" onclick="openPaste('${t.id}')">📋 批次贴上</button>
       <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
-      <button class="btn btn-sm" onclick="openCloud('${t.id}')">☁ 汇入云端</button>
+      <button class="btn btn-sm" onclick="openCloud('${t.id}')">📥 汇入 CSV</button>
       <button class="btn btn-sm btn-danger" onclick="clearPage('${t.id}')">🗑 清空本页</button>
     </div>`;
     const balBox = limitBar + `<div class="vbal3">
@@ -1611,22 +2291,24 @@ function openCloud(tid){
   let mask = document.getElementById('cloudMask');
   if(!mask){ mask = document.createElement('div'); mask.id='cloudMask'; mask.className='mask'; document.body.appendChild(mask); }
   mask.innerHTML = `<div class="cloud-box">
-    <div class="cloud-hd">☁ 汇入云端资料</div>
-    <div class="cloud-steps">先在 Google 表格：档案 → 共用 → 发布到网路 → 选 CSV → 发布，把网址贴下面</div>
+    <div class="cloud-hd">📥 汇入 CSV 档案</div>
+    <div class="cloud-steps">在 Google 表格：档案 → 下载 → 逗号分隔值 (.csv)，把档案存到电脑，再选下面上传。（Excel 也可另存为 CSV）</div>
     <div class="cloud-cols">栏位顺序：${names}${t.cols==='vcotc'?'（日期自动带今天）':''}</div>
-    <input id="cloudUrl" class="cloud-url" placeholder="贴上 Google 发布的 CSV 网址（.../pub?output=csv）">
-    <label class="cloud-opt"><input type="checkbox" id="cloudHdr" checked> 第一列是标题，略过不汇入</label>
+    <div class="cloud-file" onclick="document.getElementById('cloudFile').click()">
+      <input type="file" id="cloudFile" accept=".csv,text/csv" style="position:absolute;width:1px;height:1px;opacity:0" onchange="cloudRead(this)">
+      <button class="btn btn-solid" type="button" onclick="event.stopPropagation();document.getElementById('cloudFile').click()">选择 CSV 档案</button>
+      <span id="cloudFileName">还没选档案</span>
+    </div>
+    <label class="cloud-opt"><input type="checkbox" id="cloudHdr" checked onchange="cloudRepreview()"> 第一列是标题，略过不汇入</label>
     <label class="cloud-opt"><input type="checkbox" id="cloudClear"> 汇入前先清空现有资料（覆盖）</label>
     <div id="cloudMsg" class="cloud-msg"></div>
     <div id="cloudPrev" class="cloud-prev"></div>
     <div class="cloud-bar"><button class="btn" onclick="closeCloud()">取消</button><span class="sp"></span>
-      <button class="btn" onclick="cloudFetch()">抓取预览</button>
       <button class="btn btn-solid" onclick="cloudImport()">汇入</button></div>
   </div>`;
   mask.style.display = 'flex';
-  setTimeout(() => document.getElementById('cloudUrl')?.focus(), 30);
 }
-function closeCloud(){ const m = document.getElementById('cloudMask'); if(m) m.style.display='none'; cloudRows = null; }
+function closeCloud(){ const m = document.getElementById('cloudMask'); if(m) m.style.display='none'; cloudRows = null; cloudRaw = null; }
 let cloudRows = null;
 // 简单 CSV 解析（支援引号内逗号）
 function parseCSV(text){
@@ -1648,31 +2330,38 @@ function parseCSV(text){
   if(cur !== '' || row.length){ row.push(cur); rows.push(row); }
   return rows.filter(r => r.some(c => c.trim() !== ''));
 }
-async function cloudFetch(){
-  const url = document.getElementById('cloudUrl').value.trim();
+let cloudRaw = null;   // 原始解析（含标题）
+function cloudRead(input){
+  const file = input.files && input.files[0];
   const msg = document.getElementById('cloudMsg');
-  if(!url){ msg.textContent = '请先贴上网址'; msg.className = 'cloud-msg err'; return; }
-  msg.textContent = '抓取中…'; msg.className = 'cloud-msg';
-  try{
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    let rows = parseCSV(text);
-    if(document.getElementById('cloudHdr').checked) rows = rows.slice(1);
-    cloudRows = rows;
-    const t = findTab(cloudTid);
-    const cols = colsOf(t).filter(f => t.cols === 'vcotc' ? f.key !== 'vdate' : true);
-    const head = cols.map(f => `<th>${esc(f.label)}</th>`).join('');
-    const body = rows.slice(0,5).map(cells =>
-      '<tr>' + cols.map((f,i) => `<td>${esc((cells[i]||'').trim())}</td>`).join('') + '</tr>').join('');
-    document.getElementById('cloudPrev').innerHTML =
-      `<div class="cloud-cnt">共 ${rows.length} 笔（预览前 5）</div>
-       <div class="cloud-tbl"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
-    msg.textContent = '抓取成功，确认无误就按「汇入」'; msg.className = 'cloud-msg ok';
-  }catch(e){
-    msg.textContent = '抓取失败：' + e.message + '（确认网址是发布的 CSV，且已发布）';
-    msg.className = 'cloud-msg err';
-  }
+  if(!file){ return; }
+  document.getElementById('cloudFileName').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      cloudRaw = parseCSV(e.target.result);
+      cloudRepreview();
+      msg.textContent = '读取成功，确认无误就按「汇入」'; msg.className = 'cloud-msg ok';
+    }catch(err){
+      msg.textContent = '读取失败：' + err.message; msg.className = 'cloud-msg err';
+    }
+  };
+  reader.onerror = () => { msg.textContent = '档案读取失败'; msg.className = 'cloud-msg err'; };
+  reader.readAsText(file, 'utf-8');
+}
+function cloudRepreview(){
+  if(!cloudRaw){ return; }
+  let rows = cloudRaw.slice();
+  if(document.getElementById('cloudHdr').checked) rows = rows.slice(1);
+  cloudRows = rows;
+  const t = findTab(cloudTid);
+  const cols = colsOf(t).filter(f => t.cols === 'vcotc' ? f.key !== 'vdate' : true);
+  const head = cols.map(f => `<th>${esc(f.label)}</th>`).join('');
+  const body = rows.slice(0,5).map(cells =>
+    '<tr>' + cols.map((f,i) => `<td>${esc((cells[i]||'').trim())}</td>`).join('') + '</tr>').join('');
+  document.getElementById('cloudPrev').innerHTML =
+    `<div class="cloud-cnt">共 ${rows.length} 笔（预览前 5）</div>
+     <div class="cloud-tbl"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 function cloudImport(){
   if(!cloudRows){ toast('请先按「抓取预览」'); return; }
