@@ -306,6 +306,9 @@ body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
 .vtbl .mini.del{background:var(--red-bg,#fbe9e9);color:var(--red,#cf3b3b)}
 .vtbl .mini.ok{background:#e7f6ec;color:#1f9d57}
 
+.btn-danger{color:#cf3b3b;border-color:#f0c0c0}
+.btn-danger:hover{background:#fbe9e9;border-color:#cf3b3b}
+
 /* 汇入云端 */
 .cloud-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:min(94vw,680px);
   max-height:88vh;overflow:auto;padding:18px 20px;box-shadow:0 18px 50px rgba(0,0,0,.3)}
@@ -1438,6 +1441,7 @@ function gridView(t, q){
       <button class="btn btn-sm btn-solid" ${editRow?'disabled':''} onclick="gridAdd('${t.id}')">＋ 新增一则</button>
       <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
       <button class="btn btn-sm" onclick="openCloud('${t.id}')">☁ 汇入云端</button>
+      <button class="btn btn-sm btn-danger" onclick="clearPage('${t.id}')">🗑 清空本页</button>
     </div>`;
   const emptyMsg = () => `<div class="yempty">${q ? '这个关键字没有符合的则。'
       : (fl && seg !== '全部' ? '「' + seg + '」目前没有资料。' : '还没有资料，按上面「＋ 新增一则」开始记。')}</div>`;
@@ -1488,6 +1492,7 @@ function gridView(t, q){
       <button class="btn btn-sm" onclick="openPaste('${t.id}')">📋 批次贴上</button>
       <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
       <button class="btn btn-sm" onclick="openCloud('${t.id}')">☁ 汇入云端</button>
+      <button class="btn btn-sm btn-danger" onclick="clearPage('${t.id}')">🗑 清空本页</button>
     </div>`;
     const balBox = limitBar + `<div class="vbal3">
       <div class="vb3 vb3-rmb">
@@ -1585,6 +1590,17 @@ function gridAdd(tid){
   renderBoard();
   openRow(tid, r.id);
 }
+function clearPage(tid){
+  const t = findTab(tid);
+  const n = (t.rows || []).length;
+  if(!n){ toast('这一页本来就是空的'); return; }
+  if(!confirm(`确定清空「${t.name}」这一页的全部 ${n} 笔资料吗？\n（清空后可按「↶ 上一步」救回）`)) return;
+  beforeRows = clone(t.rows || []);
+  t.rows = [];
+  save(); renderBoard();
+  toast(`已清空 ${n} 笔，可按「上一步」救回`);
+}
+
 /* ===== 汇入云端 CSV ===== */
 let cloudTid = null;
 function openCloud(tid){
