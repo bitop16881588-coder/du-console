@@ -306,6 +306,25 @@ body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
 .vtbl .mini.del{background:var(--red-bg,#fbe9e9);color:var(--red,#cf3b3b)}
 .vtbl .mini.ok{background:#e7f6ec;color:#1f9d57}
 
+/* 汇入云端 */
+.cloud-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:min(94vw,680px);
+  max-height:88vh;overflow:auto;padding:18px 20px;box-shadow:0 18px 50px rgba(0,0,0,.3)}
+.cloud-hd{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.cloud-steps{font-size:11.5px;color:var(--ink3);background:var(--panel-2);border-radius:8px;padding:8px 11px;margin-bottom:8px;line-height:1.6}
+.cloud-cols{font-size:12px;color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,transparent);border-radius:8px;padding:7px 11px;margin-bottom:10px;font-weight:700}
+.cloud-url{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:12.5px;background:var(--panel);color:var(--ink);font-family:var(--mono)}
+.cloud-url:focus{border-color:var(--ac);outline:none}
+.cloud-opt{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2);margin:9px 0;cursor:pointer}
+.cloud-msg{font-size:12px;margin:6px 0;min-height:16px}
+.cloud-msg.ok{color:#0a8043}.cloud-msg.err{color:#cf3b3b}
+.cloud-cnt{font-size:12px;color:var(--ink2);font-weight:700;margin-bottom:5px}
+.cloud-tbl{overflow:auto;border:1px solid var(--line);border-radius:8px;max-height:210px}
+.cloud-tbl table{border-collapse:collapse;width:100%;font-size:11.5px}
+.cloud-tbl th{background:var(--panel-2);padding:6px 9px;text-align:left;color:var(--ink3);position:sticky;top:0;white-space:nowrap}
+.cloud-tbl td{padding:5px 9px;border-top:1px solid var(--line);color:var(--ink);white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.cloud-bar{display:flex;align-items:center;gap:8px;margin-top:14px}
+.cloud-bar .sp{flex:1}
+
 /* 一次两笔 */
 .multi-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:min(94vw,720px);
   max-height:88vh;overflow:auto;padding:18px 20px;box-shadow:0 18px 50px rgba(0,0,0,.3)}
@@ -1418,6 +1437,7 @@ function gridView(t, q){
   const bar = `<div class="grid-bar">${totalBox}${segsHTML(t)}<span class="sp"></span>
       <button class="btn btn-sm btn-solid" ${editRow?'disabled':''} onclick="gridAdd('${t.id}')">＋ 新增一则</button>
       <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
+      <button class="btn btn-sm" onclick="openCloud('${t.id}')">☁ 汇入云端</button>
     </div>`;
   const emptyMsg = () => `<div class="yempty">${q ? '这个关键字没有符合的则。'
       : (fl && seg !== '全部' ? '「' + seg + '」目前没有资料。' : '还没有资料，按上面「＋ 新增一则」开始记。')}</div>`;
@@ -1467,6 +1487,7 @@ function gridView(t, q){
       <button class="btn btn-sm btn-solid" onclick="openMulti('${t.id}')">＋ 新增</button>
       <button class="btn btn-sm" onclick="openPaste('${t.id}')">📋 批次贴上</button>
       <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
+      <button class="btn btn-sm" onclick="openCloud('${t.id}')">☁ 汇入云端</button>
     </div>`;
     const balBox = limitBar + `<div class="vbal3">
       <div class="vb3 vb3-rmb">
@@ -1564,6 +1585,97 @@ function gridAdd(tid){
   renderBoard();
   openRow(tid, r.id);
 }
+/* ===== 汇入云端 CSV ===== */
+let cloudTid = null;
+function openCloud(tid){
+  cloudTid = tid;
+  const t = findTab(tid);
+  const cols = colsOf(t).filter(f => t.cols === 'vcotc' ? f.key !== 'vdate' : true);
+  const names = cols.map(f => f.label).join(' · ');
+  let mask = document.getElementById('cloudMask');
+  if(!mask){ mask = document.createElement('div'); mask.id='cloudMask'; mask.className='mask'; document.body.appendChild(mask); }
+  mask.innerHTML = `<div class="cloud-box">
+    <div class="cloud-hd">☁ 汇入云端资料</div>
+    <div class="cloud-steps">先在 Google 表格：档案 → 共用 → 发布到网路 → 选 CSV → 发布，把网址贴下面</div>
+    <div class="cloud-cols">栏位顺序：${names}${t.cols==='vcotc'?'（日期自动带今天）':''}</div>
+    <input id="cloudUrl" class="cloud-url" placeholder="贴上 Google 发布的 CSV 网址（.../pub?output=csv）">
+    <label class="cloud-opt"><input type="checkbox" id="cloudHdr" checked> 第一列是标题，略过不汇入</label>
+    <label class="cloud-opt"><input type="checkbox" id="cloudClear"> 汇入前先清空现有资料（覆盖）</label>
+    <div id="cloudMsg" class="cloud-msg"></div>
+    <div id="cloudPrev" class="cloud-prev"></div>
+    <div class="cloud-bar"><button class="btn" onclick="closeCloud()">取消</button><span class="sp"></span>
+      <button class="btn" onclick="cloudFetch()">抓取预览</button>
+      <button class="btn btn-solid" onclick="cloudImport()">汇入</button></div>
+  </div>`;
+  mask.style.display = 'flex';
+  setTimeout(() => document.getElementById('cloudUrl')?.focus(), 30);
+}
+function closeCloud(){ const m = document.getElementById('cloudMask'); if(m) m.style.display='none'; cloudRows = null; }
+let cloudRows = null;
+// 简单 CSV 解析（支援引号内逗号）
+function parseCSV(text){
+  const rows = []; let row = [], cur = '', inQ = false;
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    if(inQ){
+      if(c === '"' && text[i+1] === '"'){ cur += '"'; i++; }
+      else if(c === '"'){ inQ = false; }
+      else cur += c;
+    }else{
+      if(c === '"') inQ = true;
+      else if(c === ','){ row.push(cur); cur = ''; }
+      else if(c === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; }
+      else if(c === '\r'){}
+      else cur += c;
+    }
+  }
+  if(cur !== '' || row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r => r.some(c => c.trim() !== ''));
+}
+async function cloudFetch(){
+  const url = document.getElementById('cloudUrl').value.trim();
+  const msg = document.getElementById('cloudMsg');
+  if(!url){ msg.textContent = '请先贴上网址'; msg.className = 'cloud-msg err'; return; }
+  msg.textContent = '抓取中…'; msg.className = 'cloud-msg';
+  try{
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    let rows = parseCSV(text);
+    if(document.getElementById('cloudHdr').checked) rows = rows.slice(1);
+    cloudRows = rows;
+    const t = findTab(cloudTid);
+    const cols = colsOf(t).filter(f => t.cols === 'vcotc' ? f.key !== 'vdate' : true);
+    const head = cols.map(f => `<th>${esc(f.label)}</th>`).join('');
+    const body = rows.slice(0,5).map(cells =>
+      '<tr>' + cols.map((f,i) => `<td>${esc((cells[i]||'').trim())}</td>`).join('') + '</tr>').join('');
+    document.getElementById('cloudPrev').innerHTML =
+      `<div class="cloud-cnt">共 ${rows.length} 笔（预览前 5）</div>
+       <div class="cloud-tbl"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+    msg.textContent = '抓取成功，确认无误就按「汇入」'; msg.className = 'cloud-msg ok';
+  }catch(e){
+    msg.textContent = '抓取失败：' + e.message + '（确认网址是发布的 CSV，且已发布）';
+    msg.className = 'cloud-msg err';
+  }
+}
+function cloudImport(){
+  if(!cloudRows){ toast('请先按「抓取预览」'); return; }
+  const t = findTab(cloudTid);
+  const cols = colsOf(t).filter(f => t.cols === 'vcotc' ? f.key !== 'vdate' : true);
+  const today = new Date().toISOString().slice(0,10);
+  beforeRows = clone(t.rows || []);
+  const add = cloudRows.map((cells,ri) => {
+    const r = {id:'r' + Date.now() + '_' + ri};
+    cols.forEach((f,i) => { r[f.key] = (cells[i] || '').trim(); });
+    if(t.cols === 'vcotc' && !r.vdate) r.vdate = today;
+    return r;
+  });
+  if(document.getElementById('cloudClear').checked) t.rows = add;
+  else (t.rows ||= []).unshift(...add);
+  save(); closeCloud(); renderBoard();
+  toast(`已汇入 ${add.length} 笔`);
+}
+
 /* ===== 一次两笔新增 ===== */
 let multiTid = null;
 function openMulti(tid){
