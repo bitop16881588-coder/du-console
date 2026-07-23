@@ -187,7 +187,7 @@ body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
 /* 分页轨道 */
 .tabrow{display:flex;align-items:center;gap:10px;padding:12px 0 0}
 .tabrow-sp{flex:1}
-#tools{flex:none}
+#tools{flex:none;display:inline-flex;gap:6px;align-items:center}
 .tabrail{display:flex;gap:0;overflow-x:auto;align-items:flex-end;flex:0 1 auto;padding-right:6px}
 .tab{
   position:relative;padding:9px 19px 8px;border:none;border-radius:0;
@@ -343,6 +343,127 @@ body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
   padding:3px 9px;border-radius:6px;cursor:pointer;transition:.12s;font-weight:600}
 .lk-kv b:hover{background:color-mix(in srgb,var(--ac) 15%,transparent);color:var(--ac)}
 .lk-kv b.copied{background:#d1f0dd;color:#0a6b43}
+
+/* 四方残留暂存 */
+.rs-sum{display:flex;gap:12px;margin:2px 0 14px;flex-wrap:wrap}
+.rs-s{flex:1;min-width:180px;display:flex;flex-direction:column;gap:5px;border-radius:13px;padding:13px 18px;border:1px solid}
+.rs-k{font-size:11.5px;font-weight:800;letter-spacing:.2px}
+.rs-v{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.1}
+.rs-in{background:linear-gradient(135deg,#eaf2fd,#d6e6fb);border-color:#a8c8ee}
+.rs-in .rs-k{color:#2158a8} .rs-in .rs-v{color:#1a4a92}
+.rs-out{background:linear-gradient(135deg,#fdf0e8,#fbe0cd);border-color:#f0c49c}
+.rs-out .rs-k{color:#b06424} .rs-out .rs-v{color:#8f4d15}
+.rs-all{background:linear-gradient(135deg,#eef0f4,#dfe3ea);border-color:#c3cad6}
+.rs-all .rs-k{color:#4a5568} .rs-all .rs-v{color:#2d3748}
+.rc-resid{display:flex;flex-direction:column;align-items:stretch;padding:12px 14px;min-height:84px;gap:8px}
+.rs-tag{position:absolute;top:7px;left:7px;font-size:9.5px;font-weight:900;
+  width:17px;height:17px;display:grid;place-items:center;border-radius:5px;z-index:2}
+.rs-tag.in{background:#2158a8;color:#fff}
+.rs-tag.out{background:#b06424;color:#fff}
+.rc-resid h4{padding-left:22px}
+.rc-resid.no-tag h4{padding-left:0}
+.rs-amt{font-size:21px;font-weight:900;font-variant-numeric:tabular-nums;margin-top:auto;line-height:1.1}
+.rs-cin .rs-amt{color:#1a4a92} .rs-cout .rs-amt{color:#8f4d15}
+.rs-amt.zero{color:#b8c0cc;font-size:17px}
+.rc-resid h4{flex:none;text-align:left;font-size:13.5px;font-weight:800;line-height:1.35;
+  word-break:break-word;color:var(--ink);text-shadow:none;margin:0;padding:0}
+.rc-resid .rc-g{position:absolute;top:7px;right:24px}
+.rc-resid .rc-x{position:absolute;top:7px;right:7px}
+.rc-resid.rs-zero{opacity:.5}
+.rs-row{display:flex;flex-wrap:wrap;gap:6px 10px;margin-top:auto}
+.rs-kv{display:inline-flex;align-items:center;gap:6px;background:#eaf2fd;border:1px solid #c3ddf7;
+  border-radius:7px;padding:3px 10px}
+.rs-kv span{font-size:10.5px;font-weight:700;color:#2158a8}
+.rs-kv b{font-size:13px;font-weight:900;color:#1a4a92;font-variant-numeric:tabular-nums}
+.rs-kv.out{background:#fdf0e8;border-color:#f5cfae}
+.rs-kv.out span{color:#b06424} .rs-kv.out b{color:#8f4d15}
+.rs-kv.zero{background:var(--panel-2);border-color:var(--line)}
+.rs-kv.zero span,.rs-kv.zero b{color:#a8b0bd}
+
+.rd-panel{background:linear-gradient(135deg,#f8fafc,#eef2f7);border:1px solid #d8e0ea;border-radius:15px;
+  padding:15px 18px;margin:2px 0 14px}
+.rd-top{display:flex;align-items:center;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+.rd-top .rd-strip{flex:1;min-width:340px}
+.rd-row2{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rd-row2 .sp{flex:1}
+.rd-top .sp{flex:1}
+.rd-name{font-size:17px;font-weight:900;color:var(--ink);letter-spacing:.02em;flex:none;white-space:nowrap}
+.rd-badge{font-size:11.5px;font-weight:700;color:#5b6b80;background:#e3eaf3;padding:3px 11px;border-radius:999px}
+.rd-name2{font-size:15px;font-weight:900;color:var(--ink);letter-spacing:.02em;margin-left:4px}
+.rd-cur2{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#8794a6;
+  background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:2px 8px}
+.rd-cur2 .rc-lb{font-size:10px}
+.rd-cur2 b{font-size:12px;font-weight:900;color:#8a5c08;cursor:pointer;padding:1px 5px;border-radius:4px;transition:.12s}
+.rd-cur2 b:hover{background:#fdf3e5}
+.rc-inp{width:66px;border:1px solid var(--ac);border-radius:5px;padding:2px 6px;font-size:12px;
+  text-align:center;font-weight:800;color:#8a5c08;background:#fffdf7;outline:none}
+.rd-strip{display:flex;align-items:stretch;background:#fff;border:1px solid #dbe3ed;border-radius:12px;overflow:hidden}
+.rsx{flex:1;display:flex;flex-direction:column;gap:2px;padding:11px 18px;position:relative;min-width:120px}
+.rsx+.rsx::before{content:"";position:absolute;left:0;top:22%;bottom:22%;width:1px;background:#e5eaf1}
+.rsx span{font-size:10.5px;font-weight:800;color:#8794a6;letter-spacing:.03em}
+.rsx-ed{font-style:normal;cursor:pointer;color:#c3ccd8;padding:0 3px;transition:.12s}
+.rsx-ed:hover{color:var(--ac)}
+.rsx-inp{width:130px;border:1px solid var(--ac);border-radius:6px;padding:3px 8px;font-size:17px;
+  font-weight:900;color:#2c3e56;background:#fff;outline:none;font-variant-numeric:tabular-nums}
+.rsx b{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.15;color:#2c3e56}
+.rsx-f b{color:#b5793a;font-size:17px}
+.rsx-d{background:linear-gradient(90deg,transparent,#effaf3)}
+.rsx-d span{color:#177a45}
+.rsx-d b{color:#0d5c31;font-size:23px}
+
+/* 多选备注 */
+.mlt{display:flex;flex-wrap:wrap;gap:5px}
+.mlt-b{border:1px solid var(--line);background:var(--panel);color:var(--ink3);border-radius:999px;
+  padding:3px 11px;font-size:11.5px;font-weight:700;cursor:pointer;transition:.12s;white-space:nowrap}
+.mlt-b:hover{border-color:var(--mc);color:var(--mc)}
+.mlt-b.on{background:var(--mc);border-color:var(--mc);color:#fff}
+.fee-fix{font-weight:800;color:#a8761c;font-variant-numeric:tabular-nums}
+.fee-pct{font-weight:700;color:#a8761c;font-variant-numeric:tabular-nums}
+.zt{transition:.12s}
+.zt.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.cpn{cursor:pointer;border-radius:4px;transition:.12s;padding:0 3px;margin:0 -3px}
+.cpn:hover{background:color-mix(in srgb,var(--ac) 15%,transparent);outline:1px solid color-mix(in srgb,var(--ac) 35%,transparent)}
+.cpn.copied{background:#d1f0dd !important;color:#0a6b43 !important}
+.rd-fees{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0}
+.fq{display:inline-flex;align-items:baseline;gap:6px;background:#fff;border:1px solid #dde4ed;
+  border-radius:7px;padding:4px 11px;font-size:12px;font-weight:700;color:#177a45;font-variant-numeric:tabular-nums}
+.fq b{font-size:11px;font-weight:900;color:#8a5c08}
+.fq-sum{background:#0d5c31;border-color:#0d5c31;color:#fff;font-weight:900}
+.vtbl .col-calc{text-align:right;font-weight:700;color:#8a5c08;font-variant-numeric:tabular-nums}
+.vtbl .col-calc.dif{color:#0d5c31;font-weight:800}
+.vtbl .col-dfee{text-align:center;color:#a8761c;font-weight:700}
+.vtbl .col-dnote{min-width:150px;white-space:normal}
+.vtbl .col-dnote .vtag{font-size:10.5px;padding:1px 7px;margin:1px}
+.rd-box{background:#fdf9ec;border:1px solid #e8d9a8;border-radius:13px;padding:13px 16px;margin:2px 0 13px}
+.rd-hd{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.rd-hd .sp{flex:1}
+.rt-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.rt-tbl th{background:#f5ead0;color:#7c5e14;font-weight:800;padding:7px 10px;text-align:center;border:1px solid #e0cfa0;white-space:nowrap}
+.rt-tbl td{padding:5px 8px;border:1px solid #ede0bd;text-align:center;background:#fffdf7}
+.rt-in{width:100%;min-width:78px;border:1px solid #ddd0aa;border-radius:6px;padding:5px 8px;font-size:12.5px;text-align:center;background:#fff;font-variant-numeric:tabular-nums;font-weight:700;color:#5c4610}
+.rt-in:focus{border-color:#c79a3a;outline:none;box-shadow:0 0 0 2px rgba(199,154,58,.2)}
+.rt-in.fee{color:#8a5c08}
+.rt-calc{font-weight:800;color:#6b5310;font-variant-numeric:tabular-nums}
+.rt-calc.dif{color:#b5364a}
+.rt-act{width:34px}
+.rt-none{color:#a8956a;font-size:12px;padding:14px !important}
+.rt-ft{text-align:right !important;font-weight:900;color:#14532d;background:#dff0e3 !important;font-size:13.5px}
+.rt-total{font-weight:900;color:#14532d;background:#dff0e3 !important;font-size:17px;font-variant-numeric:tabular-nums}
+.rd-title{font-size:16px;font-weight:900;color:#7c5e14}
+.rd-cnt{font-size:12px;color:#9a7c30;font-weight:700}
+.rd-sum{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#eef7f0,#ddeee2);
+  border:1px solid #b8dcc5;border-radius:13px;padding:13px 20px;margin:2px 0 13px;flex-wrap:wrap}
+.rd-title{font-size:16px;font-weight:900;color:#14532d}
+.rd-total{display:flex;align-items:baseline;gap:9px;margin-left:auto}
+.rd-k{font-size:12px;font-weight:800;color:#166534}
+.rd-v{font-size:25px;font-weight:900;color:#14532d;font-variant-numeric:tabular-nums}
+.rd-cnt{font-size:12px;color:#4b7c5c;font-weight:700}
+.rd-empty{border:1px dashed var(--line);border-radius:11px;padding:40px 20px;text-align:center;
+  color:var(--ink3);font-size:13px;background:var(--panel)}
+.tab-sub{font-style:normal;opacity:.95}
+.vtbl .col-damt{text-align:right;font-weight:800;color:#0a6b43}
+.vtbl .col-dord{font-family:var(--mono);font-size:11.5px;color:#546881}
+.vtbl .col-ddate{white-space:nowrap;color:#334;font-weight:600}
 
 /* 汇入云端 */
 .cloud-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:min(94vw,680px);
@@ -1548,7 +1669,7 @@ const DEFAULT = [
     {id:'fr11', name:'风险图档', kind:'grid', cols:'risk', rows:[], co1:false},
     {id:'fr12', name:'新宝⭐限制支出', kind:'grid', cols:'limit', rows:[], co1:false}
   ]},
-  {id:'rs', sid:'', code:'RS', tone:TONES[2], icon:'💸',   name:'四方残留暂存',   tabs:[]},
+  {id:'rs', sid:'', code:'RS', tone:TONES[2], icon:'💸',   name:'四方残留暂存',   tabs:[{"id": "rs01", "name": "残留总览", "kind": "grid", "cols": "resid", "rows": [{"id": "rs001", "rgrp": "内部", "rname": "JJ卡转卡", "ramt": "8320.322"}, {"id": "rs002", "rgrp": "外部", "rname": "JJ卡转卡", "ramt": "55522.637"}, {"id": "rs003", "rgrp": "内部", "rname": "JJ支付宝", "ramt": "27021.782"}, {"id": "rs004", "rgrp": "外部", "rname": "JJ支付宝", "ramt": "15346.649"}, {"id": "rs005", "rgrp": "内部", "rname": "JJ微信", "ramt": "375.858"}, {"id": "rs006", "rgrp": "外部", "rname": "WF支付宝", "ramt": "0.0"}, {"id": "rs007", "rgrp": "内部", "rname": "JJ数字人民币", "ramt": "0.0"}, {"id": "rs008", "rgrp": "内部", "rname": "VCOTC支付宝", "ramt": "2925.0"}, {"id": "rs009", "rgrp": "内部", "rname": "XQ小额卡卡", "ramt": "3125.166"}, {"id": "rs010", "rgrp": "内部", "rname": "红喜鹊卡转卡", "ramt": "0.0"}, {"id": "rs011", "rgrp": "内部", "rname": "红喜鹊支转支", "ramt": "0.0"}, {"id": "rs012", "rgrp": "内部", "rname": "ZCPAY支付宝", "ramt": "2110.455"}, {"id": "rs013", "rgrp": "外部", "rname": "ZCPAY支付宝", "ramt": "0.0"}, {"id": "rs014", "rgrp": "内部", "rname": "码上支付宝（新人层）", "ramt": "9828.31"}, {"id": "rs015", "rgrp": "内部", "rname": "码上纯代收", "ramt": "0.0"}, {"id": "rs016", "rgrp": "内部", "rname": "码上小额卡卡", "ramt": "962.0"}, {"id": "rs017", "rgrp": "内部", "rname": "新宝支付宝", "ramt": "3403.922"}, {"id": "rs018", "rgrp": "外部", "rname": "新宝支付宝", "ramt": "487.974"}, {"id": "rs019", "rgrp": "内部", "rname": "新宝支付宝(小额)", "ramt": "0.0"}, {"id": "rs020", "rgrp": "内部", "rname": "新宝银联", "ramt": "0.0"}, {"id": "rs021", "rgrp": "内部", "rname": "和奕", "ramt": "4513.0"}, {"id": "rs022", "rgrp": "外部", "rname": "和奕", "ramt": "7644.0"}, {"id": "rs023", "rgrp": "内部", "rname": "和奕支付宝", "ramt": "5850.818"}, {"id": "rs024", "rgrp": "内部", "rname": "全通支付宝", "ramt": "2959.02"}, {"id": "rs025", "rgrp": "外部", "rname": "全通支付宝", "ramt": "12039.15"}, {"id": "rs026", "rgrp": "内部", "rname": "GOSM支付宝", "ramt": "4261.868"}, {"id": "rs027", "rgrp": "内部", "rname": "GOSM微信", "ramt": "488.07"}, {"id": "rs028", "rgrp": "内部", "rname": "乐支付宝", "ramt": "1336.525"}, {"id": "rs029", "rgrp": "内部", "rname": "onepay数字人民币", "ramt": "0.0"}, {"id": "rs030", "rgrp": "内部", "rname": "onepay银联扫码", "ramt": "0.0"}, {"id": "rs031", "rgrp": "内部", "rname": "onepay小荷包", "ramt": "0.0"}, {"id": "rs032", "rgrp": "内部", "rname": "宝诺银联", "ramt": "0.0"}, {"id": "rs033", "rgrp": "内部", "rname": "HCPAY", "ramt": "0.0"}, {"id": "rs034", "rgrp": "内部", "rname": "XPAY支付宝", "ramt": "0.0"}, {"id": "rs035", "rgrp": "内部", "rname": "KW支付宝-TOMMY", "ramt": "0.0"}]}, {"id": "rsd_rs001", "name": "内部 · JJ卡转卡", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "OL", "ddate": "2024-08-27", "dord": "L20240827092432136846996", "dnote": "", "damt": "111.0", "id": "d001_001"}, {"dmer": "MT", "ddate": "2024-09-03", "dord": "KRE_4303201", "dnote": "", "damt": "110.0", "id": "d001_002"}, {"dmer": "SH", "ddate": "2024-12-15", "dord": "KRD_4280472", "dnote": "", "damt": "1000.0", "id": "d001_003"}, {"dmer": "OL1688", "ddate": "2024-12-19", "dord": "L20241219163256695291387", "dnote": "", "damt": "185.0", "id": "d001_004"}, {"dmer": "YS1688", "ddate": "2025-02-21", "dord": "KRF_2061014", "dnote": "", "damt": "1000.0", "id": "d001_005"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d001_006"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs002", "name": "外部 · JJ卡转卡", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "2024-08-08", "dord": "240808230640R0019P0785", "dnote": "", "damt": "", "id": "d002_001"}, {"dmer": "", "ddate": "2024-08-17", "dord": "OTC041324081708251", "dnote": "", "damt": "", "id": "d002_002"}, {"dmer": "", "ddate": "2024-08-21", "dord": "240821183052R0019P0a4c", "dnote": "", "damt": "", "id": "d002_003"}, {"dmer": "", "ddate": "2024-08-31", "dord": "1296632", "dnote": "用户取消", "damt": "", "id": "d002_004"}, {"dmer": "", "ddate": "2024-09-19", "dord": "019224091959596", "dnote": "", "damt": "", "id": "d002_005"}, {"dmer": "", "ddate": "2024-10-01", "dord": "241001143312R0019P0bc4", "dnote": "", "damt": "", "id": "d002_006"}, {"dmer": "", "ddate": "2024-10-02", "dord": "OTC067224100217640", "dnote": "", "damt": "", "id": "d002_007"}, {"dmer": "", "ddate": "2024-10-03", "dord": "1655904", "dnote": "", "damt": "", "id": "d002_008"}, {"dmer": "", "ddate": "2024-10-29", "dord": "OTC088924102917556", "dnote": "用户取消", "damt": "", "id": "d002_009"}, {"dmer": "", "ddate": "2024-11-01", "dord": "OTC096524110144879", "dnote": "", "damt": "", "id": "d002_010"}, {"dmer": "", "ddate": "2024-11-15", "dord": "241115144942R0019P03c6", "dnote": "", "damt": "", "id": "d002_011"}, {"dmer": "", "ddate": "2024-11-20", "dord": "OTC051324112058604", "dnote": "", "damt": "", "id": "d002_012"}, {"dmer": "", "ddate": "2024-11-22", "dord": "OTC089524112231490", "dnote": "", "damt": "", "id": "d002_013"}, {"dmer": "", "ddate": "2024-11-23", "dord": "L20241123175749265991799", "dnote": "", "damt": "", "id": "d002_014"}, {"dmer": "", "ddate": "2024-12-07", "dord": "241207091100R0019P032b", "dnote": "", "damt": "", "id": "d002_015"}, {"dmer": "", "ddate": "2024-12-09", "dord": "OTC015224120911229", "dnote": "", "damt": "", "id": "d002_016"}, {"dmer": "", "ddate": "2024-12-12", "dord": "1867074348889440256", "dnote": "", "damt": "", "id": "d002_017"}, {"dmer": "", "ddate": "2025-01-22", "dord": "1881990939787005952", "dnote": "", "damt": "", "id": "d002_018"}, {"dmer": "", "ddate": "2025-03-01", "dord": "250301192350R0019P074a", "dnote": "", "damt": "", "id": "d002_019"}, {"dmer": "", "ddate": "2025-03-02", "dord": "250302213918R0019P05be", "dnote": "", "damt": "", "id": "d002_020"}, {"dmer": "", "ddate": "2025-03-20", "dord": "250320172644R0019P0232", "dnote": "", "damt": "", "id": "d002_021"}, {"dmer": "", "ddate": "2025-03-23", "dord": "P01989920250323060951021", "dnote": "", "damt": "", "id": "d002_022"}, {"dmer": "", "ddate": "2025-04-15", "dord": "2025041515390434600", "dnote": "用户取消", "damt": "", "id": "d002_023"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs003", "name": "内部 · JJ支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "2025-04-20", "ddate": "", "dord": "KRE_4897710", "dnote": "", "damt": "362.0", "id": "d003_001"}, {"dmer": "2025-04-25", "ddate": "", "dord": "R0013357240", "dnote": "", "damt": "400.0", "id": "d003_002"}, {"dmer": "2025-04-29", "ddate": "", "dord": "01968182BA715BF35D0C19E7982D1000", "dnote": "", "damt": "123.0", "id": "d003_003"}, {"dmer": "2025-05-01", "ddate": "ND168NB", "dord": "KRI_1485891", "dnote": "", "damt": "300.0", "id": "d003_004"}, {"dmer": "2025-05-08", "ddate": "ND", "dord": "KRI_1526013", "dnote": "", "damt": "100.0", "id": "d003_005"}, {"dmer": "ND168NB", "ddate": "2025-05-18", "dord": "KRI_1602114", "dnote": "", "damt": "230.0", "id": "d003_006"}, {"dmer": "YS168NB", "ddate": "2025-05-21", "dord": "KRF_2204481", "dnote": "", "damt": "100.0", "id": "d003_007"}, {"dmer": "XO168B", "ddate": "2025-05-25", "dord": "0197088B76EC7971589504D0906A2FDE", "dnote": "", "damt": "500.0", "id": "d003_008"}, {"dmer": "JY168NB", "ddate": "2025-06-04", "dord": "KRH_1135819", "dnote": "用户取消", "damt": "100.0", "id": "d003_009"}, {"dmer": "JY168B", "ddate": "2025-06-07", "dord": "KRH_1141296", "dnote": "", "damt": "300.0", "id": "d003_010"}, {"dmer": "SH168B", "ddate": "2025-06-17", "dord": "KRD_4607394", "dnote": "", "damt": "110.0", "id": "d003_011"}, {"dmer": "YS168NB", "ddate": "2025-06-17", "dord": "KRF_2248914", "dnote": "", "damt": "110.0", "id": "d003_012"}, {"dmer": "ND168B", "ddate": "2025-06-17", "dord": "KRI_1825971", "dnote": "", "damt": "110.0", "id": "d003_013"}, {"dmer": "XO168NB", "ddate": "2025-06-20", "dord": "01978C541AB47CC9B5F60F159E98E84C", "dnote": "", "damt": "268.0", "id": "d003_014"}, {"dmer": "ND168NB", "ddate": "2025-06-29", "dord": "KRI_1916746", "dnote": "", "damt": "180.0", "id": "d003_015"}, {"dmer": "XO168NB", "ddate": "2025-07-03", "dord": "0197CDDAB2845BF3B827AD1C3EC62223", "dnote": "", "damt": "150.0", "id": "d003_016"}, {"dmer": "XO168NB", "ddate": "2025-07-03", "dord": "0197CDE3D10141E1FFBFC08A2293CFB8", "dnote": "", "damt": "117.0", "id": "d003_017"}, {"dmer": "JY168B", "ddate": "2025-07-08", "dord": "KRH_1191930", "dnote": "", "damt": "120.0", "id": "d003_018"}, {"dmer": "ND168B", "ddate": "2025-07-12", "dord": "KRI_2011400", "dnote": "用户取消", "damt": "110.0", "id": "d003_019"}, {"dmer": "LS168NB", "ddate": "2025-07-16", "dord": "L20250716164633558238190", "dnote": "", "damt": "209.0", "id": "d003_020"}, {"dmer": "ND168B", "ddate": "2025-07-25", "dord": "KRI_2102749", "dnote": "", "damt": "110.0", "id": "d003_021"}, {"dmer": "JY168B", "ddate": "2025-07-29", "dord": "KRH_1221059", "dnote": "", "damt": "112.0", "id": "d003_022"}, {"dmer": "MT168B", "ddate": "2025-08-01", "dord": "KRE_5139876", "dnote": "", "damt": "211.0", "id": "d003_023"}, {"dmer": "FB168B", "ddate": "2025-08-02", "dord": "KRA_2692290", "dnote": "", "damt": "138.0", "id": "d003_024"}, {"dmer": "HS168NB", "ddate": "2025-08-20", "dord": "KRJ_548254", "dnote": "", "damt": "389.0", "id": "d003_025"}, {"dmer": "OL168B", "ddate": "2025-08-29", "dord": "L20250829210620171878807", "dnote": "", "damt": "124.0", "id": "d003_026"}, {"dmer": "XY168NB", "ddate": "2025-09-03", "dord": "L20250903113205185442114", "dnote": "", "damt": "115.0", "id": "d003_027"}, {"dmer": "ND168NB", "ddate": "2025-09-05", "dord": "KRI_2461943", "dnote": "逾时失败", "damt": "300.0", "id": "d003_028"}, {"dmer": "ND168NB", "ddate": "2025-09-25", "dord": "KRI_2621429", "dnote": "逾时失败", "damt": "300.0", "id": "d003_029"}, {"dmer": "OL168NB", "ddate": "2025-10-24", "dord": "L20251024095743368814769", "dnote": "逾时失败", "damt": "233.0", "id": "d003_030"}, {"dmer": "ND168NB", "ddate": "2025-11-10", "dord": "KRI_2945498", "dnote": "逾时失败", "damt": "512.0", "id": "d003_031"}, {"dmer": "HD168NB", "ddate": "2025-11-13", "dord": "R0013420948", "dnote": "逾时失败", "damt": "500.0", "id": "d003_032"}, {"dmer": "SH168B", "ddate": "2025-11-25", "dord": "KRD_4866093", "dnote": "逾时失败", "damt": "854.0", "id": "d003_033"}, {"dmer": "YD168NB", "ddate": "2025-12-08", "dord": "KRK_161438", "dnote": "逾时失败", "damt": "225.0", "id": "d003_034"}, {"dmer": "ND168NB", "ddate": "2025-12-12", "dord": "KRI_3168804", "dnote": "逾时失败", "damt": "110.0", "id": "d003_035"}, {"dmer": "ND168NB", "ddate": "2026-01-03", "dord": "KRI_3334553", "dnote": "逾时失败", "damt": "1082.0", "id": "d003_036"}, {"dmer": "ND168NB", "ddate": "2026-01-14", "dord": "KRI_3403208", "dnote": "逾时失败", "damt": "120.0", "id": "d003_037"}, {"dmer": "YS168B", "ddate": "2026-01-19", "dord": "KRF_2666365", "dnote": "逾时失败", "damt": "207.0", "id": "d003_038"}, {"dmer": "YS168NB", "ddate": "2026-02-26", "dord": "KRF_2699596", "dnote": "用户取消", "damt": "501.0", "id": "d003_039"}, {"dmer": "XY168NB", "ddate": "2026-03-01", "dord": "L20260301120941860899820", "dnote": "用户取消", "damt": "206.0", "id": "d003_040"}, {"dmer": "ND168NB", "ddate": "2026-03-04", "dord": "KRI_3675456", "dnote": "", "damt": "120.0", "id": "d003_041"}, {"dmer": "HS168NB", "ddate": "2026-03-18", "dord": "KRJ_1458054", "dnote": "", "damt": "150.0", "id": "d003_042"}, {"dmer": "XO168NB", "ddate": "2026-03-21", "dord": "019D0FA3789E5BC451215CAF2A9501C1", "dnote": "", "damt": "135.0", "id": "d003_043"}, {"dmer": "XH168B", "ddate": "2026-03-28", "dord": "L20260328212447400069753", "dnote": "", "damt": "112.0", "id": "d003_044"}, {"dmer": "LS168B", "ddate": "2026-04-02", "dord": "L20260402133838991789760", "dnote": "", "damt": "124.0", "id": "d003_045"}, {"dmer": "OL168NB", "ddate": "2026-04-04", "dord": "L20260404091348097135986", "dnote": "", "damt": "213.0", "id": "d003_046"}, {"dmer": "MT168B", "ddate": "2026-04-07", "dord": "KRE_5627804", "dnote": "", "damt": "115.0", "id": "d003_047"}, {"dmer": "LS168NB", "ddate": "2026-04-15", "dord": "L20260415183711949544882", "dnote": "", "damt": "119.0", "id": "d003_048"}, {"dmer": "MT168B", "ddate": "2026-04-18", "dord": "KRE_5638638", "dnote": "逾时失败", "damt": "200.0", "id": "d003_049"}, {"dmer": "JY168NB", "ddate": "2026-05-14", "dord": "KRH_1572754", "dnote": "逾时失败", "damt": "110.0", "id": "d003_050"}, {"dmer": "FB168NB", "ddate": "2026-05-17", "dord": "KRA_2919257", "dnote": "三方误上方已扣除", "damt": "", "id": "d003_051"}, {"dmer": "XY168NB", "ddate": "2026-05-17", "dord": "L20260517183704062856469", "dnote": "逾时失败", "damt": "312.0", "id": "d003_052"}, {"dmer": "HS168B", "ddate": "2026-06-03", "dord": "KRJ_1706665", "dnote": "", "damt": "200.0", "id": "d003_053"}, {"dmer": "FB168NB", "ddate": "2026-06-03", "dord": "KRA_2926753", "dnote": "", "damt": "300.0", "id": "d003_054"}, {"dmer": "FB168NB", "ddate": "2026-06-03", "dord": "KRA_2926886", "dnote": "", "damt": "500.0", "id": "d003_055"}, {"dmer": "XY168NB", "ddate": "2026-06-30", "dord": "L20260630121710124801627", "dnote": "", "damt": "117.0", "id": "d003_056"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs004", "name": "外部 · JJ支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "1/20", "dord": "250120193525R004P03ca", "dnote": "", "damt": "891.0", "id": "d004_001"}, {"dmer": "", "ddate": "1/20", "dord": "250120192459R004P0ed3", "dnote": "", "damt": "1002.0", "id": "d004_002"}, {"dmer": "", "ddate": "1/21", "dord": "OTC045925012157044", "dnote": "", "damt": "1001.0", "id": "d004_003"}, {"dmer": "", "ddate": "1/30", "dord": "250130172043R004P0b6a", "dnote": "", "damt": "1009.0", "id": "d004_004"}, {"dmer": "", "ddate": "1/31", "dord": "250131131806R004P05ea", "dnote": "", "damt": "1008.0", "id": "d004_005"}, {"dmer": "", "ddate": "1/31", "dord": "250131124119R004P02ad", "dnote": "", "damt": "1008.0", "id": "d004_006"}, {"dmer": "", "ddate": "2/9", "dord": "250209234610R004P0808", "dnote": "", "damt": "505.0", "id": "d004_007"}, {"dmer": "", "ddate": "3/26", "dord": "L20250326195249975319778", "dnote": "", "damt": "165.0", "id": "d004_008"}, {"dmer": "sfpay1", "ddate": "6/30", "dord": "5063016314592851", "dnote": "", "damt": "200.0", "id": "d004_009"}, {"dmer": "sfpay1", "ddate": "12/03", "dord": "5120318815289009", "dnote": "", "damt": "400.0", "id": "d004_010"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs005", "name": "内部 · JJ微信", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "JD168E", "ddate": "2025-08-03", "dord": "KRG_1612247", "dnote": "通道失败", "damt": "199.0", "id": "d005_001"}, {"dmer": "MT168E", "ddate": "2025-10-17", "dord": "KRE_5315170", "dnote": "通道失败", "damt": "200.0", "id": "d005_002"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d005_003"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs007", "name": "内部 · JJ数字人民币", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d007_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs008", "name": "内部 · VCOTC支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "2025-04-28", "dord": "01967DAC78F119C501FCB3280FCB57BB", "dnote": "", "damt": "320.0", "id": "d008_001"}, {"dmer": "", "ddate": "2025-06-05", "dord": "KRJ_208142", "dnote": "", "damt": "305.0", "id": "d008_002"}, {"dmer": "", "ddate": "2025-06-25", "dord": "KRJ_301622", "dnote": "", "damt": "700.0", "id": "d008_003"}, {"dmer": "", "ddate": "2025-07-24", "dord": "019839DA84FD4D437DF1202C23D4C481", "dnote": "用户取消", "damt": "500.0", "id": "d008_004"}, {"dmer": "", "ddate": "2026-01-01", "dord": "KRK_261931", "dnote": "", "damt": "800.0", "id": "d008_005"}, {"dmer": "FB168B", "ddate": "2026-02-14", "dord": "KRA_2870206", "dnote": "", "damt": "300.0", "id": "d008_006"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d008_007"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs009", "name": "内部 · XQ小额卡卡", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "XY168G", "ddate": "2025-12-10", "dord": "L20251210074456955132698", "dnote": "", "damt": "680.0", "id": "d009_001"}, {"dmer": "ND168G", "ddate": "2026-01-10", "dord": "KRI_3379481", "dnote": "", "damt": "887.0", "id": "d009_002"}, {"dmer": "XY168G", "ddate": "2026-01-24", "dord": "L20260124081029814658467", "dnote": "", "damt": "701.0", "id": "d009_003"}, {"dmer": "", "ddate": "2026-03-30", "dord": "KRK_559550", "dnote": "", "damt": "1000.0", "id": "d009_004"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs012", "name": "内部 · ZCPAY支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "KF", "ddate": "2024-10-18", "dord": "L20241018021103883507575", "dnote": "", "damt": "500.0", "id": "d012_001"}, {"dmer": "YS1688A", "ddate": "2024-11-07", "dord": "KRF_1854777", "dnote": "", "damt": "677.0", "id": "d012_002"}, {"dmer": "ND", "ddate": "2024-12-03", "dord": "KRI_525287", "dnote": "", "damt": "510.0", "id": "d012_003"}, {"dmer": "ND1688A", "ddate": "2024-12-11", "dord": "KRI_568204", "dnote": "", "damt": "500.0", "id": "d012_004"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d012_005"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs013", "name": "外部 · ZCPAY支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d013_001"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d013_002"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d013_003"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs014", "name": "内部 · 码上支付宝（新人层）", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "HS168NB", "ddate": "2025-06-21", "dord": "KRJ_280156", "dnote": "", "damt": "2000.0", "id": "d014_001"}, {"dmer": "HS168NB", "ddate": "2025-08-20", "dord": "KRJ_548593", "dnote": "", "damt": "623.0", "id": "d014_002"}, {"dmer": "HS168NB", "ddate": "2025-09-01", "dord": "KRJ_601871", "dnote": "", "damt": "500.0", "id": "d014_003"}, {"dmer": "YD168NB", "ddate": "2025-11-24", "dord": "KRK_112628", "dnote": "", "damt": "500.0", "id": "d014_004"}, {"dmer": "ND168NB", "ddate": "2025-12-27", "dord": "KRI_3286437", "dnote": "", "damt": "3000.0", "id": "d014_005"}, {"dmer": "ND168NB", "ddate": "2026-01-29", "dord": "KRI_3491322", "dnote": "", "damt": "500.0", "id": "d014_006"}, {"dmer": "XO168NB", "ddate": "2026-06-17", "dord": "019ED5E81CF961FD96CC3FD7734372A8", "dnote": "", "damt": "500.0", "id": "d014_007"}, {"dmer": "RF168NB", "ddate": "2026-06-30", "dord": "KRL_91079", "dnote": "", "damt": "500.0", "id": "d014_008"}, {"dmer": "YD168NB", "ddate": "2026-07-11", "dord": "KRK_886328", "dnote": "", "damt": "500.0", "id": "d014_009"}, {"dmer": "MT168NB", "ddate": "2026-07-23", "dord": "KRE_5739268", "dnote": "", "damt": "1500.0", "id": "d014_010"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs016", "name": "内部 · 码上小额卡卡", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "LS168G", "ddate": "2026-06-17", "dord": "L20260617115724789204349", "dnote": "用户取消", "damt": "500.0", "id": "d016_001"}, {"dmer": "XY168G", "ddate": "2026-06-26", "dord": "L20260626100107984826983", "dnote": "用户取消", "damt": "500.0", "id": "d016_002"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs017", "name": "内部 · 新宝支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "SH", "ddate": "2024-12-23", "dord": "KRD_4291485", "dnote": "", "damt": "1000.0", "id": "d017_001"}, {"dmer": "JD", "ddate": "2025-09-24", "dord": "KRG_1666656", "dnote": "", "damt": "1000.0", "id": "d017_002"}, {"dmer": "ND168NB", "ddate": "2026-05-23", "dord": "KRI_4005163", "dnote": "", "damt": "500.0", "id": "d017_003"}, {"dmer": "LS168NB", "ddate": "2026-05-27", "dord": "L20260527000640156044393", "dnote": "", "damt": "1003.0", "id": "d017_004"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d017_005"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs018", "name": "外部 · 新宝支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "2026-06-06", "dord": "L20260606081017503279631", "dnote": "", "damt": "501.0", "id": "d018_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs019", "name": "内部 · 新宝支付宝(小额)", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d019_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs020", "name": "内部 · 新宝银联", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d020_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs021", "name": "内部 · 和奕", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d021_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs022", "name": "外部 · 和奕", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "4/3", "dord": "OTC088624040317840", "dnote": "", "damt": "4500.0", "id": "d022_001"}, {"dmer": "", "ddate": "4/24", "dord": "OTC097324042328576", "dnote": "", "damt": "3300.0", "id": "d022_002"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs023", "name": "内部 · 和奕支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "HS168B", "ddate": "2025-12-28", "dord": "KRJ_1148483", "dnote": "", "damt": "500.0", "id": "d023_001"}, {"dmer": "XY168B", "ddate": "2026-03-24", "dord": "L20260324221132135908836", "dnote": "逾时失败", "damt": "5507.0", "id": "d023_002"}, {"dmer": "", "ddate": "", "dord": "以上费率2.6的残留", "dnote": "", "damt": "", "id": "d023_003"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d023_004"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs024", "name": "内部 · 全通支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "SH1688A", "ddate": "2024-11-19", "dord": "KRD_4226575", "dnote": "", "damt": "1025.0", "id": "d024_001"}, {"dmer": "SH168B", "ddate": "2025-07-07", "dord": "KRD_4642458", "dnote": "", "damt": "2035.0", "id": "d024_002"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d024_003"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs025", "name": "外部 · 全通支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "2024-10-13", "dord": "L20241013181209378753431", "dnote": "", "damt": "2900.0", "id": "d025_001"}, {"dmer": "", "ddate": "2025-06-26", "dord": "250626110749R004P082d", "dnote": "", "damt": "9550.0", "id": "d025_002"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs026", "name": "内部 · GOSM支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "mt", "ddate": "", "dord": "KRE_4887677", "dnote": "", "damt": "1028.0", "id": "d026_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs027", "name": "内部 · GOSM微信", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "2025-12-01", "dord": "KRI_3090091", "dnote": "", "damt": "510.0", "id": "d027_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs028", "name": "内部 · 乐支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "SH", "ddate": "2024-12-12", "dord": "KRD_4280079", "dnote": "", "damt": "1385.0", "id": "d028_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs029", "name": "内部 · onepay数字人民币", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d029_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs030", "name": "内部 · onepay银联扫码", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d030_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs031", "name": "内部 · onepay小荷包", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d031_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs032", "name": "内部 · 宝诺银联", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d032_001"}], "sub": true, "backTo": "rs01"}]},
   {id:'ma', sid:'', code:'MA', tone:TONES[3], icon:'drop',   name:'四方商户帐密',   tabs:[]},
   {id:'lk', sid:'', code:'LK', tone:TONES[4], icon:'cloudy', name:'所需云端连结',   tabs:[
     {id:'lk01', name:'连结清单', kind:'grid', cols:'link', rows:[{"id": "lk001", "lname": "FOUUR交接记录", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk002", "lname": "四方残留", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk003", "lname": "第三方开关记录", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk004", "lname": "VCOTC四方余额", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk005", "lname": "骗单统计+错误支付", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk006", "lname": "跑分投资者东京（出）卡卡", "lurl": "", "lacc": "", "lpw": "password"}, {"id": "lk007", "lname": "跑分投资者淘宝（出）支付宝", "lurl": "", "lacc": "", "lpw": "password"}, {"id": "lk008", "lname": "跑分投资者（入）", "lurl": "", "lacc": "", "lpw": "password1"}, {"id": "lk009", "lname": "【DU】新版第三方使用状况（组员）", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk010", "lname": "公章回单范例图", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk011", "lname": "机器人验证商户号", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk012", "lname": "四方助手组员four1", "lurl": "", "lacc": "four1", "lpw": "aa123456"}, {"id": "lk013", "lname": "BB各状态记录表", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk014", "lname": "BB验证回单步骤(最新)", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk015", "lname": "点歌系统", "lurl": "", "lacc": "", "lpw": ""}, {"id": "lk016", "lname": "谷歌码", "lurl": "", "lacc": "", "lpw": ""}]}
@@ -1563,6 +1684,34 @@ const DEFAULT = [
     {id:'as01', name:'四方助手后台', kind:'embed', bare:true, url:'https://sifangassistant.nexa-matrix.com/'}
   ]}
 ];
+
+/* 残留明细：每笔带自己的费率（改费率不影响旧明细） */
+const RS_FEE = {"内部|JJ卡转卡": "0.028", "内部|JJ支付宝": "0.033", "内部|JJ微信": "0.058", "内部|JJ数字人民币": "0.022", "内部|VCOTC支付宝": "0.0", "内部|XQ小额卡卡": "0.039", "内部|红喜鹊卡转卡": "0.044", "内部|红喜鹊支转支": "0.024", "内部|ZCPAY支付宝": "0.035", "内部|码上支付宝（新人层）": "0.027", "内部|码上纯代收": "0.03", "内部|码上小额卡卡": "0.038", "内部|新宝支付宝": "0.026", "内部|新宝支付宝(小额)": "0.032", "内部|新宝银联": "0.02", "内部|和奕": "0.028", "内部|和奕支付宝": "0.026", "内部|全通支付宝": "0.033", "内部|GOSM支付宝": "0.028", "内部|GOSM微信": "0.043", "内部|乐支付宝": "0.035", "内部|onepay数字人民币": "0.022", "内部|onepay银联扫码": "0.02", "内部|onepay小荷包": "0.025", "内部|宝诺银联": "0.027", "内部|HCPAY": "0.034", "内部|XPAY支付宝": "0.023", "内部|KW支付宝-TOMMY": "0.022", "外部|JJ卡转卡": "0.028", "外部|JJ支付宝": "0.033", "外部|ZCPAY支付宝": "0.029", "外部|新宝支付宝": "0.026", "外部|和奕": "0.02", "外部|全通支付宝": "0.033"};
+(function(){
+  const rs = DEFAULT.find(c => c.id === 'rs');
+  if(!rs) return;
+  rs.tabs.forEach(t => {
+    if(t.cols !== 'rdetail' || !t.name) return;
+    const key = t.name.replace(' · ', '|');
+    const fee = RS_FEE[key];
+    delete t.rates;
+    if(fee){
+      t.curFee = fee;
+      (t.rows||[]).forEach(r => { if(!r.dfee) r.dfee = fee; });
+    }
+  });
+})();
+
+const RS_HIST = {"内部|JJ卡转卡": [{"f": "0.028", "d": "2338.632"}, {"f": "0.021", "d": "5981.69"}], "内部|JJ支付宝": [{"f": "0.033", "d": "12740.225"}, {"f": "0.035", "d": "3523.215"}, {"f": "0.034", "d": "10758.342"}], "内部|XQ小额卡卡": [{"f": "0.039", "d": "961.0"}, {"f": "0.045", "d": "669.455"}, {"f": "0.047", "d": "845.311"}, {"f": "0.045", "d": "649.4"}], "内部|码上支付宝（新人层）": [{"f": "0.027", "d": "2919.0"}, {"f": "0.03", "d": "6909.31"}], "内部|新宝支付宝": [{"f": "0.026", "d": "1463.922"}, {"f": "0.028", "d": "972.0"}, {"f": "0.032", "d": "968.0"}], "内部|GOSM支付宝": [{"f": "0.028", "d": "999.216"}, {"f": "0.032", "d": "1479.104"}, {"f": "0.038", "d": "1783.548"}], "外部|JJ卡转卡": [{"f": "0.028", "d": "30230.172"}, {"f": "0.021", "d": "25292.465"}], "外部|JJ支付宝": [{"f": "0.033", "d": "580.2"}, {"f": "0.035", "d": "6358.385"}]};
+(function(){
+  const rs = DEFAULT.find(c => c.id === 'rs');
+  if(!rs) return;
+  rs.tabs.forEach(t => {
+    if(t.cols !== 'rdetail' || !t.name) return;
+    const key = t.name.replace(' · ', '|');
+    if(RS_HIST[key]) t.hist = RS_HIST[key];
+  });
+})();
 
 let cats = load();
 let curCat = cats[0].id;
@@ -1592,7 +1741,7 @@ function normalize(saved){
   });
 }
 /* ===== 设定档版本：旧档自动升级，不清掉既有资料 ===== */
-const SCHEMA = 32;
+const SCHEMA = 37;
 function migrate(list){
   DEFAULT.forEach(d => {
     let c = list.find(x => x.id === d.id);
@@ -1630,6 +1779,35 @@ function load(){
     const v   = Array.isArray(obj) ? 0 : (obj.v || 0);
     let list = normalize(arr);
     if(v < SCHEMA) list = migrate(list);
+    if(v < 37){                       // 补历史费率残留
+      const rs = list.find(c => c.id === 'rs');
+      if(rs) rs.tabs.forEach(t => {
+        if(t.cols === 'rdetail' && t.name){
+          const key = t.name.replace(' · ', '|');
+          if(RS_HIST[key]) t.hist = RS_HIST[key];
+        }
+      });
+    }
+    if(v < 36){                       // 明细改成每笔自带费率
+      const rs = list.find(c => c.id === 'rs');
+      if(rs) rs.tabs.forEach(t => {
+        if(t.cols !== 'rdetail' || !t.name) return;
+        const key = t.name.replace(' · ', '|');
+        const fee = RS_FEE[key];
+        delete t.rates;
+        if(fee){ t.curFee = fee; (t.rows||[]).forEach(r => { if(!r.dfee) r.dfee = fee; }); }
+      });
+    }
+    if(v < 34){                       // 残留暂存 重建（内外分开+明细）
+      const rs = list.find(c => c.id === 'rs');
+      if(rs) rs.tabs = [{"id": "rs01", "name": "残留总览", "kind": "grid", "cols": "resid", "rows": [{"id": "rs001", "rgrp": "内部", "rname": "JJ卡转卡", "ramt": "8320.322"}, {"id": "rs002", "rgrp": "外部", "rname": "JJ卡转卡", "ramt": "55522.637"}, {"id": "rs003", "rgrp": "内部", "rname": "JJ支付宝", "ramt": "27021.782"}, {"id": "rs004", "rgrp": "外部", "rname": "JJ支付宝", "ramt": "15346.649"}, {"id": "rs005", "rgrp": "内部", "rname": "JJ微信", "ramt": "375.858"}, {"id": "rs006", "rgrp": "外部", "rname": "WF支付宝", "ramt": "0.0"}, {"id": "rs007", "rgrp": "内部", "rname": "JJ数字人民币", "ramt": "0.0"}, {"id": "rs008", "rgrp": "内部", "rname": "VCOTC支付宝", "ramt": "2925.0"}, {"id": "rs009", "rgrp": "内部", "rname": "XQ小额卡卡", "ramt": "3125.166"}, {"id": "rs010", "rgrp": "内部", "rname": "红喜鹊卡转卡", "ramt": "0.0"}, {"id": "rs011", "rgrp": "内部", "rname": "红喜鹊支转支", "ramt": "0.0"}, {"id": "rs012", "rgrp": "内部", "rname": "ZCPAY支付宝", "ramt": "2110.455"}, {"id": "rs013", "rgrp": "外部", "rname": "ZCPAY支付宝", "ramt": "0.0"}, {"id": "rs014", "rgrp": "内部", "rname": "码上支付宝（新人层）", "ramt": "9828.31"}, {"id": "rs015", "rgrp": "内部", "rname": "码上纯代收", "ramt": "0.0"}, {"id": "rs016", "rgrp": "内部", "rname": "码上小额卡卡", "ramt": "962.0"}, {"id": "rs017", "rgrp": "内部", "rname": "新宝支付宝", "ramt": "3403.922"}, {"id": "rs018", "rgrp": "外部", "rname": "新宝支付宝", "ramt": "487.974"}, {"id": "rs019", "rgrp": "内部", "rname": "新宝支付宝(小额)", "ramt": "0.0"}, {"id": "rs020", "rgrp": "内部", "rname": "新宝银联", "ramt": "0.0"}, {"id": "rs021", "rgrp": "内部", "rname": "和奕", "ramt": "4513.0"}, {"id": "rs022", "rgrp": "外部", "rname": "和奕", "ramt": "7644.0"}, {"id": "rs023", "rgrp": "内部", "rname": "和奕支付宝", "ramt": "5850.818"}, {"id": "rs024", "rgrp": "内部", "rname": "全通支付宝", "ramt": "2959.02"}, {"id": "rs025", "rgrp": "外部", "rname": "全通支付宝", "ramt": "12039.15"}, {"id": "rs026", "rgrp": "内部", "rname": "GOSM支付宝", "ramt": "4261.868"}, {"id": "rs027", "rgrp": "内部", "rname": "GOSM微信", "ramt": "488.07"}, {"id": "rs028", "rgrp": "内部", "rname": "乐支付宝", "ramt": "1336.525"}, {"id": "rs029", "rgrp": "内部", "rname": "onepay数字人民币", "ramt": "0.0"}, {"id": "rs030", "rgrp": "内部", "rname": "onepay银联扫码", "ramt": "0.0"}, {"id": "rs031", "rgrp": "内部", "rname": "onepay小荷包", "ramt": "0.0"}, {"id": "rs032", "rgrp": "内部", "rname": "宝诺银联", "ramt": "0.0"}, {"id": "rs033", "rgrp": "内部", "rname": "HCPAY", "ramt": "0.0"}, {"id": "rs034", "rgrp": "内部", "rname": "XPAY支付宝", "ramt": "0.0"}, {"id": "rs035", "rgrp": "内部", "rname": "KW支付宝-TOMMY", "ramt": "0.0"}]}, {"id": "rsd_rs001", "name": "内部 · JJ卡转卡", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "OL", "ddate": "2024-08-27", "dord": "L20240827092432136846996", "dnote": "", "damt": "111.0", "id": "d001_001"}, {"dmer": "MT", "ddate": "2024-09-03", "dord": "KRE_4303201", "dnote": "", "damt": "110.0", "id": "d001_002"}, {"dmer": "SH", "ddate": "2024-12-15", "dord": "KRD_4280472", "dnote": "", "damt": "1000.0", "id": "d001_003"}, {"dmer": "OL1688", "ddate": "2024-12-19", "dord": "L20241219163256695291387", "dnote": "", "damt": "185.0", "id": "d001_004"}, {"dmer": "YS1688", "ddate": "2025-02-21", "dord": "KRF_2061014", "dnote": "", "damt": "1000.0", "id": "d001_005"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d001_006"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs002", "name": "外部 · JJ卡转卡", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "2024-08-08", "dord": "240808230640R0019P0785", "dnote": "", "damt": "", "id": "d002_001"}, {"dmer": "", "ddate": "2024-08-17", "dord": "OTC041324081708251", "dnote": "", "damt": "", "id": "d002_002"}, {"dmer": "", "ddate": "2024-08-21", "dord": "240821183052R0019P0a4c", "dnote": "", "damt": "", "id": "d002_003"}, {"dmer": "", "ddate": "2024-08-31", "dord": "1296632", "dnote": "用户取消", "damt": "", "id": "d002_004"}, {"dmer": "", "ddate": "2024-09-19", "dord": "019224091959596", "dnote": "", "damt": "", "id": "d002_005"}, {"dmer": "", "ddate": "2024-10-01", "dord": "241001143312R0019P0bc4", "dnote": "", "damt": "", "id": "d002_006"}, {"dmer": "", "ddate": "2024-10-02", "dord": "OTC067224100217640", "dnote": "", "damt": "", "id": "d002_007"}, {"dmer": "", "ddate": "2024-10-03", "dord": "1655904", "dnote": "", "damt": "", "id": "d002_008"}, {"dmer": "", "ddate": "2024-10-29", "dord": "OTC088924102917556", "dnote": "用户取消", "damt": "", "id": "d002_009"}, {"dmer": "", "ddate": "2024-11-01", "dord": "OTC096524110144879", "dnote": "", "damt": "", "id": "d002_010"}, {"dmer": "", "ddate": "2024-11-15", "dord": "241115144942R0019P03c6", "dnote": "", "damt": "", "id": "d002_011"}, {"dmer": "", "ddate": "2024-11-20", "dord": "OTC051324112058604", "dnote": "", "damt": "", "id": "d002_012"}, {"dmer": "", "ddate": "2024-11-22", "dord": "OTC089524112231490", "dnote": "", "damt": "", "id": "d002_013"}, {"dmer": "", "ddate": "2024-11-23", "dord": "L20241123175749265991799", "dnote": "", "damt": "", "id": "d002_014"}, {"dmer": "", "ddate": "2024-12-07", "dord": "241207091100R0019P032b", "dnote": "", "damt": "", "id": "d002_015"}, {"dmer": "", "ddate": "2024-12-09", "dord": "OTC015224120911229", "dnote": "", "damt": "", "id": "d002_016"}, {"dmer": "", "ddate": "2024-12-12", "dord": "1867074348889440256", "dnote": "", "damt": "", "id": "d002_017"}, {"dmer": "", "ddate": "2025-01-22", "dord": "1881990939787005952", "dnote": "", "damt": "", "id": "d002_018"}, {"dmer": "", "ddate": "2025-03-01", "dord": "250301192350R0019P074a", "dnote": "", "damt": "", "id": "d002_019"}, {"dmer": "", "ddate": "2025-03-02", "dord": "250302213918R0019P05be", "dnote": "", "damt": "", "id": "d002_020"}, {"dmer": "", "ddate": "2025-03-20", "dord": "250320172644R0019P0232", "dnote": "", "damt": "", "id": "d002_021"}, {"dmer": "", "ddate": "2025-03-23", "dord": "P01989920250323060951021", "dnote": "", "damt": "", "id": "d002_022"}, {"dmer": "", "ddate": "2025-04-15", "dord": "2025041515390434600", "dnote": "用户取消", "damt": "", "id": "d002_023"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs003", "name": "内部 · JJ支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "2025-04-20", "ddate": "", "dord": "KRE_4897710", "dnote": "", "damt": "362.0", "id": "d003_001"}, {"dmer": "2025-04-25", "ddate": "", "dord": "R0013357240", "dnote": "", "damt": "400.0", "id": "d003_002"}, {"dmer": "2025-04-29", "ddate": "", "dord": "01968182BA715BF35D0C19E7982D1000", "dnote": "", "damt": "123.0", "id": "d003_003"}, {"dmer": "2025-05-01", "ddate": "ND168NB", "dord": "KRI_1485891", "dnote": "", "damt": "300.0", "id": "d003_004"}, {"dmer": "2025-05-08", "ddate": "ND", "dord": "KRI_1526013", "dnote": "", "damt": "100.0", "id": "d003_005"}, {"dmer": "ND168NB", "ddate": "2025-05-18", "dord": "KRI_1602114", "dnote": "", "damt": "230.0", "id": "d003_006"}, {"dmer": "YS168NB", "ddate": "2025-05-21", "dord": "KRF_2204481", "dnote": "", "damt": "100.0", "id": "d003_007"}, {"dmer": "XO168B", "ddate": "2025-05-25", "dord": "0197088B76EC7971589504D0906A2FDE", "dnote": "", "damt": "500.0", "id": "d003_008"}, {"dmer": "JY168NB", "ddate": "2025-06-04", "dord": "KRH_1135819", "dnote": "用户取消", "damt": "100.0", "id": "d003_009"}, {"dmer": "JY168B", "ddate": "2025-06-07", "dord": "KRH_1141296", "dnote": "", "damt": "300.0", "id": "d003_010"}, {"dmer": "SH168B", "ddate": "2025-06-17", "dord": "KRD_4607394", "dnote": "", "damt": "110.0", "id": "d003_011"}, {"dmer": "YS168NB", "ddate": "2025-06-17", "dord": "KRF_2248914", "dnote": "", "damt": "110.0", "id": "d003_012"}, {"dmer": "ND168B", "ddate": "2025-06-17", "dord": "KRI_1825971", "dnote": "", "damt": "110.0", "id": "d003_013"}, {"dmer": "XO168NB", "ddate": "2025-06-20", "dord": "01978C541AB47CC9B5F60F159E98E84C", "dnote": "", "damt": "268.0", "id": "d003_014"}, {"dmer": "ND168NB", "ddate": "2025-06-29", "dord": "KRI_1916746", "dnote": "", "damt": "180.0", "id": "d003_015"}, {"dmer": "XO168NB", "ddate": "2025-07-03", "dord": "0197CDDAB2845BF3B827AD1C3EC62223", "dnote": "", "damt": "150.0", "id": "d003_016"}, {"dmer": "XO168NB", "ddate": "2025-07-03", "dord": "0197CDE3D10141E1FFBFC08A2293CFB8", "dnote": "", "damt": "117.0", "id": "d003_017"}, {"dmer": "JY168B", "ddate": "2025-07-08", "dord": "KRH_1191930", "dnote": "", "damt": "120.0", "id": "d003_018"}, {"dmer": "ND168B", "ddate": "2025-07-12", "dord": "KRI_2011400", "dnote": "用户取消", "damt": "110.0", "id": "d003_019"}, {"dmer": "LS168NB", "ddate": "2025-07-16", "dord": "L20250716164633558238190", "dnote": "", "damt": "209.0", "id": "d003_020"}, {"dmer": "ND168B", "ddate": "2025-07-25", "dord": "KRI_2102749", "dnote": "", "damt": "110.0", "id": "d003_021"}, {"dmer": "JY168B", "ddate": "2025-07-29", "dord": "KRH_1221059", "dnote": "", "damt": "112.0", "id": "d003_022"}, {"dmer": "MT168B", "ddate": "2025-08-01", "dord": "KRE_5139876", "dnote": "", "damt": "211.0", "id": "d003_023"}, {"dmer": "FB168B", "ddate": "2025-08-02", "dord": "KRA_2692290", "dnote": "", "damt": "138.0", "id": "d003_024"}, {"dmer": "HS168NB", "ddate": "2025-08-20", "dord": "KRJ_548254", "dnote": "", "damt": "389.0", "id": "d003_025"}, {"dmer": "OL168B", "ddate": "2025-08-29", "dord": "L20250829210620171878807", "dnote": "", "damt": "124.0", "id": "d003_026"}, {"dmer": "XY168NB", "ddate": "2025-09-03", "dord": "L20250903113205185442114", "dnote": "", "damt": "115.0", "id": "d003_027"}, {"dmer": "ND168NB", "ddate": "2025-09-05", "dord": "KRI_2461943", "dnote": "逾时失败", "damt": "300.0", "id": "d003_028"}, {"dmer": "ND168NB", "ddate": "2025-09-25", "dord": "KRI_2621429", "dnote": "逾时失败", "damt": "300.0", "id": "d003_029"}, {"dmer": "OL168NB", "ddate": "2025-10-24", "dord": "L20251024095743368814769", "dnote": "逾时失败", "damt": "233.0", "id": "d003_030"}, {"dmer": "ND168NB", "ddate": "2025-11-10", "dord": "KRI_2945498", "dnote": "逾时失败", "damt": "512.0", "id": "d003_031"}, {"dmer": "HD168NB", "ddate": "2025-11-13", "dord": "R0013420948", "dnote": "逾时失败", "damt": "500.0", "id": "d003_032"}, {"dmer": "SH168B", "ddate": "2025-11-25", "dord": "KRD_4866093", "dnote": "逾时失败", "damt": "854.0", "id": "d003_033"}, {"dmer": "YD168NB", "ddate": "2025-12-08", "dord": "KRK_161438", "dnote": "逾时失败", "damt": "225.0", "id": "d003_034"}, {"dmer": "ND168NB", "ddate": "2025-12-12", "dord": "KRI_3168804", "dnote": "逾时失败", "damt": "110.0", "id": "d003_035"}, {"dmer": "ND168NB", "ddate": "2026-01-03", "dord": "KRI_3334553", "dnote": "逾时失败", "damt": "1082.0", "id": "d003_036"}, {"dmer": "ND168NB", "ddate": "2026-01-14", "dord": "KRI_3403208", "dnote": "逾时失败", "damt": "120.0", "id": "d003_037"}, {"dmer": "YS168B", "ddate": "2026-01-19", "dord": "KRF_2666365", "dnote": "逾时失败", "damt": "207.0", "id": "d003_038"}, {"dmer": "YS168NB", "ddate": "2026-02-26", "dord": "KRF_2699596", "dnote": "用户取消", "damt": "501.0", "id": "d003_039"}, {"dmer": "XY168NB", "ddate": "2026-03-01", "dord": "L20260301120941860899820", "dnote": "用户取消", "damt": "206.0", "id": "d003_040"}, {"dmer": "ND168NB", "ddate": "2026-03-04", "dord": "KRI_3675456", "dnote": "", "damt": "120.0", "id": "d003_041"}, {"dmer": "HS168NB", "ddate": "2026-03-18", "dord": "KRJ_1458054", "dnote": "", "damt": "150.0", "id": "d003_042"}, {"dmer": "XO168NB", "ddate": "2026-03-21", "dord": "019D0FA3789E5BC451215CAF2A9501C1", "dnote": "", "damt": "135.0", "id": "d003_043"}, {"dmer": "XH168B", "ddate": "2026-03-28", "dord": "L20260328212447400069753", "dnote": "", "damt": "112.0", "id": "d003_044"}, {"dmer": "LS168B", "ddate": "2026-04-02", "dord": "L20260402133838991789760", "dnote": "", "damt": "124.0", "id": "d003_045"}, {"dmer": "OL168NB", "ddate": "2026-04-04", "dord": "L20260404091348097135986", "dnote": "", "damt": "213.0", "id": "d003_046"}, {"dmer": "MT168B", "ddate": "2026-04-07", "dord": "KRE_5627804", "dnote": "", "damt": "115.0", "id": "d003_047"}, {"dmer": "LS168NB", "ddate": "2026-04-15", "dord": "L20260415183711949544882", "dnote": "", "damt": "119.0", "id": "d003_048"}, {"dmer": "MT168B", "ddate": "2026-04-18", "dord": "KRE_5638638", "dnote": "逾时失败", "damt": "200.0", "id": "d003_049"}, {"dmer": "JY168NB", "ddate": "2026-05-14", "dord": "KRH_1572754", "dnote": "逾时失败", "damt": "110.0", "id": "d003_050"}, {"dmer": "FB168NB", "ddate": "2026-05-17", "dord": "KRA_2919257", "dnote": "三方误上方已扣除", "damt": "", "id": "d003_051"}, {"dmer": "XY168NB", "ddate": "2026-05-17", "dord": "L20260517183704062856469", "dnote": "逾时失败", "damt": "312.0", "id": "d003_052"}, {"dmer": "HS168B", "ddate": "2026-06-03", "dord": "KRJ_1706665", "dnote": "", "damt": "200.0", "id": "d003_053"}, {"dmer": "FB168NB", "ddate": "2026-06-03", "dord": "KRA_2926753", "dnote": "", "damt": "300.0", "id": "d003_054"}, {"dmer": "FB168NB", "ddate": "2026-06-03", "dord": "KRA_2926886", "dnote": "", "damt": "500.0", "id": "d003_055"}, {"dmer": "XY168NB", "ddate": "2026-06-30", "dord": "L20260630121710124801627", "dnote": "", "damt": "117.0", "id": "d003_056"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs004", "name": "外部 · JJ支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "1/20", "dord": "250120193525R004P03ca", "dnote": "", "damt": "891.0", "id": "d004_001"}, {"dmer": "", "ddate": "1/20", "dord": "250120192459R004P0ed3", "dnote": "", "damt": "1002.0", "id": "d004_002"}, {"dmer": "", "ddate": "1/21", "dord": "OTC045925012157044", "dnote": "", "damt": "1001.0", "id": "d004_003"}, {"dmer": "", "ddate": "1/30", "dord": "250130172043R004P0b6a", "dnote": "", "damt": "1009.0", "id": "d004_004"}, {"dmer": "", "ddate": "1/31", "dord": "250131131806R004P05ea", "dnote": "", "damt": "1008.0", "id": "d004_005"}, {"dmer": "", "ddate": "1/31", "dord": "250131124119R004P02ad", "dnote": "", "damt": "1008.0", "id": "d004_006"}, {"dmer": "", "ddate": "2/9", "dord": "250209234610R004P0808", "dnote": "", "damt": "505.0", "id": "d004_007"}, {"dmer": "", "ddate": "3/26", "dord": "L20250326195249975319778", "dnote": "", "damt": "165.0", "id": "d004_008"}, {"dmer": "sfpay1", "ddate": "6/30", "dord": "5063016314592851", "dnote": "", "damt": "200.0", "id": "d004_009"}, {"dmer": "sfpay1", "ddate": "12/03", "dord": "5120318815289009", "dnote": "", "damt": "400.0", "id": "d004_010"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs005", "name": "内部 · JJ微信", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "JD168E", "ddate": "2025-08-03", "dord": "KRG_1612247", "dnote": "通道失败", "damt": "199.0", "id": "d005_001"}, {"dmer": "MT168E", "ddate": "2025-10-17", "dord": "KRE_5315170", "dnote": "通道失败", "damt": "200.0", "id": "d005_002"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d005_003"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs007", "name": "内部 · JJ数字人民币", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d007_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs008", "name": "内部 · VCOTC支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "2025-04-28", "dord": "01967DAC78F119C501FCB3280FCB57BB", "dnote": "", "damt": "320.0", "id": "d008_001"}, {"dmer": "", "ddate": "2025-06-05", "dord": "KRJ_208142", "dnote": "", "damt": "305.0", "id": "d008_002"}, {"dmer": "", "ddate": "2025-06-25", "dord": "KRJ_301622", "dnote": "", "damt": "700.0", "id": "d008_003"}, {"dmer": "", "ddate": "2025-07-24", "dord": "019839DA84FD4D437DF1202C23D4C481", "dnote": "用户取消", "damt": "500.0", "id": "d008_004"}, {"dmer": "", "ddate": "2026-01-01", "dord": "KRK_261931", "dnote": "", "damt": "800.0", "id": "d008_005"}, {"dmer": "FB168B", "ddate": "2026-02-14", "dord": "KRA_2870206", "dnote": "", "damt": "300.0", "id": "d008_006"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d008_007"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs009", "name": "内部 · XQ小额卡卡", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "XY168G", "ddate": "2025-12-10", "dord": "L20251210074456955132698", "dnote": "", "damt": "680.0", "id": "d009_001"}, {"dmer": "ND168G", "ddate": "2026-01-10", "dord": "KRI_3379481", "dnote": "", "damt": "887.0", "id": "d009_002"}, {"dmer": "XY168G", "ddate": "2026-01-24", "dord": "L20260124081029814658467", "dnote": "", "damt": "701.0", "id": "d009_003"}, {"dmer": "", "ddate": "2026-03-30", "dord": "KRK_559550", "dnote": "", "damt": "1000.0", "id": "d009_004"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs012", "name": "内部 · ZCPAY支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "KF", "ddate": "2024-10-18", "dord": "L20241018021103883507575", "dnote": "", "damt": "500.0", "id": "d012_001"}, {"dmer": "YS1688A", "ddate": "2024-11-07", "dord": "KRF_1854777", "dnote": "", "damt": "677.0", "id": "d012_002"}, {"dmer": "ND", "ddate": "2024-12-03", "dord": "KRI_525287", "dnote": "", "damt": "510.0", "id": "d012_003"}, {"dmer": "ND1688A", "ddate": "2024-12-11", "dord": "KRI_568204", "dnote": "", "damt": "500.0", "id": "d012_004"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d012_005"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs013", "name": "外部 · ZCPAY支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d013_001"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d013_002"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d013_003"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs014", "name": "内部 · 码上支付宝（新人层）", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "HS168NB", "ddate": "2025-06-21", "dord": "KRJ_280156", "dnote": "", "damt": "2000.0", "id": "d014_001"}, {"dmer": "HS168NB", "ddate": "2025-08-20", "dord": "KRJ_548593", "dnote": "", "damt": "623.0", "id": "d014_002"}, {"dmer": "HS168NB", "ddate": "2025-09-01", "dord": "KRJ_601871", "dnote": "", "damt": "500.0", "id": "d014_003"}, {"dmer": "YD168NB", "ddate": "2025-11-24", "dord": "KRK_112628", "dnote": "", "damt": "500.0", "id": "d014_004"}, {"dmer": "ND168NB", "ddate": "2025-12-27", "dord": "KRI_3286437", "dnote": "", "damt": "3000.0", "id": "d014_005"}, {"dmer": "ND168NB", "ddate": "2026-01-29", "dord": "KRI_3491322", "dnote": "", "damt": "500.0", "id": "d014_006"}, {"dmer": "XO168NB", "ddate": "2026-06-17", "dord": "019ED5E81CF961FD96CC3FD7734372A8", "dnote": "", "damt": "500.0", "id": "d014_007"}, {"dmer": "RF168NB", "ddate": "2026-06-30", "dord": "KRL_91079", "dnote": "", "damt": "500.0", "id": "d014_008"}, {"dmer": "YD168NB", "ddate": "2026-07-11", "dord": "KRK_886328", "dnote": "", "damt": "500.0", "id": "d014_009"}, {"dmer": "MT168NB", "ddate": "2026-07-23", "dord": "KRE_5739268", "dnote": "", "damt": "1500.0", "id": "d014_010"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs016", "name": "内部 · 码上小额卡卡", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "LS168G", "ddate": "2026-06-17", "dord": "L20260617115724789204349", "dnote": "用户取消", "damt": "500.0", "id": "d016_001"}, {"dmer": "XY168G", "ddate": "2026-06-26", "dord": "L20260626100107984826983", "dnote": "用户取消", "damt": "500.0", "id": "d016_002"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs017", "name": "内部 · 新宝支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "SH", "ddate": "2024-12-23", "dord": "KRD_4291485", "dnote": "", "damt": "1000.0", "id": "d017_001"}, {"dmer": "JD", "ddate": "2025-09-24", "dord": "KRG_1666656", "dnote": "", "damt": "1000.0", "id": "d017_002"}, {"dmer": "ND168NB", "ddate": "2026-05-23", "dord": "KRI_4005163", "dnote": "", "damt": "500.0", "id": "d017_003"}, {"dmer": "LS168NB", "ddate": "2026-05-27", "dord": "L20260527000640156044393", "dnote": "", "damt": "1003.0", "id": "d017_004"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d017_005"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs018", "name": "外部 · 新宝支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "2026-06-06", "dord": "L20260606081017503279631", "dnote": "", "damt": "501.0", "id": "d018_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs019", "name": "内部 · 新宝支付宝(小额)", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d019_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs020", "name": "内部 · 新宝银联", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d020_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs021", "name": "内部 · 和奕", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d021_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs022", "name": "外部 · 和奕", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "4/3", "dord": "OTC088624040317840", "dnote": "", "damt": "4500.0", "id": "d022_001"}, {"dmer": "", "ddate": "4/24", "dord": "OTC097324042328576", "dnote": "", "damt": "3300.0", "id": "d022_002"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs023", "name": "内部 · 和奕支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "HS168B", "ddate": "2025-12-28", "dord": "KRJ_1148483", "dnote": "", "damt": "500.0", "id": "d023_001"}, {"dmer": "XY168B", "ddate": "2026-03-24", "dord": "L20260324221132135908836", "dnote": "逾时失败", "damt": "5507.0", "id": "d023_002"}, {"dmer": "", "ddate": "", "dord": "以上费率2.6的残留", "dnote": "", "damt": "", "id": "d023_003"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d023_004"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs024", "name": "内部 · 全通支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "SH1688A", "ddate": "2024-11-19", "dord": "KRD_4226575", "dnote": "", "damt": "1025.0", "id": "d024_001"}, {"dmer": "SH168B", "ddate": "2025-07-07", "dord": "KRD_4642458", "dnote": "", "damt": "2035.0", "id": "d024_002"}, {"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d024_003"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs025", "name": "外部 · 全通支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "2024-10-13", "dord": "L20241013181209378753431", "dnote": "", "damt": "2900.0", "id": "d025_001"}, {"dmer": "", "ddate": "2025-06-26", "dord": "250626110749R004P082d", "dnote": "", "damt": "9550.0", "id": "d025_002"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs026", "name": "内部 · GOSM支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "mt", "ddate": "", "dord": "KRE_4887677", "dnote": "", "damt": "1028.0", "id": "d026_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs027", "name": "内部 · GOSM微信", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "2025-12-01", "dord": "KRI_3090091", "dnote": "", "damt": "510.0", "id": "d027_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs028", "name": "内部 · 乐支付宝", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "SH", "ddate": "2024-12-12", "dord": "KRD_4280079", "dnote": "", "damt": "1385.0", "id": "d028_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs029", "name": "内部 · onepay数字人民币", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d029_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs030", "name": "内部 · onepay银联扫码", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d030_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs031", "name": "内部 · onepay小荷包", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d031_001"}], "sub": true, "backTo": "rs01"}, {"id": "rsd_rs032", "name": "内部 · 宝诺银联", "kind": "grid", "cols": "rdetail", "rows": [{"dmer": "", "ddate": "", "dord": "", "dnote": "", "damt": "", "id": "d032_001"}], "sub": true, "backTo": "rs01"}];
+    }
+    if(v < 33){                       // 四方残留暂存 建总览
+      const rs = list.find(c => c.id === 'rs');
+      if(rs && rs.tabs.length === 0){
+        rs.tabs = [{id:'rs01', name:'残留总览', kind:'grid', cols:'resid', rows:[{"id": "rs001", "rname": "JJ卡转卡", "rin": "8320.322", "rout": "55522.637"}, {"id": "rs002", "rname": "JJ支付宝", "rin": "27021.782", "rout": "15346.649"}, {"id": "rs003", "rname": "JJ微信", "rin": "375.858", "rout": ""}, {"id": "rs004", "rname": "JJ数字人民币", "rin": "0.0", "rout": ""}, {"id": "rs005", "rname": "VCOTC支付宝", "rin": "2925.0", "rout": ""}, {"id": "rs006", "rname": "XQ小额卡卡", "rin": "3125.166", "rout": ""}, {"id": "rs007", "rname": "红喜鹊卡转卡", "rin": "0.0", "rout": ""}, {"id": "rs008", "rname": "红喜鹊支转支", "rin": "0.0", "rout": ""}, {"id": "rs009", "rname": "ZCPAY支付宝", "rin": "2110.455", "rout": "0.0"}, {"id": "rs010", "rname": "码上支付宝（新人层）", "rin": "9828.31", "rout": ""}, {"id": "rs011", "rname": "码上纯代收", "rin": "0.0", "rout": ""}, {"id": "rs012", "rname": "码上小额卡卡", "rin": "962.0", "rout": ""}, {"id": "rs013", "rname": "新宝支付宝", "rin": "3403.922", "rout": "487.974"}, {"id": "rs014", "rname": "新宝支付宝(小额)", "rin": "0.0", "rout": ""}, {"id": "rs015", "rname": "新宝银联", "rin": "0.0", "rout": ""}, {"id": "rs016", "rname": "和奕", "rin": "4513.0", "rout": "7644.0"}, {"id": "rs017", "rname": "和奕支付宝", "rin": "5850.818", "rout": ""}, {"id": "rs018", "rname": "全通支付宝", "rin": "2959.02", "rout": "12039.15"}, {"id": "rs019", "rname": "GOSM支付宝", "rin": "4261.868", "rout": ""}, {"id": "rs020", "rname": "GOSM微信", "rin": "488.07", "rout": ""}, {"id": "rs021", "rname": "乐支付宝", "rin": "1336.525", "rout": ""}, {"id": "rs022", "rname": "onepay数字人民币", "rin": "0.0", "rout": ""}, {"id": "rs023", "rname": "onepay银联扫码", "rin": "0.0", "rout": ""}, {"id": "rs024", "rname": "onepay小荷包", "rin": "0.0", "rout": ""}, {"id": "rs025", "rname": "宝诺银联", "rin": "0.0", "rout": ""}, {"id": "rs026", "rname": "HCPAY", "rin": "0.0", "rout": ""}, {"id": "rs027", "rname": "XPAY支付宝", "rin": "0.0", "rout": ""}, {"id": "rs028", "rname": "KW支付宝-TOMMY", "rin": "0.0", "rout": ""}, {"id": "rs029", "rname": "WF支付宝", "rin": "", "rout": "0.0"}]}];
+      }
+    }
     if(v < 32){                       // 通道开关加密码，后台免输
       const sw = list.find(c => c.id === 'sw')?.tabs?.find(t => t.id === 'sw01');
       if(sw && sw.url && sw.url.indexOf('k=7878') < 0)
@@ -1854,6 +2032,18 @@ F.lname = {key:'lname', label:'名称', type:'text'};
 F.lurl  = {key:'lurl',  label:'网址', type:'url'};
 F.lacc  = {key:'lacc',  label:'帐号', type:'text'};
 F.lpw   = {key:'lpw',   label:'密码', type:'text'};
+F.rname = {key:'rname', label:'通道名', type:'text'};
+F.rgrp  = {key:'rgrp',  label:'归属', type:'select', opts:[{v:'内部',c:'#2158a8'},{v:'外部',c:'#b06424'}]};
+F.ramt  = {key:'ramt',  label:'残留金额', type:'num', money:true};
+F.rnote = {key:'rnote', label:'备注', type:'rich'};
+F.dmer  = {key:'dmer',  label:'商户', type:'text'};
+F.ddate = {key:'ddate', label:'日期', type:'date'};
+F.dord  = {key:'dord',  label:'商户单号', type:'text'};
+F.dnote = {key:'dnote', label:'备注', type:'multi', opts:[
+  {v:'通道失败',c:'#c0392b'},{v:'用户取消',c:'#7a51c4'},
+  {v:'逾时失败',c:'#d9772e'},{v:'待确认',c:'#2f6f8f'}]};
+F.damt  = {key:'damt',  label:'申请金额', type:'num', money:true};
+F.dfee  = {key:'dfee',  label:'充值手续费', type:'num'};
 const COLS = {
   base: [F.date, F.shift, F.text, F.img],                 // 固定事项 / 外部交接
   rate: [F.date, F.shift, F.onoff, F.text, F.img],        // 商户汇率变动
@@ -1868,11 +2058,13 @@ const COLS = {
   risk: [F.zone, F.img, F.desc],                          // 风险图档
   du3rd:[F.grp, F.nm, F.cut, F.place, F.cap, F.fee, F.ufee, F.daily, F.rule, F.usest, F.risk, F.settle, F.other, F.notice, F.memo],
   vcotc:[F.vdate, F.vch, F.vmer, F.vrmb, F.vusdt, F.vrate, F.vtype], // VCOTC 流水
-  link: [F.lname, F.lurl, F.lacc, F.lpw]   // 所需云端连结
+  link: [F.lname, F.lurl, F.lacc, F.lpw],  // 所需云端连结
+  resid:[F.rgrp, F.rname, F.ramt, F.rnote],  // 四方残留暂存·总览
+  rdetail:[F.dmer, F.ddate, F.dord, F.damt, F.dfee, F.dnote]  // 残留明细（备注多选放最后）
 };
 const GALLERY = { risk: true };                           // 图片放大显示的版型
 const SUM_OF = { limit: F.amt };                          // 哪些版型上方要加总
-const FILTER_OF = { case: F.state, fraud: F.state, jail: F.prog, risk: F.zone, du3rd: F.grp };  // 哪些版型上方要有切换器
+const FILTER_OF = { case: F.state, fraud: F.state, jail: F.prog, risk: F.zone, du3rd: F.grp, resid: F.rgrp };  // 哪些版型上方要有切换器
 const filterOf = t => FILTER_OF[t.cols];
 const optsOf = (t, f) => (t.opts && t.opts[f.key]) || f.opts || [];
 const sumOf = t => SUM_OF[t.cols];
@@ -1982,6 +2174,103 @@ function fallbackCopy(txt, cb){
 /* ===== 卡片拖曳排序 ===== */
 let cdrag = null;
 const clearCardMarks = () => document.querySelectorAll('.rc').forEach(x => x.classList.remove('over-l','over-r'));
+function residGrip(ev, tid, rid){
+  if(ev.target.closest && (ev.target.closest('.rc-x') || ev.target.closest('h4'))) return;
+  ev.preventDefault();
+  const el = ev.currentTarget, x0 = ev.clientX, y0 = ev.clientY;
+  let moved = false;
+  const move = e => { if(!moved && (Math.abs(e.clientX-x0)>5 || Math.abs(e.clientY-y0)>5)) moved = true; };
+  const up = () => {
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+    if(!moved) openResidDetail(tid, rid);
+  };
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+}
+// 开某商户的明细分页（没有就建）
+function openResidDetail(tid, rid){
+  const c = cats.find(x => x.tabs.some(t => t.id === tid));
+  const t = c.tabs.find(t => t.id === tid);
+  const r = (t.rows||[]).find(x => x.id === rid);
+  if(!r) return;
+  const nm = r.rname || '未命名';
+  const detId = 'rsd_' + rid;
+  let det = c.tabs.find(x => x.id === detId);
+  if(!det){
+    det = {id:detId, name:nm, kind:'grid', cols:'rdetail', rows:[], sub:true, backTo:tid};
+    c.tabs.push(det);
+    save();
+  }
+  curTab = detId;
+  renderTabs(); renderBoard();
+}
+function toggleMulti(tid, rid, key, val){
+  const t = findTab(tid);
+  const r = (t.rows||[]).find(x => x.id === rid);
+  if(!r) return;
+  const cur = String(r[key]||'').split(',').map(x=>x.trim()).filter(Boolean);
+  const i = cur.indexOf(val);
+  if(i >= 0) cur.splice(i,1); else cur.push(val);
+  r[key] = cur.join(',');
+  save(); renderBoard();
+  if(openRowId) renderRowModal();
+}
+function editApply(tid, el){
+  const t = findTab(tid);
+  const box = el.closest('.rsx');
+  const b = box.querySelector('b');
+  const inp = document.createElement('input');
+  inp.type = 'number'; inp.step = '0.01';
+  inp.value = t.applyOverride ?? '';
+  inp.placeholder = '留空＝自动加总';
+  inp.className = 'rsx-inp';
+  inp.onblur = () => { t.applyOverride = inp.value === '' ? null : inp.value; save(); renderBoard(); };
+  inp.onkeydown = e => { if(e.key === 'Enter') inp.blur(); if(e.key === 'Escape') renderBoard(); };
+  b.replaceWith(inp);
+  inp.focus(); inp.select();
+}
+function editCurFee(tid, el){
+  const t = findTab(tid);
+  const inp = document.createElement('input');
+  inp.type = 'number'; inp.step = '0.01';
+  inp.value = t.curFee ? String(Number(t.curFee) * 100) : '';
+  inp.placeholder = '2.8';
+  inp.className = 'rc-inp';
+  inp.onblur = () => setCurFee(tid, feeParse(inp.value));
+  inp.onkeydown = e => { if(e.key === 'Enter') inp.blur(); if(e.key === 'Escape') renderBoard(); };
+  el.replaceWith(inp);
+  inp.focus(); inp.select();
+}
+// 费率显示成百分比（0.028 → 2.8%）；输入时可打 2.8 或 0.028 都吃
+function feePct(v){
+  const n = Number(v);
+  if(v === '' || v == null || isNaN(n)) return '';
+  return (n * 100).toFixed(2).replace(/\.?0+$/, '') + '%';
+}
+function feeParse(v){
+  const n = Number(String(v).replace('%','').trim());
+  if(isNaN(n)) return '';
+  const r = n > 1 ? n / 100 : n;        // 打 2.8 当 2.8%；打 0.028 当原值
+  return String(Number(r.toFixed(6)));  // 去掉浮点误差
+}
+function toggleZero(tid){
+  const t = findTab(tid);
+  t.hideZero = !t.hideZero;
+  save(); renderBoard();
+}
+function setCurFee(tid, val){
+  const t = findTab(tid);
+  t.curFee = val;      // 只当作「之后新增明细的预设费率」，不改任何既有明细
+  save(); renderBoard();
+}
+function backToResid(tid){
+  const c = cats.find(x => x.tabs.some(t => t.id === tid));
+  const t = c.tabs.find(t => t.id === tid);
+  curTab = t.backTo || c.tabs[0].id;
+  renderTabs(); renderBoard();
+}
+
 function cardGrip(ev, tid, rid){
   if(ev.target.closest && ev.target.closest('.rc-x')) return;   // 删除钮自己处理
   ev.preventDefault();
@@ -2076,6 +2365,11 @@ function renderRowModal(){
         const isVc = t.cols === 'vcotc';
         const xbtn = isVc ? '' : `<button class="rf-x" title="移除这个栏位" onclick="event.preventDefault();delField('${t.id}','${f.key}')">✕</button>`;
         // VCOTC 的日期栏：唯读显示今天，不给编辑
+        if(t.cols === 'rdetail' && f.key === 'dfee'){
+          const fv = r.dfee || t.curFee || '';
+          if(!r.dfee && t.curFee) r.dfee = t.curFee;
+          return `<label class="rf t-num"><span>${f.label}</span><div class="rf-datefix">${fv?feePct(fv):'—'}（跟当前费率）</div></label>`;
+        }
         if(isVc && f.type === 'date'){
           const d = r[f.key] || new Date().toISOString().slice(0,10);
           if(!r[f.key]) r[f.key] = d;
@@ -2126,6 +2420,13 @@ function readCell(t, f, r){
     const o = optsOf(t, f).find(x => x.v === v), c = o ? o.c : '#6C7488';
     return `<span class="pill" style="background:${c}1F;color:${c}">${esc(v)}</span>`;
   }
+  if(f.type === 'multi'){
+    if(!v) return '';
+    return String(v).split(',').filter(Boolean).map(x => {
+      const o = (f.opts||[]).find(y => y.v === x.trim()), c = o ? o.c : '#6C7488';
+      return `<span class="pill" style="background:${c}1F;color:${c}">${esc(x.trim())}</span>`;
+    }).join(' ');
+  }
   if(f.type === 'rich')   return `<div class="v-text">${r[f.key + '_h'] || esc(v)}</div>`;
   if(f.type === 'img')    return v
     ? `<a class="thumb big" href="${esc(v)}" target="_blank" rel="noopener" style="background-image:url('${esc(driveThumb(v))}')"></a>`
@@ -2143,6 +2444,14 @@ function editCell(t, f, r){
       oninput="gridSet('${t.id}','${r.id}','${f.key}',this.value);autoGrow(this)">${esc(v)}</textarea>`;
   if(f.type === 'url') return `<input type="url" class="mono" placeholder="贴上网址 https://..." value="${esc(v)}"
       onkeydown="gridKey(event,'${t.id}')" oninput="gridSet('${t.id}','${r.id}','${f.key}',this.value)">`;
+  if(f.type === 'multi'){
+    const picked = String(v||'').split(',').map(x=>x.trim()).filter(Boolean);
+    return `<div class="mlt">${(f.opts||[]).map(o => {
+      const on = picked.includes(o.v);
+      return `<button type="button" class="mlt-b${on?' on':''}" style="--mc:${o.c}"
+        onclick="toggleMulti('${t.id}','${r.id}','${f.key}','${esc(o.v)}')">${esc(o.v)}</button>`;
+    }).join('')}</div>`;
+  }
   if(f.type === 'select'){
     const list = optsOf(t, f), o = list.find(x => x.v === v);
     return `<div class="selcell">
@@ -2207,7 +2516,9 @@ function gridView(t, q){
   const rows0 = all.filter(r => r.id === editRow ||
     ((!fl || seg === '全部' || (r[fl.key] || '') === seg) &&
      (!q || keys.some(k => String(r[k]||'').toLowerCase().includes(q)))));
-  const rows = (t.cols === 'vcotc' && vlimit !== 'all') ? rows0.slice(0, Number(vlimit)) : rows0;
+  const rowsZ = (t.hideZero && (t.cols === 'vcotc'))
+    ? rows0.filter(r => (Number(r.vrmb)||0) !== 0 || r.id === editRow) : rows0;
+  const rows = (t.cols === 'vcotc' && vlimit !== 'all') ? rowsZ.slice(0, Number(vlimit)) : rowsZ;
 
   const hasDate = cols.some(f => f.type === 'date');
   const undoN   = (undoStack[t.id] || []).length;
@@ -2225,6 +2536,126 @@ function gridView(t, q){
       : (fl && seg !== '全部' ? '「' + seg + '」目前没有资料。' : '还没有资料，按上面「＋ 新增一则」开始记。')}</div>`;
   const table = arr => `<div class="cards">${arr.map(r => r.id === editRow ? cardEdit(t,r) : cardRead(t,r)).join('')}</div>`;
 
+  // ── 残留明细页 ──
+  if(t.cols === 'rdetail'){
+    const fmtD = n => Number(n||0).toLocaleString('zh-TW',{maximumFractionDigits:2});
+    const sumAmt = all.reduce((n,r) => n + (Number(r.damt)||0), 0);
+    const hideZeroD = !!t.hideZero;
+    const barD = `<div class="grid-bar">
+        <button class="btn btn-sm" onclick="backToResid('${t.id}')">← 返回总览</button>
+        <span class="rd-name2">${esc((t.name||"").replace(/^(内部|外部)\s*·\s*/, ""))}</span>
+        <button class="btn btn-sm zt${hideZeroD?' on':''}" onclick="toggleZero('${t.id}')">${hideZeroD?'✓ 只看有金额':'只看有金额'}</button>
+        <span class="sp"></span>
+        <button class="btn btn-sm btn-solid" ${editRow?'disabled':''} onclick="gridAdd('${t.id}')">＋ 新增一则</button>
+        <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
+      </div>`;
+    // 每笔明细自带费率：手续费 = 申请金额 × 该笔费率；差额 = 申请金额 - 手续费
+    const lineCalc = r => {
+      const a = Number(r.damt)||0, f = Number(r.dfee)||0;
+      const mf = a * f;
+      return {a, f, mf, dif: a - mf};
+    };
+    const autoApply = all.reduce((n,r) => n + lineCalc(r).a, 0);
+    const sumApply = (t.applyOverride != null && t.applyOverride !== '') ? Number(t.applyOverride) : autoApply;
+    const sumFee   = all.reduce((n,r) => n + lineCalc(r).mf, 0);
+    const sumRemain= all.reduce((n,r) => n + lineCalc(r).dif, 0);
+    const curFee   = t.curFee ?? '';
+    // 依费率分组统计（自动，不影响明细）
+    const byFee = {};
+    all.forEach(r => { const c = lineCalc(r); const k = r.dfee || '未设';
+      (byFee[k] ||= {amt:0, fee:0, dif:0, n:0});
+      byFee[k].amt += c.a; byFee[k].fee += c.mf; byFee[k].dif += c.dif; byFee[k].n++; });
+    const hist = t.hist || [];
+    const feeKeys = Object.keys(byFee).sort();
+    const feeList = hist.length
+      ? hist.map(h => ({f:h.f, d:Number(h.d)||0}))
+      : (feeKeys.length > 1 ? feeKeys.map(k => ({f:k, d:byFee[k].dif})) : []);
+    const feeTotal = feeList.reduce((n,x) => n + x.d, 0);
+    const feeChips = feeList.length
+      ? feeList.map(x => `<span class="fq cpn" data-copy="${x.d}" title="点一下复制" onclick="copyFromEl(this)"><b>${feePct(x.f)}</b> ${fmtD(x.d)}</span>`).join('')
+      : '';
+    const sumD = `<div class="rd-panel">
+        <div class="rd-top">
+          <div class="rd-strip">
+            <div class="rsx"><span>申请总额 <i class="rsx-ed" title="点数字可改" onclick="editApply('${t.id}',this)">✎</i></span>
+              <b class="cpn" data-copy="${sumApply}" title="点一下复制（笔的✎可改）" onclick="copyFromEl(this)">${fmtD(sumApply)}</b></div>
+            <div class="rsx rsx-f"><span>商户手续费</span><b class="cpn" data-copy="${sumFee}" title="点一下复制" onclick="copyFromEl(this)">−${fmtD(sumFee)}</b></div>
+            <div class="rsx rsx-d"><span>总残留</span><b class="cpn" data-copy="${sumRemain}" title="点一下复制" onclick="copyFromEl(this)">${fmtD(sumRemain)}</b></div>
+          </div>
+        </div>
+        <div class="rd-row2">
+          ${feeChips ? `<div class="rd-fees">${feeChips}</div>` : '<span></span>'}
+          <span class="sp"></span>
+          <span class="rd-cur2" title="点一下改；只影响之后新增的明细">
+            <span class="rc-lb">费率</span>
+            <b onclick="editCurFee('${t.id}',this)">${curFee ? feePct(curFee) : '—'}</b>
+          </span>
+        </div>
+      </div>`;
+    const headD = cols.map(f => `<th class="col-${f.key}">${esc(f.label)}</th>`).join('')
+      + '<th class="col-calc">商户手续费</th><th class="col-calc">商户差额</th>';
+    const rowsD = hideZeroD ? rows.filter(r => (Number(r.damt)||0) !== 0 || r.id === editRow) : rows;
+    const bodyD = rowsD.map(r => r.id === editRow
+      ? `<tr class="tr-edit">${cols.map(f => `<td>${tblEditCell(t,r,f)}</td>`).join('')}
+          <td class="tr-act"><button class="mini ok" onclick="commitEdit();renderBoard()">✓</button></td></tr>`
+      : (() => { const c = lineCalc(r);
+        return `<tr onclick="openRow('${t.id}','${r.id}')">${cols.map(f => {
+          const v = r[f.key] ?? '';
+          let cell;
+          if(f.type === 'multi' && v){
+            cell = String(v).split(',').filter(Boolean).map(x => {
+              const o = (f.opts||[]).find(y => y.v === x.trim()), c = o ? o.c : '#6C7488';
+              return `<span class="vtag" style="background:${c}1F;color:${c};border:1px solid ${c}55">${esc(x.trim())}</span>`;
+            }).join(' ');
+          } else if(f.key === 'dfee'){
+            cell = v===''?'—':`<span class="fee-pct">${feePct(v)}</span>`;
+          } else if(f.type==='num' && f.money){
+            cell = v===''?'':`<span class="cpn" data-copy="${v}" onclick="event.stopPropagation();copyFromEl(this)">${fmtD(v)}</span>`;
+          } else if(v && (f.key==='dord' || f.key==='dmer')){
+            cell = `<span class="cpn" data-copy="${esc(v)}" onclick="event.stopPropagation();copyFromEl(this)">${esc(v)}</span>`;
+          } else cell = esc(v);
+          return `<td class="col-${f.key}">${cell}</td>`;
+        }).join('')}
+          <td class="col-calc">${c.f?`<span class="cpn" data-copy="${c.mf}" onclick="event.stopPropagation();copyFromEl(this)">${fmtD(c.mf)}</span>`:'—'}</td>
+          <td class="col-calc dif">${c.f?`<span class="cpn" data-copy="${c.dif}" onclick="event.stopPropagation();copyFromEl(this)">${fmtD(c.dif)}</span>`:'—'}</td>
+          <td class="tr-act"><button class="mini del" onclick="event.stopPropagation();gridDel('${t.id}','${r.id}')">✕</button></td></tr>`; })()
+    ).join('');
+    const tblD = rowsD.length
+      ? `<div class="vtbl-wrap"><table class="vtbl"><thead><tr>${headD}<th class="tr-act"></th></tr></thead><tbody>${bodyD}</tbody></table></div>`
+      : `<div class="rd-empty">${hideZeroD ? '没有金额不为 0 的明细。' : '这个商户还没有明细。用「＋新增一则」「📋批次贴上」或「📥汇入 CSV」加入。'}</div>`;
+    return barD + sumD + tblD;
+  }
+
+  // ── 四方残留暂存：筛选钮 + 通道卡片 ──
+  if(t.cols === 'resid'){
+    const fmt = n => Number(n||0).toLocaleString('zh-TW',{maximumFractionDigits:3});
+    const hideZero = !!t.hideZero;
+    const bar2 = `<div class="grid-bar">${segsHTML(t)}
+        <button class="btn btn-sm zt${hideZero?' on':''}" onclick="toggleZero('${t.id}')">${hideZero?'✓ 只看有余额':'只看有余额'}</button>
+        <span class="sp"></span>
+        <button class="btn btn-sm btn-solid" ${editRow?'disabled':''} onclick="gridAdd('${t.id}')">＋ 新增一则</button>
+        <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
+        <button class="btn btn-sm" onclick="openCloud('${t.id}')">📥 汇入 CSV</button>
+        <button class="btn btn-sm btn-danger" onclick="clearPage('${t.id}')">🗑 清空本页</button>
+      </div>`;
+    const rowsF = hideZero ? rows.filter(r => (Number(r.ramt)||0) !== 0 || r.id === editRow) : rows;
+    const cardsHTML = rowsF.map(r => {
+      if(r.id === editRow) return cardEdit(t, r);
+      const amt = Number(r.ramt)||0;
+      const isIn = (r.rgrp||'') === '内部';
+      const dim = amt <= 0 ? ' rs-zero' : '';
+      return `<article class="rc rc-resid${dim} ${isIn?'rs-cin':'rs-cout'}${seg==='全部'?'':' no-tag'}" data-id="${r.id}" onpointerdown="residGrip(event,'${t.id}','${r.id}')">
+        <span class="rc-g" aria-hidden="true">⋮⋮</span>
+        ${seg === '全部' ? `<span class="rs-tag ${isIn?'in':'out'}">${isIn?'内':'外'}</span>` : ''}
+        <h4 data-copy="${esc(r.rname||'')}" title="点一下复制" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();copyFromEl(this)">${esc(r.rname||'（未命名）')}</h4>
+        <div class="rs-amt${amt>0?'':' zero'} cpn" data-copy="${amt}" title="点一下复制" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();copyFromEl(this)">${fmt(amt)}</div>
+        <button class="rc-x" title="删除这则" onclick="event.stopPropagation();gridDel('${t.id}','${r.id}')">✕</button>
+      </article>`;
+    }).join('');
+    return bar2 + (rowsF.length ? `<div class="cards">${cardsHTML}</div>`
+      : `<div class="yempty">${hideZero ? '目前没有余额不为 0 的通道。' : '还没有资料。'}</div>`);
+  }
+
   // ── 表格模式（VCOTC 这种流水帐）──
   if(t.cols === 'vcotc'){
     const fmt = (n,d) => Number(n).toLocaleString('zh-TW',{maximumFractionDigits:d});
@@ -2233,7 +2664,7 @@ function gridView(t, q){
       if(f.type === 'num' && f.money){
         if(v==='') return '';
         const neg = Number(v) < 0;
-        return `<span style="color:${neg?'#cf3b3b':''}">${fmt(v,2)}</span>`;
+        return `<span class="cpn" data-copy="${v}" title="点一下复制" onclick="event.stopPropagation();copyFromEl(this)" style="color:${neg?'#cf3b3b':''}">${fmt(v,2)}</span>`;
       }
       if(f.type === 'select' && v){
         const o = (f.opts||[]).find(x => x.v === v);
@@ -2260,7 +2691,9 @@ function gridView(t, q){
     const rmbSum  = all.reduce((n,r) => n + (Number(r.vrmb)||0), 0);
     const usdtSum = all.reduce((n,r) => n + (Number(r.vusdt)||0), 0);
 
+    const hideZeroV = !!t.hideZero;
     const limitBar = `<div class="vlimit-bar">
+      <button class="btn btn-sm zt${hideZeroV?' on':''}" onclick="toggleZero('${t.id}')">${hideZeroV?'✓ 只看有金额':'只看有金额'}</button>
       <select class="vlimit-sel" onchange="setVlimit('${t.id}',this.value)">
         ${['5','10','20','50','100','all'].map(n => `<option value="${n}" ${vlimit===n?'selected':''}>显示 ${n==='all'?'全部':n+' 笔'}</option>`).join('')}
       </select>
@@ -2315,6 +2748,19 @@ function gridView(t, q){
 
 function tblEditCell(t, r, f){
   const k = f.key;
+  if(k === 'dfee'){                       // 费率跟着「当前费率」，不用逐笔填
+    const fv = r.dfee || t.curFee || '';
+    if(!r.dfee && t.curFee) r.dfee = t.curFee;
+    return `<span class="fee-fix">${fv ? feePct(fv) : '—'}</span>`;
+  }
+  if(f.type === 'multi'){
+    const picked = String(r[k]||'').split(',').map(x=>x.trim()).filter(Boolean);
+    return `<div class="mlt">${(f.opts||[]).map(o => {
+      const on = picked.includes(o.v);
+      return `<button type="button" class="mlt-b${on?' on':''}" style="--mc:${o.c}"
+        onclick="toggleMulti('${t.id}','${r.id}','${k}','${esc(o.v)}')">${esc(o.v)}</button>`;
+    }).join('')}</div>`;
+  }
   if(f.type === 'select'){
     const list = (f.opts||[]).map(o => typeof o === 'string' ? o : o.v);
     const opts = ['<option value="">—</option>'].concat(list.map(o =>
@@ -2363,6 +2809,7 @@ function gridAdd(tid){
   beforeRows = clone(t.rows || []);
   const r = {id:'r' + Date.now()};
   colsOf(t).forEach(f => r[f.key] = f.type === 'date' ? new Date().toISOString().slice(0,10) : '');
+  if(t.cols === 'rdetail' && t.curFee) r.dfee = t.curFee;   // 新增明细带当前费率（旧的不动）
   (t.rows ||= []).unshift(r);
   editRow = r.id;
   renderBoard();
@@ -3013,10 +3460,11 @@ function reorderTab(tid, targetId, after){
 }
 function renderTabs(){
   const c = cat();
+  const shown = c.tabs.filter(t => !t.sub || t.id === curTab);
   document.getElementById('tabRail').innerHTML =
-    (c.tabs.length > 1 ? c.tabs.map(t => `
-      <button class="tab ${t.id===curTab?'on':''}" data-id="${t.id}"
-              onpointerdown="tabDown(event,'${t.id}')">${esc(t.name)}</button>`).join('') : '');
+    (shown.length > 1 ? shown.map(t => `
+      <button class="tab ${t.id===curTab?'on':''}${t.sub?' tab-sub':''}" data-id="${t.id}"
+              onpointerdown="tabDown(event,'${t.id}')">${t.sub?'↳ ':''}${esc(t.name)}</button>`).join('') : '');
 }
 function renderBoard(){
   const c = cat(), b = document.getElementById('board');
@@ -3111,7 +3559,11 @@ function renderTools(){
   const t = tab();
   if(!t){ el.innerHTML = ''; return }
   if(t.kind === 'grid'){
-    el.innerHTML = '';
+    el.innerHTML = (t.cols === 'rdetail')
+      ? `<button class="btn btn-sm" onclick="openPaste('${t.id}')">📋 批次贴上</button>
+         <button class="btn btn-sm" onclick="openCloud('${t.id}')">📥 汇入 CSV</button>
+         <button class="btn btn-sm btn-danger" onclick="clearPage('${t.id}')">🗑 清空本页</button>`
+      : '';
   }else{
     el.innerHTML = `<button class="btn" onclick="reloadCurrent()">重新载入</button>`;
   }
