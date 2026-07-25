@@ -1957,6 +1957,7 @@ function fbInit(){
     db.collection('cards').onSnapshot(function(qs){ if(qs.metadata.hasPendingWrites) return; _snapCards = qs; scheduleCloud(); });
   }catch(e){ cloudReady=false; console.warn('Firebase init 失败', e); }
 }
+function fbClean(x){ return JSON.parse(JSON.stringify(x===undefined?null:x)); }
 function scheduleCloud(){ clearTimeout(_onCloudT); _onCloudT=setTimeout(applyCloud,150); }
 function applyCloud(){
   if(!cloudReady || !_snapStruct || !_snapCards) return;
@@ -1979,11 +1980,11 @@ function cloudSave(){
   try{
     var cur={}, batch=db.batch(), ops=0;
     cats.forEach(function(c){ (c.tabs||[]).forEach(function(t){ (t.rows||[]).forEach(function(r,ord){ cur[c.id+'~'+t.id+'~'+r.id]={ci:c.id,ti:t.id,ord:ord,d:r}; }); }); });
-    for(var key in cur){ var sig=JSON.stringify({ord:cur[key].ord,d:cur[key].d}); if(_cloudCache[key]!==sig){ batch.set(db.collection('cards').doc(key), cur[key]); _cloudCache[key]=sig; if(++ops>=400){ batch.commit(); batch=db.batch(); ops=0; } } }
+    for(var key in cur){ var sig=JSON.stringify({ord:cur[key].ord,d:cur[key].d}); if(_cloudCache[key]!==sig){ batch.set(db.collection('cards').doc(key), fbClean(cur[key])); _cloudCache[key]=sig; if(++ops>=400){ batch.commit(); batch=db.batch(); ops=0; } } }
     for(var k2 in _cloudCache){ if(k2!=='__sk' && !(k2 in cur)){ batch.delete(db.collection('cards').doc(k2)); delete _cloudCache[k2]; if(++ops>=400){ batch.commit(); batch=db.batch(); ops=0; } } }
     var sk = cats.map(function(c){ return {id:c.id,name:c.name,code:c.code,tone:c.tone,icon:c.icon,sid:c.sid||'', tabs:(c.tabs||[]).map(function(t){ var tt=Object.assign({},t); tt.rows=[]; return tt; })}; });
     var skSig=JSON.stringify(sk);
-    if(_cloudCache.__sk!==skSig){ batch.set(db.collection('meta').doc('structure'), {v:SCHEMA, sk:sk}); _cloudCache.__sk=skSig; ops++; }
+    if(_cloudCache.__sk!==skSig){ batch.set(db.collection('meta').doc('structure'), fbClean({v:SCHEMA, sk:sk})); _cloudCache.__sk=skSig; ops++; }
     if(ops>0) batch.commit();
   }catch(e){ console.warn('cloudSave 失败', e); }
 }
@@ -1993,9 +1994,9 @@ async function cloudMigrateUp(){
   try{
     var batch=db.batch(), ops=0;
     var sk = cats.map(function(c){ return {id:c.id,name:c.name,code:c.code,tone:c.tone,icon:c.icon,sid:c.sid||'', tabs:(c.tabs||[]).map(function(t){ var tt=Object.assign({},t); tt.rows=[]; return tt; })}; });
-    batch.set(db.collection('meta').doc('structure'), {v:SCHEMA, sk:sk}); ops++;
-    batch.set(db.collection('meta').doc('auth'), {v:getAuth()}); ops++;
-    cats.forEach(function(c){ (c.tabs||[]).forEach(function(t){ (t.rows||[]).forEach(function(r,ord){ batch.set(db.collection('cards').doc(c.id+'~'+t.id+'~'+r.id), {ci:c.id,ti:t.id,ord:ord,d:r}); if(++ops>=400){ batch.commit(); batch=db.batch(); ops=0; } }); }); });
+    batch.set(db.collection('meta').doc('structure'), fbClean({v:SCHEMA, sk:sk})); ops++;
+    batch.set(db.collection('meta').doc('auth'), fbClean({v:getAuth()})); ops++;
+    cats.forEach(function(c){ (c.tabs||[]).forEach(function(t){ (t.rows||[]).forEach(function(r,ord){ batch.set(db.collection('cards').doc(c.id+'~'+t.id+'~'+r.id), fbClean({ci:c.id,ti:t.id,ord:ord,d:r})); if(++ops>=400){ batch.commit(); batch=db.batch(); ops=0; } }); }); });
     if(ops>0) await batch.commit();
     cloudMigrated=true; _cloudCache={};
     toast('已上传到云端！大家现在共用同一份'); refreshCloudStat();
@@ -4201,10 +4202,10 @@ const AUTH_KEY='console.auth', SHIFT_KEY='console.shift', LOG_KEY='console.oplog
 const SHIFTS=['早班','中班','晚班'];
 const DEFAULT_AUTH={'早班':{acc:'zao',pw:'zao168'},'中班':{acc:'zhong',pw:'zhong168'},'晚班':{acc:'wan',pw:'wan168'},_admin:'admin168'};
 function getAuth(){ if(cloudReady && _authCache){ return Object.assign({}, DEFAULT_AUTH, _authCache); } try{ const o=JSON.parse(store.get(AUTH_KEY)||'null'); return o? Object.assign({}, DEFAULT_AUTH, o):{...DEFAULT_AUTH}; }catch(e){ return {...DEFAULT_AUTH}; } }
-function setAuth(a){ store.set(AUTH_KEY, JSON.stringify(a)); _authCache=a; if(cloudReady){ try{ db.collection('meta').doc('auth').set({v:a}); }catch(e){} } }
+function setAuth(a){ store.set(AUTH_KEY, JSON.stringify(a)); _authCache=a; if(cloudReady){ try{ db.collection('meta').doc('auth').set(fbClean({v:a})); }catch(e){} } }
 function curShift(){ try{ return sessionStorage.getItem(SHIFT_KEY)||''; }catch(e){ return ''; } }
 function getLog(){ try{ return JSON.parse(store.get(LOG_KEY)||'[]')||[]; }catch(e){ return []; } }
-function addLog(act, mod, tgt){ const e={t:Date.now(), s:curShift()||'—', act:act, mod:mod||'', tgt:tgt||''}; try{ const g=getLog(); g.unshift(e); if(g.length>3000) g.length=3000; store.set(LOG_KEY, JSON.stringify(g)); }catch(_){} if(cloudReady){ try{ db.collection('oplog').add(e); }catch(_){} } }
+function addLog(act, mod, tgt){ const e={t:Date.now(), s:curShift()||'—', act:act, mod:mod||'', tgt:tgt||''}; try{ const g=getLog(); g.unshift(e); if(g.length>3000) g.length=3000; store.set(LOG_KEY, JSON.stringify(g)); }catch(_){} if(cloudReady){ try{ db.collection('oplog').add(fbClean(e)); }catch(_){} } }
 function fmtTime(ms){ const d=new Date(ms), p=x=>String(x).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; }
 function rowLabel(t, r){ if(!r) return ''; const keys=['lname','rname','dord','dmer','lmid','vch','vmer','text','name','title']; for(const k of keys){ if(r[k]) return String(r[k]).slice(0,40); } const f=(colsOf(t)||[]).find(f=>['text','url'].includes(f.type)); return f&&r[f.key]?String(r[f.key]).slice(0,40):''; }
 function tabPath(tb){ if(!tb) return ''; const c=cats.find(c=>(c.tabs||[]).some(x=>x.id===tb.id)); return (c?c.name+' / ':'')+(tb.name||''); }
