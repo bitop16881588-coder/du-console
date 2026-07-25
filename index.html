@@ -336,6 +336,44 @@ body.dragging-on,body.dragging-on *{cursor:grabbing !important;user-select:none}
 .csw:hover{transform:scale(1.14)}
 .cclr{width:100%;margin-top:2px;font-size:12px;font-weight:700;color:#5b6b80;padding:5px;border:1px solid #dbe3ed;border-radius:7px;background:#f6f8fb;cursor:pointer}
 .cclr:hover{background:#eef2f7}
+.logingate{position:fixed;inset:0;z-index:100000;background:rgba(20,26,40,.55);display:flex;align-items:center;justify-content:center}
+.lg-box{width:340px;max-width:92vw;background:#fff;border-radius:16px;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.lg-title{font-size:20px;font-weight:900;color:#1c2a44;text-align:center}
+.lg-sub{font-size:12.5px;color:#8794a6;text-align:center;margin:4px 0 16px}
+.lg-shifts{display:flex;gap:8px;margin-bottom:14px}
+.lg-sh{flex:1;padding:9px 0;border:1px solid #dbe3ed;background:#f6f8fb;border-radius:9px;font-weight:800;color:#5b6b80;cursor:pointer;transition:.12s}
+.lg-sh.on{background:#2158a8;color:#fff;border-color:#2158a8}
+.lg-in{width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:10px;border:1px solid #dbe3ed;border-radius:9px;font-size:14px;outline:none}
+.lg-in:focus{border-color:#2158a8}
+.lg-go{width:100%;padding:11px;background:#2158a8;color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:800;cursor:pointer}
+.lg-go:hover{background:#1a4886}
+.lg-err{color:#cf3b3b;font-size:12.5px;text-align:center;min-height:18px;margin-top:8px;font-weight:700}
+.lg-set{width:100%;margin-top:4px;background:none;border:none;color:#8794a6;font-size:12px;cursor:pointer;text-decoration:underline}
+.lg-auth{margin-top:10px;border-top:1px dashed #dbe3ed;padding-top:10px}
+.lg-arow{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.lg-arow span{width:36px;font-size:12px;font-weight:800;color:#5b6b80}
+.lg-ain{flex:1;min-width:0;padding:6px 8px;border:1px solid #dbe3ed;border-radius:6px;font-size:12.5px;outline:none}
+.lg-save{width:100%;padding:8px;background:#22a699;color:#fff;border:none;border-radius:7px;font-weight:800;cursor:pointer;margin-top:4px}
+.who{font-size:12px;font-weight:800;color:#177a45;background:#e3f3e9;padding:3px 9px;border-radius:999px;margin-right:2px}
+.logpanel{position:fixed;inset:0;z-index:99999;background:rgba(20,26,40,.5);display:flex;align-items:center;justify-content:center}
+.lp-box{width:900px;max-width:94vw;max-height:86vh;background:#fff;border-radius:14px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.lp-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #e5eaf1}
+.lp-bar b{font-size:16px;color:#1c2a44}
+.lp-cnt{font-size:12px;color:#8794a6}
+.lp-tblwrap{overflow:auto}
+.lp-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.lp-tbl th{position:sticky;top:0;background:#f6f8fb;text-align:left;padding:8px 12px;font-size:12px;color:#5b6b80;border-bottom:1px solid #e5eaf1}
+.lp-tbl td{padding:7px 12px;border-bottom:1px solid #f0f3f7;white-space:nowrap;max-width:280px;overflow:hidden;text-overflow:ellipsis}
+.lp-t{color:#8794a6;font-variant-numeric:tabular-nums}
+.lp-s{font-weight:800;color:#5b6b80}
+.lp-a{font-weight:800}
+.a-删除,.a-清空{color:#cf3b3b}.a-新增{color:#177a45}.a-修改{color:#2158a8}.a-登入{color:#8a5c08}.a-登出{color:#8794a6}
+.lp-empty{text-align:center;color:#8794a6;padding:24px}
+.authbar{padding:10px 14px 2px;display:flex;flex-direction:column;gap:7px}
+.who2{font-size:12px;font-weight:800;color:#c8f0d8;background:rgba(34,166,153,.18);border:1px solid rgba(34,166,153,.35);padding:5px 10px;border-radius:8px;text-align:center}
+.authbtns{display:flex;gap:6px}
+.authbtns button{flex:1;font-size:11.5px;font-weight:700;color:#c3ccdd;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:6px 4px;cursor:pointer;transition:.12s}
+.authbtns button:hover{background:rgba(255,255,255,.14);color:#fff}
 .lk-row{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
 .lk-url{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;color:#2563eb;
   text-decoration:none;background:#eef4ff;padding:4px 11px;border-radius:7px;transition:.12s;border:none;cursor:pointer}
@@ -890,6 +928,7 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
         <p id="railStamp">— —</p>
       </div>
     </div>
+    <div id="authBar" class="authbar"></div>
     <div class="rail-label">分类</div>
     <div class="cat-list" id="catList"></div>
     <button class="cat-add" onclick="openCatDialog()"><i>＋</i><span>新增分类</span></button>
@@ -3348,6 +3387,7 @@ function clearPage(tid){
   if(!confirm(`确定清空「${t.name}」这一页的全部 ${n} 笔资料吗？\n（清空后可按「↶ 上一步」救回）`)) return;
   beforeRows = clone(t.rows || []);
   t.rows = [];
+  addLog('清空', tabPath(t), n+' 笔');
   save(); renderBoard();
   toast(`已清空 ${n} 笔，可按「上一步」救回`);
 }
@@ -3598,7 +3638,11 @@ function commitEdit(){
       rtSync(f.key);
       if(cur && cur[f.key + '_h']) cur[f.key + '_h'] = sanitizeHtml(cur[f.key + '_h']);
     });
-    if(beforeRows && JSON.stringify(beforeRows) !== JSON.stringify(t.rows)) pushUndo(t.id, beforeRows);
+    if(beforeRows && JSON.stringify(beforeRows) !== JSON.stringify(t.rows)){
+      pushUndo(t.id, beforeRows);
+      const _isAdd = t.rows.length > beforeRows.length;
+      addLog(_isAdd ? '新增' : '修改', tabPath(t), rowLabel(t, t.rows.find(x => x.id === editRow)));
+    }
   }
   editRow = null; beforeRows = null; save();
 }
@@ -3635,8 +3679,10 @@ function gridCancel(tid){
 }
 function gridDel(tid, rid){
   const t = findTab(tid);
+  const _lbl = rowLabel(t, (t.rows||[]).find(r => r.id === rid));
   pushUndo(tid, t.rows);
   t.rows = t.rows.filter(r => r.id !== rid);
+  addLog('删除', tabPath(t), _lbl);
   save(); renderBoard(); toast('已删除，可按「上一步」救回');
 }
 function gridUndo(tid){
@@ -3875,6 +3921,7 @@ function renderRail(){
       <button class="cat-edit" title="分类设定" onclick="event.stopPropagation();openCatDialog('${c.id}')">✎</button>
       <span class="cat-count">${c.tabs.length}</span>
     </div>`).join('');
+  renderAuth();
 }
 function segsHTML(t){
   if(!t || t.kind !== 'grid') return '';
@@ -4094,10 +4141,81 @@ function renderTools(){
     el.innerHTML = `<button class="btn" onclick="reloadCurrent()">重新载入</button>`;
   }
 }
+function renderAuth(){
+  const el = document.getElementById('authBar');
+  if(!el) return;
+  const sh = curShift();
+  el.innerHTML = `<div class="who2">${sh ? ('🟢 '+esc(sh)) : '⚪ 未登入'}</div>
+    <div class="authbtns">
+      <button onclick="openLog()">🗂 操作记录</button>
+      ${sh ? `<button onclick="logout()">登出</button>` : `<button onclick="showLogin()">登入</button>`}
+    </div>`;
+}
 function render(){
   if(!curTab) curTab = cat().tabs[0]?.id || null;   // 先确定分页，切换器才画得出来
   applyTone(); renderRail(); renderTabs(); renderBoard();
 }
+
+/* ===== 三班制登入 + 操作记录 ===== */
+const AUTH_KEY='console.auth', SHIFT_KEY='console.shift', LOG_KEY='console.oplog';
+const SHIFTS=['早班','中班','晚班'];
+const DEFAULT_AUTH={'早班':{acc:'zao',pw:'zao168'},'中班':{acc:'zhong',pw:'zhong168'},'晚班':{acc:'wan',pw:'wan168'}};
+function getAuth(){ try{ const o=JSON.parse(store.get(AUTH_KEY)||'null'); return o? Object.assign({}, DEFAULT_AUTH, o):{...DEFAULT_AUTH}; }catch(e){ return {...DEFAULT_AUTH}; } }
+function setAuth(a){ store.set(AUTH_KEY, JSON.stringify(a)); }
+function curShift(){ try{ return sessionStorage.getItem(SHIFT_KEY)||''; }catch(e){ return ''; } }
+function getLog(){ try{ return JSON.parse(store.get(LOG_KEY)||'[]')||[]; }catch(e){ return []; } }
+function addLog(act, mod, tgt){ try{ const g=getLog(); g.unshift({t:Date.now(), s:curShift()||'—', act, mod:mod||'', tgt:tgt||''}); if(g.length>3000) g.length=3000; store.set(LOG_KEY, JSON.stringify(g)); }catch(e){} }
+function fmtTime(ms){ const d=new Date(ms), p=x=>String(x).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; }
+function rowLabel(t, r){ if(!r) return ''; const keys=['lname','rname','dord','dmer','lmid','vch','vmer','text','name','title']; for(const k of keys){ if(r[k]) return String(r[k]).slice(0,40); } const f=(colsOf(t)||[]).find(f=>['text','url'].includes(f.type)); return f&&r[f.key]?String(r[f.key]).slice(0,40):''; }
+function tabPath(tb){ if(!tb) return ''; const c=cats.find(c=>(c.tabs||[]).some(x=>x.id===tb.id)); return (c?c.name+' / ':'')+(tb.name||''); }
+function showLogin(){
+  let m=document.getElementById('loginGate');
+  if(!m){ m=document.createElement('div'); m.id='loginGate'; m.className='logingate'; document.body.appendChild(m); }
+  const a=getAuth();
+  m.innerHTML=`<div class="lg-box">
+    <div class="lg-title">后台登入</div>
+    <div class="lg-sub">选择班别并输入该班帐号密码</div>
+    <div class="lg-shifts">${SHIFTS.map((x,i)=>`<button class="lg-sh${i===0?' on':''}" data-s="${x}" onclick="pickShift(this)">${x}</button>`).join('')}</div>
+    <input id="lgAcc" class="lg-in" placeholder="帐号" autocomplete="off">
+    <input id="lgPw" class="lg-in" type="password" placeholder="密码" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="lg-go" onclick="doLogin()">登入</button>
+    <div class="lg-err" id="lgErr"></div>
+    <button class="lg-set" onclick="toggleAuthEdit()">⚙ 设定班别帐密</button>
+    <div class="lg-auth" id="lgAuth" style="display:none">
+      ${SHIFTS.map(x=>`<div class="lg-arow"><span>${x}</span><input class="lg-ain" id="au_${x}_acc" placeholder="帐号" value="${esc(a[x].acc)}"><input class="lg-ain" id="au_${x}_pw" placeholder="密码" value="${esc(a[x].pw)}"></div>`).join('')}
+      <button class="lg-save" onclick="saveAuthEdit()">储存帐密</button>
+    </div>
+  </div>`;
+  m._shift=SHIFTS[0]; m.style.display='flex';
+  setTimeout(()=>{ const el=document.getElementById('lgAcc'); if(el) el.focus(); },30);
+}
+function pickShift(el){ const m=document.getElementById('loginGate'); m._shift=el.dataset.s; m.querySelectorAll('.lg-sh').forEach(b=>b.classList.toggle('on', b===el)); }
+function doLogin(){
+  const m=document.getElementById('loginGate'); const sft=m._shift||SHIFTS[0];
+  const acc=document.getElementById('lgAcc').value.trim(), pw=document.getElementById('lgPw').value;
+  const a=getAuth()[sft];
+  if(a && acc===a.acc && pw===a.pw){ try{ sessionStorage.setItem(SHIFT_KEY, sft); }catch(e){} addLog('登入','',sft); m.style.display='none'; m.remove(); renderAuth(); toast('已登入：'+sft); }
+  else { document.getElementById('lgErr').textContent='帐号或密码错误'; }
+}
+function logout(){ if(!confirm('确定登出？')) return; addLog('登出','',curShift()); try{ sessionStorage.removeItem(SHIFT_KEY); }catch(e){} location.reload(); }
+function toggleAuthEdit(){ const b=document.getElementById('lgAuth'); b.style.display=b.style.display==='none'?'block':'none'; }
+function saveAuthEdit(){ const a={}; SHIFTS.forEach(x=>{ a[x]={acc:document.getElementById('au_'+x+'_acc').value.trim(), pw:document.getElementById('au_'+x+'_pw').value}; }); setAuth(a); toast('帐密已储存'); }
+function openLog(){
+  let m=document.getElementById('logPanel');
+  if(!m){ m=document.createElement('div'); m.id='logPanel'; m.className='logpanel'; document.body.appendChild(m); }
+  const g=getLog();
+  const rows=g.slice(0,800).map(e=>`<tr><td class="lp-t">${fmtTime(e.t)}</td><td class="lp-s">${esc(e.s)}</td><td class="lp-a a-${esc(e.act)}">${esc(e.act)}</td><td>${esc(e.mod)}</td><td>${esc(e.tgt)}</td></tr>`).join('');
+  m.innerHTML=`<div class="lp-box">
+    <div class="lp-bar"><b>操作记录</b><span class="lp-cnt">${g.length} 笔</span><span style="flex:1"></span>
+      <button class="btn btn-sm btn-danger" onclick="clearLog()">🗑 清空</button>
+      <button class="btn btn-sm" onclick="closeLog()">✕ 关闭</button></div>
+    <div class="lp-tblwrap"><table class="lp-tbl"><thead><tr><th>时间</th><th>班别</th><th>动作</th><th>页面</th><th>目标</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="5" class="lp-empty">还没有记录</td></tr>'}</tbody></table></div>
+  </div>`;
+  m.style.display='flex';
+}
+function closeLog(){ const m=document.getElementById('logPanel'); if(m) m.style.display='none'; }
+function clearLog(){ if(!confirm('确定清空全部操作记录？此动作无法复原')) return; store.set(LOG_KEY,'[]'); openLog(); toast('已清空记录'); }
 
 /* ===== 操作 ===== */
 function goCat(id){ commitEdit(); curCat = id; curTab = cat().tabs[0]?.id || null; document.getElementById('q').value=''; render(); autoPull(); }
@@ -4307,7 +4425,7 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeDialog(
 ['tabMask','catMask','optMask','fldMask'].forEach(id => document.getElementById(id).addEventListener('click', e => { if(e.target.id === id) closeDialog(id) }));
 document.getElementById('rowMask').addEventListener('click', e => { if(e.target.id === 'rowMask') closeRow() });
 
-save(); render(); autoPull();
+save(); render(); autoPull(); if(!curShift()) showLogin();
 </script>
 </body>
 </html>
