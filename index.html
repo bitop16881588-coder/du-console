@@ -1967,6 +1967,7 @@ function applyCloud(){
   rebuilt.forEach(function(c){ (c.tabs||[]).forEach(function(t){ t.rows=[]; byTab[c.id+'~'+t.id]=t; }); });
   _snapCards.forEach(function(doc){ var x=doc.data(); var t=byTab[x.ci+'~'+x.ti]; if(t){ t.rows.push({o:x.ord,d:x.d}); } cache[doc.id]=JSON.stringify({ord:x.ord,d:x.d}); });
   Object.keys(byTab).forEach(function(k){ var t=byTab[k]; t.rows.sort(function(a,b){return a.o-b.o;}); t.rows=t.rows.map(function(r){return r.d;}); });
+  try{ cache.__sk=JSON.stringify(sk); }catch(_){}
   _cloudCache=cache;
   cats.length=0; rebuilt.forEach(function(c){ cats.push(c); });
   try{ store.set('console.v2', JSON.stringify({v:SCHEMA, cats:cats})); }catch(_){}
