@@ -906,10 +906,10 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-.nmark{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e0495b;margin-left:6px;cursor:pointer;vertical-align:middle;box-shadow:0 0 0 2px rgba(224,73,91,.22)}
+.nmark{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e0495b;margin-left:6px;cursor:pointer;vertical-align:middle;box-shadow:0 0 0 2px rgba(224,73,91,.2);padding:0}
 .nmark:hover{filter:brightness(.92)}
-.nmark.empty{background:#fff;box-shadow:0 0 0 1.5px #cad3df}
-.nmark.empty:hover{box-shadow:0 0 0 1.5px #7B4FD4}
+.nmark.nmadd{width:7px;height:7px;background:transparent;box-shadow:0 0 0 1.5px #d3dae4;opacity:.7}
+.nmark.nmadd:hover{opacity:1;box-shadow:0 0 0 1.5px #7B4FD4}
 .nmark-pop{position:absolute;z-index:99999;width:262px;max-width:90vw;background:#fff;border:1px solid #e5eaf1;border-radius:10px;padding:10px;box-shadow:0 12px 34px rgba(0,0,0,.22)}
 .nmark-pop .nm-txt{font-size:13px;color:#26324a;line-height:1.55;white-space:pre-wrap;max-height:220px;overflow:auto}
 .nmark-pop .nm-none{color:#9aa4b5}
@@ -3022,7 +3022,7 @@ function noteMark(t,r,f){
   const n = (r.notes && r.notes[f.key]) || '';
   if(!n && (!t || t.cols !== 'du3rd')) return '';   // 只有 DU三方使用状况 显示空点可加；其他分页没备注就不显示
   const has = !!n;
-  return `<span class="nmark${has?'':' empty'}" data-tid="${esc(t.id)}" data-rid="${esc(r.id)}" data-fk="${esc(f.key)}" onclick="event.stopPropagation();showNote(this)" title="${has?'备注 · 点一下看／改':'加备注'}"></span>`;
+  return `<span class="nmark${has?'':' nmadd'}" data-tid="${esc(t.id)}" data-rid="${esc(r.id)}" data-fk="${esc(f.key)}" onclick="event.stopPropagation();showNote(this)" title="${has?'备注 · 点一下看／改':'加备注'}"></span>`;
 }
 let _nmPop=null, _nmCtx=null;
 function _nmEl(){ if(!_nmPop){ _nmPop=document.createElement('div'); _nmPop.id='nmarkPop'; _nmPop.className='nmark-pop'; document.body.appendChild(_nmPop); } return _nmPop; }
