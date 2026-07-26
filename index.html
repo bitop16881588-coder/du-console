@@ -906,9 +906,19 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-.nmark{display:inline-block;width:9px;height:9px;border-radius:50%;background:#e0495b;margin-left:6px;cursor:pointer;vertical-align:middle;box-shadow:0 0 0 2px rgba(224,73,91,.22)}
-.nmark:hover{background:#c93547}
-.nmark-pop{position:absolute;z-index:99999;max-width:270px;background:#1c2a44;color:#fff;padding:9px 12px;border-radius:9px;font-size:12.5px;line-height:1.55;white-space:pre-wrap;box-shadow:0 12px 34px rgba(0,0,0,.4)}
+.nmark{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e0495b;margin-left:6px;cursor:pointer;vertical-align:middle;box-shadow:0 0 0 2px rgba(224,73,91,.22)}
+.nmark:hover{filter:brightness(.92)}
+.nmark.empty{background:#fff;box-shadow:0 0 0 1.5px #cad3df}
+.nmark.empty:hover{box-shadow:0 0 0 1.5px #7B4FD4}
+.nmark-pop{position:absolute;z-index:99999;width:262px;max-width:90vw;background:#fff;border:1px solid #e5eaf1;border-radius:10px;padding:10px;box-shadow:0 12px 34px rgba(0,0,0,.22)}
+.nmark-pop .nm-txt{font-size:13px;color:#26324a;line-height:1.55;white-space:pre-wrap;max-height:220px;overflow:auto}
+.nmark-pop .nm-none{color:#9aa4b5}
+.nmark-pop .nm-ta{width:100%;min-height:72px;box-sizing:border-box;border:1px solid #dbe3ed;border-radius:7px;padding:8px;font-size:13px;font-family:inherit;line-height:1.5;resize:vertical;outline:none}
+.nmark-pop .nm-ta:focus{border-color:#7B4FD4}
+.nmark-pop .nm-bar{display:flex;align-items:center;gap:6px;margin-top:8px}
+.nm-btn{padding:6px 11px;border:1px solid #dbe3ed;background:#f6f8fb;border-radius:7px;font-size:12.5px;font-weight:700;cursor:pointer;color:#41506b}
+.nm-btn.ok{background:#7B4FD4;color:#fff;border-color:#7B4FD4}
+.nm-btn.danger{background:#fff;color:#cf3b3b;border-color:#f0c9cd}
 </style>
 </head>
 <body>
@@ -2981,8 +2991,8 @@ function renderRowModal(){
       }).join('')}</div>`
     : (sm.length || sb.length)
       ? `${sm.length ? `<dl class="rc-d">${sm.map(f =>
-            `<div><dt>${f.label}${noteMark(r,f)}</dt><dd>${readCell(t, f, r)}</dd></div>`).join('')}</dl>` : ''}
-         ${sb.map(f => `<section class="rc-b"><h5>${f.label}${noteMark(r,f)}</h5>${readCell(t, f, r)}</section>`).join('')}`
+            `<div><dt>${f.label}${noteMark(t,r,f)}</dt><dd>${readCell(t, f, r)}</dd></div>`).join('')}</dl>` : ''}
+         ${sb.map(f => `<section class="rc-b"><h5>${f.label}${noteMark(t,r,f)}</h5>${readCell(t, f, r)}</section>`).join('')}`
       : `<p class="rm-empty">这一则还没有内容，按「编辑」开始填。</p>`;
 
   document.getElementById('rowFoot').innerHTML = editing
@@ -3008,22 +3018,50 @@ function cardEdit(t, r){
 }
 
 /* --- 格子 --- */
-function noteMark(r,f){
-  const n = r && r.notes && r.notes[f.key];
-  if(!n) return '';
-  return `<span class="nmark" data-n="${esc(n)}" onclick="event.stopPropagation();showNote(this)" title="有隐藏备注，点一下看"></span>`;
+function noteMark(t,r,f){
+  const n = (r.notes && r.notes[f.key]) || '';
+  if(!n && (!t || t.cols !== 'du3rd')) return '';   // 只有 DU三方使用状况 显示空点可加；其他分页没备注就不显示
+  const has = !!n;
+  return `<span class="nmark${has?'':' empty'}" data-tid="${esc(t.id)}" data-rid="${esc(r.id)}" data-fk="${esc(f.key)}" onclick="event.stopPropagation();showNote(this)" title="${has?'备注 · 点一下看／改':'加备注'}"></span>`;
 }
+let _nmPop=null, _nmCtx=null;
+function _nmEl(){ if(!_nmPop){ _nmPop=document.createElement('div'); _nmPop.id='nmarkPop'; _nmPop.className='nmark-pop'; document.body.appendChild(_nmPop); } return _nmPop; }
+function _nmNote(){ const t=findTab(_nmCtx.tid); const r=t&&(t.rows||[]).find(x=>x.id===_nmCtx.rid); return (r&&r.notes&&r.notes[_nmCtx.fk])||''; }
 function showNote(el){
-  const txt = el.getAttribute('data-n') || '';
-  let p = document.getElementById('nmarkPop');
-  if(!p){ p = document.createElement('div'); p.id='nmarkPop'; p.className='nmark-pop'; document.body.appendChild(p); }
-  p.textContent = txt;
+  _nmCtx={ tid:el.getAttribute('data-tid'), rid:el.getAttribute('data-rid'), fk:el.getAttribute('data-fk'), el:el };
+  nmRender(false);
+}
+function nmRender(editing){
+  const p=_nmEl(), txt=_nmNote();
+  if(editing){
+    p.innerHTML=`<textarea class="nm-ta" id="nmTa" placeholder="输入备注…">${esc(txt)}</textarea>
+      <div class="nm-bar"><button class="nm-btn danger" onclick="nmClear()">清空</button><span style="flex:1"></span>
+        <button class="nm-btn" onclick="nmClose()">取消</button><button class="nm-btn ok" onclick="nmSave()">储存</button></div>`;
+  } else {
+    p.innerHTML=`<div class="nm-txt">${txt?esc(txt):'<span class="nm-none">还没有备注</span>'}</div>
+      <div class="nm-bar"><span style="flex:1"></span><button class="nm-btn" onclick="nmEdit()">✎ ${txt?'编辑':'加备注'}</button></div>`;
+  }
   p.style.display='block';
-  const rc = el.getBoundingClientRect();
-  p.style.left = Math.max(8, Math.min(rc.left, window.innerWidth-270)) + 'px';
-  p.style.top  = (rc.bottom + window.scrollY + 6) + 'px';
-  const close = (e)=>{ if(e.target!==el){ p.style.display='none'; document.removeEventListener('click', close, true); } };
-  setTimeout(()=>document.addEventListener('click', close, true), 0);
+  const rc=_nmCtx.el.getBoundingClientRect();
+  p.style.left=Math.max(8, Math.min(rc.left, window.innerWidth-280))+'px';
+  p.style.top =(rc.bottom+window.scrollY+6)+'px';
+  if(editing){ const ta=document.getElementById('nmTa'); if(ta) ta.focus(); }
+  setTimeout(()=>document.addEventListener('mousedown', _nmDismiss, true), 0);
+}
+function _nmDismiss(e){ if(_nmPop && _nmPop.style.display!=='none' && !_nmPop.contains(e.target) && e.target!==_nmCtx.el){ nmClose(); } }
+function nmEdit(){ nmRender(true); }
+function nmClose(){ if(_nmPop) _nmPop.style.display='none'; document.removeEventListener('mousedown', _nmDismiss, true); }
+function nmClear(){ const ta=document.getElementById('nmTa'); if(ta) ta.value=''; nmSave(); }
+function nmSave(){
+  const t=findTab(_nmCtx.tid); const r=t&&(t.rows||[]).find(x=>x.id===_nmCtx.rid);
+  if(!r){ nmClose(); return; }
+  const val=(document.getElementById('nmTa').value||'').trim();
+  if(!r.notes) r.notes={};
+  if(val) r.notes[_nmCtx.fk]=val;
+  else { delete r.notes[_nmCtx.fk]; if(!Object.keys(r.notes).length) delete r.notes; }
+  save(); nmClose();
+  if(typeof openRowId!=='undefined' && openRowId) renderRowModal();
+  toast('备注已更新');
 }
 function readCell(t, f, r){
   const v = r[f.key] || '';
