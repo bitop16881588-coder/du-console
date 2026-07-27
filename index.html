@@ -2414,8 +2414,40 @@ function load(){
       const t = list.find(c => c.id === 'du')?.tabs.find(x => x.id === 'du01');
       if(t) t.rows = JSON.parse(JSON.stringify(DU_ROWS));
     }
+    list = dedupTabs(list);
     return list;
   }catch(e){ return structuredClone(DEFAULT) }
+}
+/* 同类别里若有「同名分页」重复：合并资料到一页（按 id 与内容去重，不丢记录），其余移除。幂等，每次载入都可安全执行 */
+function dedupTabs(list){
+  (list || []).forEach(c => {
+    if(!Array.isArray(c.tabs)) return;
+    const defIds = new Set((((DEFAULT.find(d => d.id === c.id) || {}).tabs) || []).map(t => t.id));
+    const rowSig = r => { const o = Object.assign({}, r); delete o.id; return JSON.stringify(o); };
+    const byName = new Map();   // 名称 → 保留的分页
+    const keep = [];
+    c.tabs.forEach(t => {
+      const nm = String(t.name || '').trim();
+      if(!nm || !byName.has(nm)){ if(nm) byName.set(nm, t); keep.push(t); return; }
+      let survivor = byName.get(nm), victim = t;
+      // 优先保留「预设 id」那一页当主体；若原保留页不是预设 id、而新页是，就换成新页当主体
+      if(!defIds.has(survivor.id) && defIds.has(t.id)){
+        const ki = keep.indexOf(survivor);
+        if(ki >= 0) keep[ki] = t;
+        victim = survivor; survivor = t; byName.set(nm, t);
+      }
+      survivor.rows = survivor.rows || [];
+      const ids  = new Set(survivor.rows.map(r => r.id));
+      const sigs = new Set(survivor.rows.map(rowSig));
+      (victim.rows || []).forEach(r => {
+        if(r.id && ids.has(r.id)) return;
+        const s = rowSig(r); if(sigs.has(s)) return;
+        survivor.rows.push(r); if(r.id) ids.add(r.id); sigs.add(s);
+      });
+    });
+    if(keep.length !== c.tabs.length) c.tabs = keep;
+  });
+  return list;
 }
 function save(){
   store.set('console.v2', JSON.stringify({v:SCHEMA, cats:
@@ -2583,6 +2615,7 @@ const COLS = {
   resid:[F.rgrp, F.rname, F.ramt, F.rnote],  // 四方残留暂存·总览
   rdetail:[F.dmer, F.ddate, F.dord, F.dfee, F.damt, F.dnote]  // 残留明细（照云端表格顺序）
 };
+const FO_LIST = { base:1, rate:1, case:1, fraud:1, jail:1, chase:1, fake:1, back:1, limit:1 };  // FOUUR 交接各页改用列表版（不分早晚班）
 const GALLERY = { risk: true };                           // 图片放大显示的版型
 const SUM_OF = { limit: F.amt };                          // 哪些版型上方要加总
 const FILTER_OF = { case: F.state, fraud: F.state, jail: F.prog, risk: F.zone, du3rd: F.grp, forec: F.fshift, resid: F.rgrp, link: F.lgrp };  // 哪些版型上方要有切换器
@@ -3227,6 +3260,25 @@ function foRecTable(t, rows){
   }).join('');
   return `<div class="fo-wrap"><table class="fo-tbl"><thead><tr><th class="fo-d">日期</th><th class="fo-s">班别</th><th class="fo-st">状态</th><th>内容</th></tr></thead><tbody>${body}</tbody></table></div>`;
 }
+/* 通用列表版（FOUUR 交接各页）：只显示 日期 + 内容，不再分早/晚班。点一列即开弹窗看／改／删 */
+function foListTable(t, rows){
+  const cols  = colsOf(t);
+  const dateF = cols.find(f => f.type === 'date') || cols[0];
+  const badgeF= cols.find(f => ['state','onoff','prog','chase'].includes(f.key));
+  const richF = cols.find(f => f.type === 'rich')
+             || cols.find(f => ['text','item','order'].includes(f.key))
+             || cols.find(f => f.type === 'multi');
+  const imgF  = cols.find(f => f.type === 'img');
+  const dk = dateF ? dateF.key : 'date';
+  const sorted = rows.slice().sort((a,b) => String(b[dk]||'').localeCompare(String(a[dk]||'')));
+  const body = sorted.map(r => {
+    const badge = (badgeF && r[badgeF.key]) ? `<span class="fo-st">${esc(r[badgeF.key])}</span> ` : '';
+    const img   = (imgF && r[imgF.key]) ? ' <span class="fo-img" title="有图档">📷</span>' : '';
+    const content = richF ? (r[richF.key+'_h'] || esc(r[richF.key]||'')) : '';
+    return `<tr onclick="openRow('${t.id}','${r.id}')"><td class="fo-d">${esc(r[dk]||'')}</td><td class="fo-c">${badge}${content}${img}</td></tr>`;
+  }).join('');
+  return `<div class="fo-wrap"><table class="fo-tbl fo-tbl2"><thead><tr><th class="fo-d">日期</th><th>内容</th></tr></thead><tbody>${body}</tbody></table></div>`;
+}
 function duRefTable(t, rows, seg){
   const mk = (r,k) => { const has=r.notes&&r.notes[k]; return `<span class="nmark${has?'':' nmadd'}" data-tid="${esc(t.id)}" data-rid="${esc(r.id)}" data-fk="${esc(k)}" onclick="event.stopPropagation();showNote(this)" title="${has?'备注 · 点看／改':'加备注'}"></span>`; };
   const vc = (r,k) => `<td class="dref-v"><span class="dref-val" onclick="drefEdit(this,'${t.id}','${r.id}','${k}')">${esc(r[k]||'—')}</span>${mk(r,k)}</td>`;
@@ -3511,6 +3563,10 @@ function gridView(t, q){
   // FOUUR 交接记录 → 表格式（日期/班别/状态/内容）
   if(t.cols === 'forec')
     return bar + (rows.length ? foRecTable(t, rows) : emptyMsg());
+
+  // FOUUR 交接各页 → 列表版（只显示 日期 + 内容，不分早/晚班）
+  if(FO_LIST[t.cols])
+    return bar + (rows.length ? foListTable(t, rows) : emptyMsg());
 
   // 没有日期栏的版型：不分年份
   if(!hasDate) return bar + (rows.length ? table(rows) : emptyMsg());
