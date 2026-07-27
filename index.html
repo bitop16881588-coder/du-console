@@ -2056,10 +2056,16 @@ function applyCloud(){
   _logCache=lc;
   try{ cache.__sk=JSON.stringify(sk); }catch(_){}
   _cloudCache=cache;
+  // 云端结构可能含「同名重复分页」→ 合并（幂等、不丢资料）
+  var _cntBefore = rebuilt.reduce(function(n,c){ return n + ((c.tabs||[]).length); }, 0);
+  dedupTabs(rebuilt);
+  var _cntAfter = rebuilt.reduce(function(n,c){ return n + ((c.tabs||[]).length); }, 0);
   cats.length=0; rebuilt.forEach(function(c){ cats.push(c); });
   try{ store.set('console.v2', JSON.stringify({v:SCHEMA, cats:cats})); }catch(_){}
   _pendingRemote=false;
   render();
+  // 有合并掉分页 → 把清理后的结构写回云端，让大家同步
+  if(_cntAfter !== _cntBefore && cloudReady && cloudMigrated){ try{ cloudSave(); }catch(_){} }
 }
 function cloudSave(){
   if(!cloudReady || !cloudMigrated) return;
@@ -2618,7 +2624,7 @@ const COLS = {
 const FO_LIST = { base:1, rate:1, case:1, fraud:1, jail:1, chase:1, fake:1, back:1, limit:1 };  // FOUUR 交接各页改用列表版（不分早晚班）
 const GALLERY = { risk: true };                           // 图片放大显示的版型
 const SUM_OF = { limit: F.amt };                          // 哪些版型上方要加总
-const FILTER_OF = { case: F.state, fraud: F.state, jail: F.prog, risk: F.zone, du3rd: F.grp, forec: F.fshift, resid: F.rgrp, link: F.lgrp };  // 哪些版型上方要有切换器
+const FILTER_OF = { case: F.state, fraud: F.state, jail: F.prog, risk: F.zone, du3rd: F.grp, resid: F.rgrp, link: F.lgrp };  // 哪些版型上方要有切换器（forec 不再依班别切）
 const filterOf = t => (t && typeof t.id==='string' && t.id.indexOf('lk')===0) ? null : FILTER_OF[t.cols];
 const optsOf = (t, f) => (t.opts && t.opts[f.key]) || f.opts || [];
 const sumOf = t => SUM_OF[t.cols];
@@ -3260,22 +3266,29 @@ function foRecTable(t, rows){
   }).join('');
   return `<div class="fo-wrap"><table class="fo-tbl"><thead><tr><th class="fo-d">日期</th><th class="fo-s">班别</th><th class="fo-st">状态</th><th>内容</th></tr></thead><tbody>${body}</tbody></table></div>`;
 }
-/* 通用列表版（FOUUR 交接各页）：只显示 日期 + 内容，不再分早/晚班。点一列即开弹窗看／改／删 */
+/* 通用列表版（FOUUR 交接各页）：只显示 日期 + 内容，不再分早/晚班。点一列即开弹窗看／改／删。
+   同时兼容两种栏位（旧 base 类 date/text，与 forec 类 fdate/fcontent），所以混在一起也能正常显示 */
 function foListTable(t, rows){
   const cols  = colsOf(t);
   const dateF = cols.find(f => f.type === 'date') || cols[0];
-  const badgeF= cols.find(f => ['state','onoff','prog','chase'].includes(f.key));
+  const badgeF= cols.find(f => ['state','onoff','prog','chase','fstat'].includes(f.key));
   const richF = cols.find(f => f.type === 'rich')
-             || cols.find(f => ['text','item','order'].includes(f.key))
+             || cols.find(f => ['text','item','order','fcontent'].includes(f.key))
              || cols.find(f => f.type === 'multi');
   const imgF  = cols.find(f => f.type === 'img');
   const dk = dateF ? dateF.key : 'date';
-  const sorted = rows.slice().sort((a,b) => String(b[dk]||'').localeCompare(String(a[dk]||'')));
+  // 取值时同时尝试 base 与 forec 两套 key，混合资料也读得到
+  const dVal = r => r[dk] || r.date || r.fdate || '';
+  const bVal = r => (badgeF && r[badgeF.key]) || r.fstat || r.state || '';
+  const cVal = r => (richF && (r[richF.key+'_h'] || r[richF.key])) || r.fcontent_h || r.fcontent || r.text_h || r.text || '';
+  const cRaw = r => (richF && r[richF.key+'_h']) || r.fcontent_h || r.text_h;   // 已是 HTML 就不转义
+  const iVal = r => (imgF && r[imgF.key]) || r.fimg || r.img || '';
+  const sorted = rows.slice().sort((a,b) => String(dVal(b)).localeCompare(String(dVal(a))));
   const body = sorted.map(r => {
-    const badge = (badgeF && r[badgeF.key]) ? `<span class="fo-st">${esc(r[badgeF.key])}</span> ` : '';
-    const img   = (imgF && r[imgF.key]) ? ' <span class="fo-img" title="有图档">📷</span>' : '';
-    const content = richF ? (r[richF.key+'_h'] || esc(r[richF.key]||'')) : '';
-    return `<tr onclick="openRow('${t.id}','${r.id}')"><td class="fo-d">${esc(r[dk]||'')}</td><td class="fo-c">${badge}${content}${img}</td></tr>`;
+    const badge = bVal(r) ? `<span class="fo-st">${esc(bVal(r))}</span> ` : '';
+    const img   = iVal(r) ? ' <span class="fo-img" title="有图档">📷</span>' : '';
+    const content = cRaw(r) ? cRaw(r) : esc(cVal(r));
+    return `<tr onclick="openRow('${t.id}','${r.id}')"><td class="fo-d">${esc(dVal(r))}</td><td class="fo-c">${badge}${content}${img}</td></tr>`;
   }).join('');
   return `<div class="fo-wrap"><table class="fo-tbl fo-tbl2"><thead><tr><th class="fo-d">日期</th><th>内容</th></tr></thead><tbody>${body}</tbody></table></div>`;
 }
@@ -3560,9 +3573,9 @@ function gridView(t, q){
   if(t.cols === 'du3rd' && (seg === '费率对照' || seg === '代收付金额'))
     return bar + (rows.length ? duRefTable(t, rows, seg) : emptyMsg());
 
-  // FOUUR 交接记录 → 表格式（日期/班别/状态/内容）
+  // FOUUR 交接记录（含旧 forec 版）→ 一律无班别列表
   if(t.cols === 'forec')
-    return bar + (rows.length ? foRecTable(t, rows) : emptyMsg());
+    return bar + (rows.length ? foListTable(t, rows) : emptyMsg());
 
   // FOUUR 交接各页 → 列表版（只显示 日期 + 内容，不分早/晚班）
   if(FO_LIST[t.cols])
