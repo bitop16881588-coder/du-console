@@ -954,8 +954,11 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 .fo-ctx{color:var(--ac,#3B6FE0);font-weight:700;margin-right:2px}
 .fo-inp{font:inherit;color:var(--ink);width:100%;box-sizing:border-box;border:1px solid var(--ac,#3B6FE0);border-radius:6px;padding:4px 6px;background:#fff;outline:none}
 .fo-inp-m{min-height:60px;line-height:1.5;resize:vertical;white-space:pre-wrap}
-.fo-acts{float:right;display:inline-flex;gap:4px;margin-left:8px;opacity:0;transition:opacity .12s}
+.fo-acts{float:right;display:inline-flex;gap:4px;margin-left:8px;opacity:.6;transition:opacity .12s}
 .fo-tbl2 tr:hover .fo-acts{opacity:1}
+.fo-thumb{display:inline-block;width:34px;height:34px;border-radius:6px;border:1px solid var(--line);background:#fff center/cover no-repeat;vertical-align:middle;margin-left:6px;text-decoration:none;text-align:center;line-height:34px}
+.fo-thumb span{font-size:15px;opacity:.5}
+.fo-thumb[style*="url"] span{display:none}
 .fo-more,.fo-x{border:1px solid var(--line);background:var(--panel-2);border-radius:6px;width:24px;height:22px;font-size:12px;color:var(--ink2);cursor:pointer;line-height:1}
 .fo-more:hover{border-color:var(--ac,#3B6FE0);color:var(--ac,#3B6FE0)}
 .fo-x:hover{border-color:#B5364A;color:#B5364A;background:#fdecef}
@@ -3308,7 +3311,8 @@ function foListTable(t, rows){
   const sorted = rows.slice().sort((a,b) => String(dVal(b)).localeCompare(String(dVal(a))));
   const body = sorted.map(r => {
     const badge = bVal(r) ? `<span class="fo-st">${esc(bVal(r))}</span> ` : '';
-    const img   = iVal(r) ? ' <span class="fo-img" title="有图档">📷</span>' : '';
+    const iv = iVal(r);
+    const img = iv ? ` <a class="fo-thumb" href="${esc(iv)}" target="_blank" rel="noopener" title="点开看原图" onclick="event.stopPropagation()" style="background-image:url('${esc(driveThumb(iv))}')"><span>🖼</span></a>` : '';
     const content = cRaw(r) ? cRaw(r) : esc(cVal(r));
     // 结构化栏位（资金担保等）→ 在内容前带出 商户・金额，方便一眼看
     const ctx = [];
@@ -3322,7 +3326,7 @@ function foListTable(t, rows){
     return `<tr>
       <td class="fo-d"><span class="fo-ed" onclick="foCellEdit(this,'${t.id}','${r.id}','${dK}',false)">${esc(dVal(r))||'—'}</span></td>
       <td class="fo-c">${badge}${ctxHtml}<span class="fo-ed fo-edc" onclick="foCellEdit(this,'${t.id}','${r.id}','${cK}',true)">${content || '<i class="fo-ph">（空白，点一下编辑）</i>'}</span>${img}
-        <span class="fo-acts"><button class="fo-more" title="完整编辑（图档/备注）" onclick="openRow('${t.id}','${r.id}')">详</button><button class="fo-x" title="删除这则" onclick="foDelRow('${t.id}','${r.id}')">✕</button></span></td>
+        <span class="fo-acts"><button class="fo-more" title="打开完整编辑：图档／备注／其他栏位" onclick="openRowEdit('${t.id}','${r.id}')">详</button><button class="fo-x" title="删除这则" onclick="foDelRow('${t.id}','${r.id}')">✕</button></span></td>
     </tr>`;
   }).join('');
   return `<div class="fo-wrap"><table class="fo-tbl fo-tbl2"><thead><tr><th class="fo-d">日期</th><th>内容</th></tr></thead><tbody>${body}</tbody></table></div>`;
@@ -3360,6 +3364,10 @@ function foCellSave(tid, rid, key, val){
   delete r[key + '_h'];                        // 改纯文字→清掉该栏旧富文本版，避免又显示 HTML
   if(key === 'text' || key === 'fcontent'){ delete r.text_h; delete r.fcontent_h; }
   save(); renderBoard();
+}
+function openRowEdit(tid, rid){          // 「详」→ 直接开弹窗并进入编辑（可贴图／改备注／改其他栏位）
+  openRow(tid, rid);
+  if(typeof editRowInModal === 'function') editRowInModal();
 }
 function foDelRow(tid, rid){
   if(!confirm('删除这则？')) return;
