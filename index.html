@@ -951,6 +951,7 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 .fo-ed:hover{background:var(--ac-soft,#eef2fb);box-shadow:inset 0 0 0 1px var(--line)}
 .fo-edc{display:block;min-height:1.3em}
 .fo-ph{color:#aab3c4;font-style:normal}
+.fo-ctx{color:var(--ac,#3B6FE0);font-weight:700;margin-right:2px}
 .fo-inp{font:inherit;color:var(--ink);width:100%;box-sizing:border-box;border:1px solid var(--ac,#3B6FE0);border-radius:6px;padding:4px 6px;background:#fff;outline:none}
 .fo-inp-m{min-height:60px;line-height:1.5;resize:vertical;white-space:pre-wrap}
 .fo-acts{float:right;display:inline-flex;gap:4px;margin-left:8px;opacity:0;transition:opacity .12s}
@@ -2634,7 +2635,7 @@ const COLS = {
   resid:[F.rgrp, F.rname, F.ramt, F.rnote],  // 四方残留暂存·总览
   rdetail:[F.dmer, F.ddate, F.dord, F.dfee, F.damt, F.dnote]  // 残留明细（照云端表格顺序）
 };
-const FO_LIST = { base:1, rate:1, case:1, fraud:1, jail:1, chase:1, fake:1, back:1, limit:1 };  // FOUUR 交接各页改用列表版（不分早晚班）
+const FO_LIST = { base:1, rate:1, case:1, fraud:1, jail:1, chase:1, fake:1, back:1, limit:1, guar:1 };  // FOUUR 交接各页改用列表版（不分早晚班）
 const GALLERY = { risk: true };                           // 图片放大显示的版型
 const SUM_OF = { limit: F.amt };                          // 哪些版型上方要加总
 const FILTER_OF = { case: F.state, fraud: F.state, jail: F.prog, risk: F.zone, du3rd: F.grp, resid: F.rgrp, link: F.lgrp };  // 哪些版型上方要有切换器（forec 不再依班别切）
@@ -3309,12 +3310,18 @@ function foListTable(t, rows){
     const badge = bVal(r) ? `<span class="fo-st">${esc(bVal(r))}</span> ` : '';
     const img   = iVal(r) ? ' <span class="fo-img" title="有图档">📷</span>' : '';
     const content = cRaw(r) ? cRaw(r) : esc(cVal(r));
+    // 结构化栏位（资金担保等）→ 在内容前带出 商户・金额，方便一眼看
+    const ctx = [];
+    if(r.merch) ctx.push(esc(r.merch));
+    if(r.amt != null && r.amt !== '') ctx.push('金额 ' + esc(r.amt));
+    if(r.chan) ctx.push(esc(r.chan));
+    const ctxHtml = ctx.length ? `<b class="fo-ctx">${ctx.join(' · ')}</b> ` : '';
     // 该列实际用哪个 key（兼容 base 与 forec）
     const dK = (r.date!=null?'date':(r.fdate!=null?'fdate':dk));
     const cK = (r.text!=null?'text':(r.fcontent!=null?'fcontent':(richF?richF.key:'text')));
     return `<tr>
       <td class="fo-d"><span class="fo-ed" onclick="foCellEdit(this,'${t.id}','${r.id}','${dK}',false)">${esc(dVal(r))||'—'}</span></td>
-      <td class="fo-c">${badge}<span class="fo-ed fo-edc" onclick="foCellEdit(this,'${t.id}','${r.id}','${cK}',true)">${content || '<i class="fo-ph">（空白，点一下编辑）</i>'}</span>${img}
+      <td class="fo-c">${badge}${ctxHtml}<span class="fo-ed fo-edc" onclick="foCellEdit(this,'${t.id}','${r.id}','${cK}',true)">${content || '<i class="fo-ph">（空白，点一下编辑）</i>'}</span>${img}
         <span class="fo-acts"><button class="fo-more" title="完整编辑（图档/备注）" onclick="openRow('${t.id}','${r.id}')">详</button><button class="fo-x" title="删除这则" onclick="foDelRow('${t.id}','${r.id}')">✕</button></span></td>
     </tr>`;
   }).join('');
@@ -3342,7 +3349,8 @@ function foCellSave(tid, rid, key, val){
   const t = findTab(tid), r = t && (t.rows||[]).find(x => x.id === rid);
   if(!r){ renderBoard(); return; }
   r[key] = String(val).trim();
-  if(key === 'text' || key === 'fcontent'){ delete r[key + '_h']; delete r.text_h; delete r.fcontent_h; }  // 改纯文字→清掉旧富文本版
+  delete r[key + '_h'];                        // 改纯文字→清掉该栏旧富文本版，避免又显示 HTML
+  if(key === 'text' || key === 'fcontent'){ delete r.text_h; delete r.fcontent_h; }
   save(); renderBoard();
 }
 function foDelRow(tid, rid){
