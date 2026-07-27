@@ -3336,7 +3336,15 @@ function foCellEdit(span, tid, rid, key, multi){
   const el = document.createElement(multi ? 'textarea' : 'input');
   el.className = 'fo-inp' + (multi ? ' fo-inp-m' : '');
   el.value = (r[key] != null ? r[key] : '');
-  span.replaceWith(el); el.focus(); if(el.select) el.select();
+  span.replaceWith(el);
+  if(multi){
+    const fit = () => { el.style.height = 'auto'; el.style.height = Math.max(90, el.scrollHeight + 4) + 'px'; };
+    el.addEventListener('input', fit);
+    el.focus(); fit();
+    const n = el.value.length; el.setSelectionRange(n, n);   // 游标放最后，不全选（长文避免误删）
+  } else {
+    el.focus(); if(el.select) el.select();
+  }
   const done = commit => { if(!_foEditing) return; _foEditing = false;
     if(commit) foCellSave(tid, rid, key, el.value); else renderBoard(); };
   el.addEventListener('blur', () => done(true));
