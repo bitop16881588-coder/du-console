@@ -3422,8 +3422,7 @@ function gridView(t, q){
   const rows0 = all.filter(r => r.id === editRow ||
     ((!fl || seg === '全部' || (r[fl.key] || '') === seg) &&
      (!q || keys.some(k => String(r[k]||'').toLowerCase().includes(q)))));
-  const rowsZ = (t.hideZero && (t.cols === 'vcotc'))
-    ? rows0.filter(r => (Number(r.vrmb)||0) !== 0 || r.id === editRow) : rows0;
+  const rowsZ = rows0;
   const rows = (t.cols === 'vcotc' && vlimit !== 'all') ? rowsZ.slice(0, Number(vlimit)) : rowsZ;
 
   const hasDate = cols.some(f => f.type === 'date');
@@ -3633,9 +3632,7 @@ function gridView(t, q){
     const rmbSum  = all.reduce((n,r) => n + (Number(r.vrmb)||0), 0);
     const usdtSum = all.reduce((n,r) => n + (Number(r.vusdt)||0), 0);
 
-    const hideZeroV = !!t.hideZero;
     const limitBar = `<div class="vlimit-bar">
-      <button class="btn btn-sm zt${hideZeroV?' on':''}" onclick="toggleZero('${t.id}')">${hideZeroV?'✓ 只看有金额':'只看有金额'}</button>
       <select class="vlimit-sel" onchange="setVlimit('${t.id}',this.value)">
         ${['5','10','20','50','100','all'].map(n => `<option value="${n}" ${vlimit===n?'selected':''}>显示 ${n==='all'?'全部':n+' 笔'}</option>`).join('')}
       </select>
