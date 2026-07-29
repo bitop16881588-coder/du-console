@@ -802,8 +802,10 @@ button.rsd-x:hover{color:#cf3b3b;background:#fbe9e9}
 .optrow .pill{flex:none;min-width:52px;text-align:center}
 .optdel{color:var(--ink3);font-family:var(--mono);font-size:11px;padding:4px;flex:none}
 .optdel:hover{color:var(--red)}
-.imgcell{display:flex;gap:11px;align-items:flex-start}
-.imgcell input{flex:1}
+.imgcell{display:flex;gap:11px;align-items:flex-start;flex-wrap:wrap;border-radius:8px;padding:2px;transition:box-shadow .12s,background .12s}
+.imgcell.drop{box-shadow:inset 0 0 0 2px var(--ac,#3B6FE0);background:var(--ac-soft,#eef2fb)}
+.imgcell input{flex:1;min-width:180px}
+.img-hint{flex-basis:100%;font-size:11px;color:var(--ink3,#8992A6);padding-left:2px}
 .thumb{flex:none;width:36px;height:36px;border-radius:7px;border:1px solid var(--line);
   background:var(--panel-2) center/cover no-repeat;display:grid;place-items:center;
   font-size:11px;color:var(--ink3);overflow:hidden}
@@ -3238,12 +3240,13 @@ function editCell(t, f, r){
       <button class="optbtn" title="编辑这栏的选项" onclick="openOpts('${t.id}','${f.key}')">⚙</button>
     </div>`;
   }
-  if(f.type === 'img') return `<div class="imgcell">
+  if(f.type === 'img') return `<div class="imgcell" onpaste="foPasteImg(event,'${t.id}','${r.id}','${f.key}')" ondragover="event.preventDefault();this.classList.add('drop')" ondragleave="this.classList.remove('drop')" ondrop="this.classList.remove('drop');foDropImg(event,'${t.id}','${r.id}','${f.key}')">
       <a class="thumb" id="th_${r.id}" ${v?`href="${esc(v)}" target="_blank" rel="noopener"`:''}
          style="${v?`background-image:url('${esc(driveThumb(v))}')`:''}">${v?'':'图'}</a>
-      <input type="url" placeholder="贴图片或云端硬碟网址" value="${esc(v)}"
+      <input type="text" placeholder="直接按 Ctrl+V 贴截图，或贴网址" value="${esc(v)}"
         onkeydown="gridKey(event,'${t.id}')" oninput="gridSet('${t.id}','${r.id}','${f.key}',this.value)"
         onchange="gridThumb('${r.id}',this.value)">
+      <div class="img-hint">可直接贴上截图或拖曳图片进来</div>
     </div>`;
   if(f.type === 'rich'){
     const k = f.key;
@@ -3325,7 +3328,7 @@ function foListTable(t, rows){
     const cK = (r.text!=null?'text':(r.fcontent!=null?'fcontent':(richF?richF.key:'text')));
     return `<tr>
       <td class="fo-d"><span class="fo-ed" onclick="foCellEdit(this,'${t.id}','${r.id}','${dK}',false)">${esc(dVal(r))||'—'}</span></td>
-      <td class="fo-c">${badge}${ctxHtml}<span class="fo-ed fo-edc" onclick="foCellEdit(this,'${t.id}','${r.id}','${cK}',true)">${content || '<i class="fo-ph">（空白，点一下编辑）</i>'}</span>${img}
+      <td class="fo-c">${badge}${ctxHtml}<span class="fo-ed fo-edc" id="foc_${r.id}" onclick="foCellEdit(this,'${t.id}','${r.id}','${cK}',true)">${content || '<i class="fo-ph">（空白，点一下编辑）</i>'}</span>${img}
         <span class="fo-acts"><button class="fo-more" title="打开完整编辑：图档／备注／其他栏位" onclick="openRowEdit('${t.id}','${r.id}')">详</button><button class="fo-x" title="删除这则" onclick="foDelRow('${t.id}','${r.id}')">✕</button></span></td>
     </tr>`;
   }).join('');
@@ -3369,10 +3372,20 @@ function openRowEdit(tid, rid){          // 「详」→ 直接开弹窗并进�
   openRow(tid, rid);
   if(typeof editRowInModal === 'function') editRowInModal();
 }
-function foDelRow(tid, rid){
-  if(!confirm('删除这则？')) return;
-  if(typeof gridDel === 'function'){ gridDel(tid, rid); return; }
+/* FOUUR 各页「新增一则」：在列表最上面加一列空白，自动进入就地编辑（跟改既有资料一样，不跳弹窗） */
+function foAddRow(tid){
   const t = findTab(tid); if(!t) return;
+  beforeRows = clone(t.rows || []);
+  const r = { id: 'r' + Date.now() };
+  colsOf(t).forEach(f => r[f.key] = f.type === 'date' ? new Date().toISOString().slice(0,10) : '');
+  (t.rows ||= []).unshift(r);
+  save(); renderBoard();
+  setTimeout(() => { const sp = document.getElementById('foc_' + r.id); if(sp) sp.click(); }, 30);
+}
+function foDelRow(tid, rid){
+  if(typeof gridDel === 'function'){ gridDel(tid, rid); return; }   // gridDel 已内含确认
+  const t = findTab(tid); if(!t) return;
+  if(!confirm('删除这则？')) return;
   t.rows = (t.rows||[]).filter(x => x.id !== rid); save(); renderBoard();
 }
 function duRefTable(t, rows, seg){
@@ -3420,7 +3433,7 @@ function gridView(t, q){
   const total = sf ? all.reduce((n, r) => n + (Number(r[sf.key]) || 0), 0) : null;
   const totalBox = sf ? `<div class="total">总金额<b>${total.toLocaleString('zh-TW')}</b></div>` : '';
   const bar = `<div class="grid-bar">${totalBox}${segsHTML(t)}<span class="sp"></span>
-      <button class="btn btn-sm btn-solid" ${editRow?'disabled':''} onclick="gridAdd('${t.id}')">＋ 新增一则</button>
+      <button class="btn btn-sm btn-solid" ${editRow?'disabled':''} onclick="${(FO_LIST[t.cols]||t.cols==='forec')?'foAddRow':'gridAdd'}('${t.id}')">＋ 新增一则</button>
       <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
       <button class="btn btn-sm" onclick="openCloud('${t.id}')">📥 汇入 CSV</button>
       
@@ -3744,6 +3757,54 @@ function gridThumb(rid, url){
   if(!el) return;
   if(url){ el.style.backgroundImage = `url('${driveThumb(url)}')`; el.textContent = ''; el.href = url; el.target = '_blank'; }
   else { el.style.backgroundImage = ''; el.textContent = '图'; el.removeAttribute('href'); }
+}
+/* 直接贴截图 / 拖放图片：压缩后存成图片资料（不必先上传图床）。会算进云端同步大小，故压得较小 */
+function compressImg(file, max, q){
+  return new Promise((res, rej) => {
+    const im = new Image();
+    im.onload = () => {
+      let w = im.width, h = im.height;
+      if(w > max || h > max){ const s = Math.min(max/w, max/h); w = Math.round(w*s); h = Math.round(h*s); }
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(im, 0, 0, w, h);
+      res(c.toDataURL('image/jpeg', q));
+    };
+    im.onerror = rej;
+    const fr = new FileReader(); fr.onload = () => im.src = fr.result; fr.onerror = rej; fr.readAsDataURL(file);
+  });
+}
+async function _imgFromFile(file, tid, rid, key){
+  if(!file || file.type.indexOf('image') !== 0) return false;
+  try{
+    let d = await compressImg(file, 900, 0.6);
+    if(d.length > 900000) d = await compressImg(file, 700, 0.5);   // 太大再压一次
+    // 保险：估算这一页加上新图后的大小，接近云端单页上限(1MB)就挡下，改用连结
+    const t = findTab(tid);
+    const cur = t ? JSON.stringify(t.rows || []).length : 0;
+    if(cur + d.length > 700000){
+      toast('这一页图片已经很多、快到容量上限了，这张请改贴云端硬碟连结');
+      return true;
+    }
+    gridSet(tid, rid, key, d); gridThumb(rid, d);
+    toast('图片已贴上');
+  }catch(e){ toast('这张图读不进来，换一张或改用网址'); }
+  return true;
+}
+function foPasteImg(ev, tid, rid, key){
+  const items = (ev.clipboardData && ev.clipboardData.items) || [];
+  for(const it of items){
+    if(it.type && it.type.indexOf('image') === 0){
+      ev.preventDefault();
+      _imgFromFile(it.getAsFile(), tid, rid, key);
+      return;
+    }
+  }
+  // 没图就当一般贴网址，交给 input 预设行为
+}
+function foDropImg(ev, tid, rid, key){
+  ev.preventDefault();
+  const f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+  _imgFromFile(f, tid, rid, key);
 }
 function gridAdd(tid){
   const t = findTab(tid);
@@ -4141,6 +4202,7 @@ function gridCancel(tid){
   renderBoard();
 }
 function gridDel(tid, rid){
+  if(!confirm('删除这则？删除后可按「上一步」救回。')) return;
   const t = findTab(tid);
   const _lbl = rowLabel(t, (t.rows||[]).find(r => r.id === rid));
   pushUndo(tid, t.rows);
@@ -4335,11 +4397,23 @@ function saveField(){
 }
 function delField(tid, key){
   const t = findTab(tid);
-  if((t.xcols || []).some(f => f.key === key)){       // 自己加的 → 直接删掉
+  const custom = (t.xcols || []).some(f => f.key === key);
+  const f = (colsOf(t) || []).find(x => x.key === key) || (t.xcols || []).find(x => x.key === key);
+  const nm = (f && f.label) || key;
+  // 太容易误触 → 连续两次确认
+  const first = custom
+    ? `确定要删除栏位「${nm}」吗？\n\n⚠ 这会把「这一整页」每一则里这一栏的内容一起删掉，且无法复原。`
+    : `确定要移除栏位「${nm}」吗？\n\n（资料会保留，之后可在「＋ 栏位」里拿回来）`;
+  if(!confirm(first)) return;
+  const second = custom
+    ? `再次确认：真的要永久删除「${nm}」栏和它在这一页的所有资料吗？`
+    : `再次确认：移除栏位「${nm}」？`;
+  if(!confirm(second)) return;
+  if(custom){                                          // 自己加的 → 直接删掉
     t.xcols = t.xcols.filter(f => f.key !== key);
     (t.rows || []).forEach(r => { delete r[key]; delete r[key + '_h'] });
     toast('栏位已删除');
-  }else{                                              // 内建的 → 收起来，资料留著
+  }else{                                               // 内建的 → 收起来，资料留著
     (t.hidden ||= []).push(key);
     toast('栏位已移除，可在「＋ 栏位」里拿回来');
   }
