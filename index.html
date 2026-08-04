@@ -990,6 +990,8 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 .cap-note{margin:0 0 10px;padding:8px 12px;border-radius:8px;font-size:12.5px;line-height:1.5;font-weight:500}
 .cap-note.amber{background:#fff5e6;border:1px solid #f0c979;color:#8a5a00}
 .cap-note.red{background:#fdecec;border:1px solid #e79b9b;color:#a52222}
+.rs-ed{font-style:normal;cursor:pointer;color:#c3ccd8;font-size:13px;margin-left:6px;padding:0 3px;transition:.12s;vertical-align:middle}
+.rs-ed:hover{color:var(--ac)}
 .fo-more,.fo-x{border:1px solid var(--line);background:var(--panel-2);border-radius:6px;width:24px;height:22px;font-size:12px;color:var(--ink2);cursor:pointer;line-height:1}
 .fo-more:hover{border-color:var(--ac,#3B6FE0);color:var(--ac,#3B6FE0)}
 .fo-x:hover{border-color:#B5364A;color:#B5364A;background:#fdecef}
@@ -3015,6 +3017,67 @@ function setCurFee(tid, val){
   save(); renderBoard();
 }
 // 手动修改总残留：点铅笔 → 输入框；留空存档＝回自动（费率组合计／明细算）
+// 把明细页解算后的总残留，回写到「残留总览」对应那一列（明细页 id = 'rsd_' + 总览列 id）
+function writeRemainToOverview(detTid, val){
+  if(!/^rsd_/.test(detTid)) return false;
+  const oid = detTid.slice(4);
+  for(const c of cats){ for(const tb of (c.tabs||[])){
+    if(tb.cols === 'resid'){
+      const row = (tb.rows||[]).find(r => r.id === oid);
+      if(row){ row.ramt = String(val); return true; }
+    }
+  }}
+  return false;
+}
+// 解算一个明细页「目前显示的总残留」：手动值优先 → 既有参考值(xTotal/总览) → 都没有才用明细自动算
+// 刻意「不」拿明细加总去盖掉既有总残留——很多通道的总览金额比明细记录大（明细只是部分纪录），
+// 盲目用明细加总会把正确的残留冲掉。所以只把「你手动改过的值」补上去，其余维持原样。
+function residResolved(t){
+  const remainManualOn = (t.remainManual!=='' && t.remainManual!=null && !isNaN(Number(t.remainManual)));
+  if(remainManualOn) return Number(t.remainManual);
+  if(t.xOld && t.xOld.length) return t.xOld.reduce((n,o)=>n+(Number(o.d)||0),0);  // 有旧汇率组：用各组残留加总
+  if(t.xTotal != null && !isNaN(Number(t.xTotal))) return Number(t.xTotal);        // 既有总残留（=总览现值）
+  // 完全没有参考值时，才退而用明细自动算（申请−手续费）
+  const round3 = n => { const s = n<0?-1:1; return s*Math.round((Math.abs(n)+1e-9)*1000)/1000; };
+  return (t.rows||[]).reduce((n,r) => {
+    const a = Number(r.damt)||0, f = Number(r.dfee)||0;
+    const auto = round3(a * f);
+    const hasM = r.dmf!=='' && r.dmf!=null && !isNaN(Number(r.dmf));
+    const mf = hasM ? round3(Number(r.dmf)) : auto;
+    return n + round3(a - mf);
+  }, 0);
+}
+// 一键：把所有明细页目前显示的总残留，同步回总览（主要把你手动改过的值一次补上）
+function syncAllResid(){
+  const dets = [];
+  for(const c of cats){ for(const t of (c.tabs||[])){ if(t.cols === 'rdetail') dets.push(t); } }
+  if(!dets.length){ toast('目前没有明细页可同步'); return; }
+  if(!confirm('把每个明细页「目前显示的总残留」同步回「残留总览」。\n手动改过总残留的明细以你填的值为准；没改过的维持原总览金额（不会用明细记录去覆盖）。\n确定要同步全部吗？')) return;
+  let n = 0, changed = 0;
+  dets.forEach(t => { const v = residResolved(t); if(writeRemainToOverview(t.id, v)){ if(t.xTotal !== v) changed++; t.xTotal = v; n++; } });
+  save(); renderBoard();
+  toast('已同步 ' + n + ' 个通道到总览（其中 ' + changed + ' 个金额有更新）');
+}
+// 总览金额直接点改
+function editResidAmt(tid, rid, el){
+  const t = findTab(tid); const r = t && (t.rows||[]).find(x => x.id === rid); if(!r) return;
+  const card = el.closest('.rc-resid');
+  const amtEl = card && card.querySelector('.rs-amt');
+  const inp = document.createElement('input');
+  inp.type = 'number'; inp.step = '0.001';
+  inp.value = (r.ramt!=null ? r.ramt : '');
+  inp.className = 'rsx-inp'; inp.style.width = '128px'; inp.style.fontSize = '19px';
+  inp.onpointerdown = e => e.stopPropagation();
+  inp.onclick = e => e.stopPropagation();
+  inp.onblur = () => {
+    r.ramt = inp.value.trim();
+    const det = findTab('rsd_' + rid);   // 总览改了 → 更新该通道明细页的参考值，两边一致
+    if(det) det.xTotal = Number(r.ramt)||0;
+    save(); renderBoard();
+  };
+  inp.onkeydown = e => { e.stopPropagation(); if(e.key==='Enter') inp.blur(); if(e.key==='Escape') renderBoard(); };
+  (amtEl || el).replaceWith(inp); inp.focus(); inp.select();
+}
 function editRemain(tid, el){
   const t = findTab(tid);
   const inp = document.createElement('input');
@@ -3023,7 +3086,13 @@ function editRemain(tid, el){
   inp.placeholder = '留空＝自动';
   inp.className = 'rsx-inp';
   inp.onclick = e => e.stopPropagation();
-  inp.onblur = () => { t.remainManual = inp.value.trim(); save(); renderBoard(); };
+  inp.onblur = () => {
+    t.remainManual = inp.value.trim();
+    // 手动改了总残留 → 回写「残留总览」对应那一列的残留金额，两边同步
+    const on = (t.remainManual !== '' && !isNaN(Number(t.remainManual)));
+    if(on){ writeRemainToOverview(t.id, Number(t.remainManual)); t.xTotal = Number(t.remainManual); }
+    save(); renderBoard();
+  };
   inp.onkeydown = e => { e.stopPropagation();
     if(e.key==='Enter') inp.blur();
     if(e.key==='Escape') renderBoard(); };
@@ -3636,6 +3705,7 @@ function gridView(t, q){
     const hideZero = !!t.hideZero;
     const bar2 = `<div class="grid-bar">${segsHTML(t)}
         <button class="btn btn-sm zt${hideZero?' on':''}" onclick="toggleZero('${t.id}')">${hideZero?'✓ 只看有余额':'只看有余额'}</button>
+        <button class="btn btn-sm" onclick="syncAllResid()" title="把各明细页目前显示的总残留同步回总览（手动改过的会补上）">🔄 同步全部到总览</button>
         <span class="sp"></span>
         <button class="btn btn-sm btn-solid" ${editRow?'disabled':''} onclick="gridAdd('${t.id}')">＋ 新增一则</button>
         <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
@@ -3655,6 +3725,7 @@ function gridView(t, q){
         ${seg === '全部' ? `<span class="rs-tag ${isOld?'old':(isIn?'in':'out')}">${isOld?'旧':(isIn?'内':'外')}</span>` : ''}
         <h4 data-copy="${esc(r.rname||'')}" title="点一下复制" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();copyFromEl(this)">${esc(r.rname||'（未命名）')}</h4>
         <div class="rs-amt${amt>0?'':' zero'} cpn" data-copy="${amt}" title="点一下复制" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();copyFromEl(this)">${fmt(amt)}</div>
+        <i class="rs-ed" title="直接改金额" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();editResidAmt('${t.id}','${r.id}',this)">✎</i>
         <button class="rc-x" title="删除这则" onclick="event.stopPropagation();gridDel('${t.id}','${r.id}')">✕</button>
       </article>`;
     }).join('');
