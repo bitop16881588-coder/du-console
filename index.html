@@ -894,7 +894,16 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 }
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
-.rsx-detail-full{margin-top:12px;padding-top:11px;max-width:560px}
+.rsx-detail-full{margin-top:12px;padding-top:11px;max-width:560px;display:flex;flex-direction:column;gap:7px}
+.rsx-detail-full .rsd-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:12px}
+.rsx-detail-full .rsd-cell{display:flex;align-items:center;gap:5px}
+.rsx-detail-full .rsd-cell em{font-style:normal;font-size:10px;font-weight:800;color:#8794a6;flex:none}
+.rsx-detail-full input.rsd-f{width:60px;flex:none;text-align:center;color:#a8761c;font-weight:800;border:1px solid #e4e9f0;background:#fff;border-radius:5px;padding:3px 5px}
+.rsx-detail-full input.rsd-a,.rsx-detail-full input.rsd-d{width:86px;flex:none;text-align:right;border:1px solid #e4e9f0;background:#fff;border-radius:5px;padding:3px 6px}
+.rsx-detail-full input.rsd-in:focus{border-color:var(--ac);outline:none}
+.rsx-detail-full .rsd-x{margin-left:auto;flex:none}
+.rsx-detail-full .rsd-sum{border-top:1px solid #e5eaf1;padding-top:7px}
+.rsx-detail-full .rsd-sum b.rsd-a,.rsx-detail-full .rsd-sum b.rsd-d{min-width:70px;text-align:right;font-weight:900;color:#2c3e56}
 
 @media (max-width:860px){
   .shell{grid-template-columns:1fr;grid-template-rows:auto 1fr}
@@ -3563,18 +3572,18 @@ function gridView(t, q){
         </div>
         ${(t.oldOpen && oldRec) ? `<div class="rsx-detail rsx-detail-full">${oldRec.map((o,i) =>
                 `<div class="rsd-row">
-                  <input class="rsd-f rsd-in" type="number" step="0.001" value="${esc(o.f||'')}" placeholder="费率"
-                    onclick="event.stopPropagation()" onchange="setOldRate('${t.id}',${i},'f',this.value)">
-                  <input class="rsd-a rsd-in" type="number" step="0.01" value="${esc(o.a||'')}" placeholder="申请"
-                    onclick="event.stopPropagation()" onchange="setOldRate('${t.id}',${i},'a',this.value)">
-                  <input class="rsd-d rsd-in" type="number" step="0.001" value="${esc(o.d||'')}" placeholder="残留"
-                    onclick="event.stopPropagation()" onchange="setOldRate('${t.id}',${i},'d',this.value)">
+                  <span class="rsd-cell"><em>费率</em><input class="rsd-f rsd-in" type="number" step="0.001" value="${esc(o.f||'')}"
+                    onclick="event.stopPropagation()" onchange="setOldRate('${t.id}',${i},'f',this.value)"></span>
+                  <span class="rsd-cell"><em>申请</em><input class="rsd-a rsd-in" type="number" step="0.01" value="${esc(o.a||'')}"
+                    onclick="event.stopPropagation()" onchange="setOldRate('${t.id}',${i},'a',this.value)"></span>
+                  <span class="rsd-cell"><em>残留</em><input class="rsd-d rsd-in" type="number" step="0.001" value="${esc(o.d||'')}"
+                    onclick="event.stopPropagation()" onchange="setOldRate('${t.id}',${i},'d',this.value)"></span>
                   <button class="rsd-x" onclick="event.stopPropagation();delOldRate('${t.id}',${i})" title="删这组">✕</button>
                 </div>`).join('')}
-                <div class="rsd-row rsd-sum"><span class="rsd-f">合计</span>
-                  <span class="rsd-a">${fmtD(oldRec.reduce((n,o)=>n+(Number(o.a)||0),0))}</span>
-                  <span class="rsd-d">${fmtD(oldRec.reduce((n,o)=>n+(Number(o.d)||0),0))}</span><span class="rsd-x"></span></div>
-                <div class="rsd-hd"><span class="rsd-f">费率</span><span class="rsd-a">申请</span><span class="rsd-d">残留</span><span class="rsd-x"></span></div>
+                <div class="rsd-row rsd-sum">
+                  <span class="rsd-cell"><em>合计申请</em><b class="rsd-a">${fmtD(oldRec.reduce((n,o)=>n+(Number(o.a)||0),0))}</b></span>
+                  <span class="rsd-cell"><em>合计残留</em><b class="rsd-d">${fmtD(oldRec.reduce((n,o)=>n+(Number(o.d)||0),0))}</b></span>
+                </div>
               </div>` : ''}
         <div class="rd-row2">
           ${feeChips ? `<div class="rd-fees">${feeChips}</div>` : '<span></span>'}
