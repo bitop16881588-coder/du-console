@@ -894,6 +894,8 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 }
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
+.rsx-detail-full{margin-top:12px;padding-top:11px;max-width:560px}
+
 @media (max-width:860px){
   .shell{grid-template-columns:1fr;grid-template-rows:auto 1fr}
   .rail{flex-direction:row;overflow-x:auto;align-items:center}
@@ -905,6 +907,16 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
   .topbar-row{justify-content:flex-start;min-height:0;padding-right:150px}
   .cat-title{align-items:flex-start}
   .search input{width:104px}
+  /* 残留明细摘要：窄屏改上下堆叠，让「申请总额／总残留」各占整行，展开的费率明细才放得下三栏 */
+  .rd-top .rd-strip{min-width:0}
+  .rd-strip{flex-direction:column}
+  .rd-panel{padding:13px;border-radius:12px}
+  .rsx{min-width:0;padding:11px 14px}
+  .rsx+.rsx::before{display:none}
+  .rsx+.rsx{border-top:1px solid #e5eaf1}
+  .rsd-row{gap:6px}
+  .rsd-f,input.rsd-f{width:46px}
+  .rsd-a,.rsd-d,.rsd-in{min-width:0}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
@@ -3545,7 +3557,11 @@ function gridView(t, q){
             <div class="rsx rsx-apply">
               <span>申请总额 <i class="rsx-ed" title="新增一组旧汇率" onclick="addOldRate('${t.id}')">＋</i>${oldRec&&oldRec.length?` <i class="rsx-more" onclick="toggleOld('${t.id}')" title="看各费率明细">${t.oldOpen?'▾':'▸'}</i>`:''}</span>
               <b class="cpn" data-copy="${applyShow}" title="点一下复制" onclick="copyFromEl(this)">${fmtD(applyShow)}</b>
-              ${(t.oldOpen && oldRec) ? `<div class="rsx-detail">${oldRec.map((o,i) =>
+            </div>
+            <div class="rsx rsx-d"><span>总残留 <i class="rsx-ed" title="手动修改总残留（留空＝回自动）" onclick="event.stopPropagation();editRemain('${t.id}',this.closest('.rsx').querySelector('b'))">✎</i></span><b class="cpn${remainManualOn?' rd-man':''}" data-copy="${sumRemain}" title="${remainManualOn?'已手动修改 · 点一下复制':'点一下复制'}" onclick="copyFromEl(this)">${fmtD(sumRemain)}${remainManualOn?' ✎':''}</b></div>
+          </div>
+        </div>
+        ${(t.oldOpen && oldRec) ? `<div class="rsx-detail rsx-detail-full">${oldRec.map((o,i) =>
                 `<div class="rsd-row">
                   <input class="rsd-f rsd-in" type="number" step="0.001" value="${esc(o.f||'')}" placeholder="费率"
                     onclick="event.stopPropagation()" onchange="setOldRate('${t.id}',${i},'f',this.value)">
@@ -3560,10 +3576,6 @@ function gridView(t, q){
                   <span class="rsd-d">${fmtD(oldRec.reduce((n,o)=>n+(Number(o.d)||0),0))}</span><span class="rsd-x"></span></div>
                 <div class="rsd-hd"><span class="rsd-f">费率</span><span class="rsd-a">申请</span><span class="rsd-d">残留</span><span class="rsd-x"></span></div>
               </div>` : ''}
-            </div>
-            <div class="rsx rsx-d"><span>总残留 <i class="rsx-ed" title="手动修改总残留（留空＝回自动）" onclick="event.stopPropagation();editRemain('${t.id}',this.closest('.rsx').querySelector('b'))">✎</i></span><b class="cpn${remainManualOn?' rd-man':''}" data-copy="${sumRemain}" title="${remainManualOn?'已手动修改 · 点一下复制':'点一下复制'}" onclick="copyFromEl(this)">${fmtD(sumRemain)}${remainManualOn?' ✎':''}</b></div>
-          </div>
-        </div>
         <div class="rd-row2">
           ${feeChips ? `<div class="rd-fees">${feeChips}</div>` : '<span></span>'}
           <span class="sp"></span>
