@@ -3024,7 +3024,7 @@ function writeRemainToOverview(detTid, val){
   for(const c of cats){ for(const tb of (c.tabs||[])){
     if(tb.cols === 'resid'){
       const row = (tb.rows||[]).find(r => r.id === oid);
-      if(row){ row.ramt = String(val); return true; }
+      if(row){ row.ramt = String(Math.round(((Number(val)||0)+1e-9)*1000)/1000); return true; }
     }
   }}
   return false;
@@ -3033,19 +3033,20 @@ function writeRemainToOverview(detTid, val){
 // 刻意「不」拿明细加总去盖掉既有总残留——很多通道的总览金额比明细记录大（明细只是部分纪录），
 // 盲目用明细加总会把正确的残留冲掉。所以只把「你手动改过的值」补上去，其余维持原样。
 function residResolved(t){
+  const r3 = n => Math.round(((Number(n)||0)+1e-9)*1000)/1000;
   const remainManualOn = (t.remainManual!=='' && t.remainManual!=null && !isNaN(Number(t.remainManual)));
-  if(remainManualOn) return Number(t.remainManual);
-  if(t.xOld && t.xOld.length) return t.xOld.reduce((n,o)=>n+(Number(o.d)||0),0);  // 有旧汇率组：用各组残留加总
-  if(t.xTotal != null && !isNaN(Number(t.xTotal))) return Number(t.xTotal);        // 既有总残留（=总览现值）
+  if(remainManualOn) return r3(t.remainManual);
+  if(t.xOld && t.xOld.length) return r3(t.xOld.reduce((n,o)=>n+(Number(o.d)||0),0));  // 有旧汇率组：用各组残留加总
+  if(t.xTotal != null && !isNaN(Number(t.xTotal))) return r3(t.xTotal);        // 既有总残留（=总览现值）
   // 完全没有参考值时，才退而用明细自动算（申请−手续费）
   const round3 = n => { const s = n<0?-1:1; return s*Math.round((Math.abs(n)+1e-9)*1000)/1000; };
-  return (t.rows||[]).reduce((n,r) => {
+  return r3((t.rows||[]).reduce((n,r) => {
     const a = Number(r.damt)||0, f = Number(r.dfee)||0;
     const auto = round3(a * f);
     const hasM = r.dmf!=='' && r.dmf!=null && !isNaN(Number(r.dmf));
     const mf = hasM ? round3(Number(r.dmf)) : auto;
     return n + round3(a - mf);
-  }, 0);
+  }, 0));
 }
 // 一键：把所有明细页目前显示的总残留，同步回总览（主要把你手动改过的值一次补上）
 function syncAllResid(){
@@ -3070,7 +3071,8 @@ function editResidAmt(tid, rid, el){
   inp.onpointerdown = e => e.stopPropagation();
   inp.onclick = e => e.stopPropagation();
   inp.onblur = () => {
-    r.ramt = inp.value.trim();
+    const raw = inp.value.trim();
+    r.ramt = (raw!=='' && !isNaN(Number(raw))) ? String(Math.round((Number(raw)+1e-9)*1000)/1000) : raw;
     const det = findTab('rsd_' + rid);   // 总览改了 → 更新该通道明细页的参考值，两边一致
     if(det) det.xTotal = Number(r.ramt)||0;
     save(); renderBoard();
@@ -3087,7 +3089,8 @@ function editRemain(tid, el){
   inp.className = 'rsx-inp';
   inp.onclick = e => e.stopPropagation();
   inp.onblur = () => {
-    t.remainManual = inp.value.trim();
+    const raw = inp.value.trim();
+    t.remainManual = (raw!=='' && !isNaN(Number(raw))) ? String(Math.round((Number(raw)+1e-9)*1000)/1000) : raw;
     // 手动改了总残留 → 回写「残留总览」对应那一列的残留金额，两边同步
     const on = (t.remainManual !== '' && !isNaN(Number(t.remainManual)));
     if(on){ writeRemainToOverview(t.id, Number(t.remainManual)); t.xTotal = Number(t.remainManual); }
@@ -3577,7 +3580,7 @@ function gridView(t, q){
 
   // ── 残留明细页 ──
   if(t.cols === 'rdetail'){
-    const fmtD = n => Number(n||0).toLocaleString('zh-TW',{maximumFractionDigits:20});
+    const fmtD = n => Number(n||0).toLocaleString('zh-TW',{maximumFractionDigits:3});
     const sumAmt = all.reduce((n,r) => n + (Number(r.damt)||0), 0);
     const barD = `<div class="grid-bar">
         <button class="btn btn-sm" onclick="backToResid('${t.id}')">← 返回总览</button>
@@ -3701,7 +3704,7 @@ function gridView(t, q){
 
   // ── 四方残留暂存：筛选钮 + 通道卡片 ──
   if(t.cols === 'resid'){
-    const fmt = n => Number(n||0).toLocaleString('zh-TW',{maximumFractionDigits:20});
+    const fmt = n => Number(n||0).toLocaleString('zh-TW',{maximumFractionDigits:3});
     const hideZero = !!t.hideZero;
     const bar2 = `<div class="grid-bar">${segsHTML(t)}
         <button class="btn btn-sm zt${hideZero?' on':''}" onclick="toggleZero('${t.id}')">${hideZero?'✓ 只看有余额':'只看有余额'}</button>
