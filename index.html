@@ -923,12 +923,12 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 .nm-btn.danger{background:#fff;color:#cf3b3b;border-color:#f0c9cd}
 
 .dref-wrap{overflow-x:auto;margin-top:8px;border:1px solid #eef1f6;border-radius:10px}
-.dref{width:100%;border-collapse:collapse;font-size:13px}
-.dref th{text-align:left;padding:9px 13px;color:#5b6b80;font-size:12px;font-weight:800;background:#f7f9fc;border-bottom:1px solid #e5eaf1;position:sticky;top:0}
-.dref td{padding:9px 13px;border-bottom:1px solid #f0f3f8;color:#26324a;cursor:pointer;vertical-align:top}
+.dref{width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed}
+.dref th{text-align:left;padding:10px 14px;color:#5b6b80;font-size:12.5px;font-weight:800;background:#f7f9fc;border-bottom:1px solid #e5eaf1;position:sticky;top:0}
+.dref td{padding:10px 14px;border-bottom:1px solid #f0f3f8;color:#26324a;cursor:pointer;vertical-align:top;line-height:1.55;white-space:normal;word-break:break-word}
 .dref tr:last-child td{border-bottom:none}
 .dref tbody tr:hover td{background:#f7f9fc}
-.dref .dref-nm{font-weight:700;white-space:nowrap;color:#1c2a44}
+.dref .dref-nm{font-weight:700;white-space:normal;word-break:break-word;color:#1c2a44;width:32%}
 
 .dref .dref-val{cursor:text;display:inline-block;min-width:14px;border-radius:4px;padding:1px 3px}
 .dref .dref-val:hover{background:#eef3fb;box-shadow:inset 0 0 0 1px #d7e0ee}
@@ -961,6 +961,14 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 .fo-thumb{display:inline-block;width:34px;height:34px;border-radius:6px;border:1px solid var(--line);background:#fff center/cover no-repeat;vertical-align:middle;margin-left:6px;text-decoration:none;text-align:center;line-height:34px}
 .fo-thumb span{font-size:15px;opacity:.5}
 .fo-thumb[style*="url"] span{display:none}
+#imgZoom{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(15,18,30,.82);backdrop-filter:blur(2px);cursor:zoom-out}
+#imgZoom.on{display:flex}
+#imgZoom .iz-img{max-width:92vw;max-height:90vh;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.5);background:#fff;cursor:default}
+#imgZoom .iz-x{position:fixed;top:14px;right:20px;color:#fff;font-size:30px;line-height:1;cursor:pointer;opacity:.85;user-select:none}
+#imgZoom .iz-x:hover{opacity:1}
+.cap-note{margin:0 0 10px;padding:8px 12px;border-radius:8px;font-size:12.5px;line-height:1.5;font-weight:500}
+.cap-note.amber{background:#fff5e6;border:1px solid #f0c979;color:#8a5a00}
+.cap-note.red{background:#fdecec;border:1px solid #e79b9b;color:#a52222}
 .fo-more,.fo-x{border:1px solid var(--line);background:var(--panel-2);border-radius:6px;width:24px;height:22px;font-size:12px;color:var(--ink2);cursor:pointer;line-height:1}
 .fo-more:hover{border-color:var(--ac,#3B6FE0);color:var(--ac,#3B6FE0)}
 .fo-x:hover{border-color:#B5364A;color:#B5364A;background:#fdecef}
@@ -2651,6 +2659,20 @@ const colsOf = t => [...(COLS[t.cols] || COLS.base), ...(t.xcols || [])].filter(
 const findTab = tid => cats.flatMap(c => c.tabs).find(x => x.id === tid);
 const clone = v => JSON.parse(JSON.stringify(v));
 
+/* 云端单页容量提示：base/rate/guar/limit/risk/forec 这些分页在云端是「整页一份文件」，
+   Firestore 单份上限 1MB。图片（base64）多了会逼近上限，逼近就在页面顶端提醒。 */
+function tabBytes(t){ try{ return new Blob([JSON.stringify(t.rows||[])]).size; }catch(_){ return (JSON.stringify(t.rows||[])||'').length; } }
+function tabCapNote(t){
+  if(!t || !_LOGC[t.cols]) return '';
+  const b = tabBytes(t), kb = Math.round(b/1024);
+  if(b < 700000) return '';
+  const red = b >= 900000;
+  const msg = red
+    ? `这一页快满了（约 ${kb}KB／上限 1024KB）。新的图请改贴云端硬碟连结，或删掉旧图，否则这一页可能无法同步到云端。`
+    : `这一页图片偏多（约 ${kb}KB／上限 1024KB）。之后的图建议改贴云端硬碟连结。`;
+  return `<div class="cap-note ${red?'red':'amber'}">⚠ ${msg}</div>`;
+}
+
 let editRow = null;    // 正在编辑的列
 let beforeRows = null; // 进入编辑前的整页快照
 const undoStack = {};  // 每个分页各自的上一步
@@ -2663,6 +2685,28 @@ function driveThumb(u){
   const m = String(u).match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?[^]*id=)([A-Za-z0-9-_]+)/);
   return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w400` : u;
 }
+/* 点图放大：不再另开分页，直接在页面内弹出大图（Drive 用大尺寸缩图，贴的截图直接显示） */
+function bigImg(u){
+  const m = String(u).match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?[^]*id=)([A-Za-z0-9-_]+)/);
+  return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1600` : u;
+}
+function zoomImg(u){
+  if(!u) return false;
+  let ov = document.getElementById('imgZoom');
+  if(!ov){
+    ov = document.createElement('div');
+    ov.id = 'imgZoom';
+    ov.innerHTML = '<span class="iz-x" title="关闭">✕</span><img class="iz-img" alt="">';
+    ov.addEventListener('click', e => { if(e.target === ov || e.target.classList.contains('iz-x')) zoomClose(); });
+    document.body.appendChild(ov);
+  }
+  ov.querySelector('.iz-img').src = bigImg(u);
+  ov.classList.add('on');
+  document.addEventListener('keydown', zoomEsc);
+  return false;
+}
+function zoomClose(){ const ov = document.getElementById('imgZoom'); if(ov) ov.classList.remove('on'); document.removeEventListener('keydown', zoomEsc); }
+function zoomEsc(e){ if(e.key === 'Escape') zoomClose(); }
 
 /* --- 一笔一张卡 --- */
 function cardParts(t){
@@ -3206,7 +3250,7 @@ function readCell(t, f, r){
   }
   if(f.type === 'rich')   return `<div class="v-text">${r[f.key + '_h'] || esc(v)}</div>`;
   if(f.type === 'img')    return v
-    ? `<a class="thumb big" href="${esc(v)}" target="_blank" rel="noopener" style="background-image:url('${esc(driveThumb(v))}')"></a>`
+    ? `<a class="thumb big" href="${esc(v)}" onclick="return zoomImg(this.getAttribute('href'))" style="background-image:url('${esc(driveThumb(v))}')"></a>`
     : '<span class="v-empty">—</span>';
   return esc(v);
 }
@@ -3241,7 +3285,7 @@ function editCell(t, f, r){
     </div>`;
   }
   if(f.type === 'img') return `<div class="imgcell" onpaste="foPasteImg(event,'${t.id}','${r.id}','${f.key}')" ondragover="event.preventDefault();this.classList.add('drop')" ondragleave="this.classList.remove('drop')" ondrop="this.classList.remove('drop');foDropImg(event,'${t.id}','${r.id}','${f.key}')">
-      <a class="thumb" id="th_${r.id}" ${v?`href="${esc(v)}" target="_blank" rel="noopener"`:''}
+      <a class="thumb" id="th_${r.id}" ${v?`href="${esc(v)}" onclick="return zoomImg(this.getAttribute('href'))"`:''}
          style="${v?`background-image:url('${esc(driveThumb(v))}')`:''}">${v?'':'图'}</a>
       <input type="text" placeholder="直接按 Ctrl+V 贴截图，或贴网址" value="${esc(v)}"
         onkeydown="gridKey(event,'${t.id}')" oninput="gridSet('${t.id}','${r.id}','${f.key}',this.value)"
@@ -3315,7 +3359,7 @@ function foListTable(t, rows){
   const body = sorted.map(r => {
     const badge = bVal(r) ? `<span class="fo-st">${esc(bVal(r))}</span> ` : '';
     const iv = iVal(r);
-    const img = iv ? ` <a class="fo-thumb" href="${esc(iv)}" target="_blank" rel="noopener" title="点开看原图" onclick="event.stopPropagation()" style="background-image:url('${esc(driveThumb(iv))}')"><span>🖼</span></a>` : '';
+    const img = iv ? ` <a class="fo-thumb" href="${esc(iv)}" title="点图放大" onclick="event.stopPropagation();return zoomImg(this.getAttribute('href'))" style="background-image:url('${esc(driveThumb(iv))}')"><span>🖼</span></a>` : '';
     const content = cRaw(r) ? cRaw(r) : esc(cVal(r));
     // 结构化栏位（资金担保等）→ 在内容前带出 商户・金额，方便一眼看
     const ctx = [];
@@ -3390,7 +3434,7 @@ function foDelRow(tid, rid){
 }
 function duRefTable(t, rows, seg){
   const mk = (r,k) => { const has=r.notes&&r.notes[k]; return `<span class="nmark${has?'':' nmadd'}" data-tid="${esc(t.id)}" data-rid="${esc(r.id)}" data-fk="${esc(k)}" onclick="event.stopPropagation();showNote(this)" title="${has?'备注 · 点看／改':'加备注'}"></span>`; };
-  const vc = (r,k) => `<td class="dref-v"><span class="dref-val" onclick="drefEdit(this,'${t.id}','${r.id}','${k}')">${esc(r[k]||'—')}</span>${mk(r,k)}</td>`;
+  const vc = (r,k) => `<td class="dref-v"><span class="dref-val" onclick="drefEdit(this,'${t.id}','${r.id}','${k}')">${esc(r[k]||'—').replace(/\n/g,'<br>')}</span>${mk(r,k)}</td>`;
   const nc = (r) => `<td class="dref-nm"><span class="dref-val" onclick="drefEdit(this,'${t.id}','${r.id}','nm')">${esc(r.nm||'—')}</span></td>`;
   if(seg === '费率对照'){
     const body = rows.map(r => `<tr>${nc(r)}${vc(r,'fee')}</tr>`).join('');
@@ -3431,7 +3475,7 @@ function gridView(t, q){
   const sf    = sumOf(t);
   const total = sf ? all.reduce((n, r) => n + (Number(r[sf.key]) || 0), 0) : null;
   const totalBox = sf ? `<div class="total">总金额<b>${total.toLocaleString('zh-TW')}</b></div>` : '';
-  const bar = `<div class="grid-bar">${totalBox}${segsHTML(t)}<span class="sp"></span>
+  const bar = `${tabCapNote(t)}<div class="grid-bar">${totalBox}${segsHTML(t)}<span class="sp"></span>
       <button class="btn btn-sm btn-solid" ${editRow?'disabled':''} onclick="${(FO_LIST[t.cols]||t.cols==='forec')?'foAddRow':'gridAdd'}('${t.id}')">＋ 新增一则</button>
       <button class="btn btn-sm" ${undoN?'':'disabled'} onclick="gridUndo('${t.id}')">↶ 上一步</button>
       <button class="btn btn-sm" onclick="openCloud('${t.id}')">📥 汇入 CSV</button>
@@ -3752,8 +3796,8 @@ function gridSet(tid, rid, field, val){
 function gridThumb(rid, url){
   const el = document.getElementById('th_' + rid);
   if(!el) return;
-  if(url){ el.style.backgroundImage = `url('${driveThumb(url)}')`; el.textContent = ''; el.href = url; el.target = '_blank'; }
-  else { el.style.backgroundImage = ''; el.textContent = '图'; el.removeAttribute('href'); }
+  if(url){ el.style.backgroundImage = `url('${driveThumb(url)}')`; el.textContent = ''; el.href = url; el.removeAttribute('target'); el.onclick = function(){ return zoomImg(url); }; }
+  else { el.style.backgroundImage = ''; el.textContent = '图'; el.removeAttribute('href'); el.onclick = null; }
 }
 /* 直接贴截图 / 拖放图片：压缩后存成图片资料（不必先上传图床）。会算进云端同步大小，故压得较小 */
 function compressImg(file, max, q){
