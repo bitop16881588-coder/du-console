@@ -992,6 +992,8 @@ a.thumb:hover{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 .cap-note.red{background:#fdecec;border:1px solid #e79b9b;color:#a52222}
 .rs-ed{font-style:normal;cursor:pointer;color:#c3ccd8;font-size:13px;margin-left:6px;padding:0 3px;transition:.12s;vertical-align:middle}
 .rs-ed:hover{color:var(--ac)}
+.rc-resid .rs-head{display:flex;align-items:center;gap:2px}
+.rc-resid .rs-head h4{flex:0 1 auto}
 .fo-more,.fo-x{border:1px solid var(--line);background:var(--panel-2);border-radius:6px;width:24px;height:22px;font-size:12px;color:var(--ink2);cursor:pointer;line-height:1}
 .fo-more:hover{border-color:var(--ac,#3B6FE0);color:var(--ac,#3B6FE0)}
 .fo-x:hover{border-color:#B5364A;color:#B5364A;background:#fdecef}
@@ -3726,9 +3728,8 @@ function gridView(t, q){
       return `<article class="rc rc-resid${dim} ${isOld?'rs-cold':(isIn?'rs-cin':'rs-cout')}${seg==='全部'?'':' no-tag'}" data-id="${r.id}" onpointerdown="residGrip(event,'${t.id}','${r.id}')">
         <span class="rc-g" aria-hidden="true">⋮⋮</span>
         ${seg === '全部' ? `<span class="rs-tag ${isOld?'old':(isIn?'in':'out')}">${isOld?'旧':(isIn?'内':'外')}</span>` : ''}
-        <h4 data-copy="${esc(r.rname||'')}" title="点一下复制" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();copyFromEl(this)">${esc(r.rname||'（未命名）')}</h4>
+        <div class="rs-head"><h4 data-copy="${esc(r.rname||'')}" title="点一下复制" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();copyFromEl(this)">${esc(r.rname||'（未命名）')}</h4><i class="rs-ed" title="改金额" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();editResidAmt('${t.id}','${r.id}',this)">✎</i></div>
         <div class="rs-amt${amt>0?'':' zero'} cpn" data-copy="${amt}" title="点一下复制" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();copyFromEl(this)">${fmt(amt)}</div>
-        <i class="rs-ed" title="直接改金额" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();editResidAmt('${t.id}','${r.id}',this)">✎</i>
         <button class="rc-x" title="删除这则" onclick="event.stopPropagation();gridDel('${t.id}','${r.id}')">✕</button>
       </article>`;
     }).join('');
