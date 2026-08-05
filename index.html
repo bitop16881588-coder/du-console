@@ -3753,6 +3753,9 @@ function gridView(t, q){
         const c = o ? o.c : '#6C7488';
         return `<span class="vtag" style="background:${c}1F;color:${c};border:1px solid ${c}55">${esc(v)}</span>`;
       }
+      if((f.key === 'vch' || f.key === 'vmer') && v){
+        return `<span class="cpn" data-copy="${esc(v)}" title="点一下复制单号" onclick="event.stopPropagation();copyFromEl(this)">${esc(v)}</span>`;
+      }
       if(f.key === 'memo') return r.memo_h || esc(v);
       return esc(v);
     };
@@ -4210,12 +4213,65 @@ function pasteCols(t){
   if(t.cols === 'vcotc') return all.filter(f => f.key !== 'vdate');
   return all;
 }
+function pasteAllCols(t){ return colsOf(t); }
+function _pnorm(x){ return String(x==null?'':x).replace(/[\s\u3000]/g,'').toLowerCase(); }
+function pasteNameMap(t){
+  const m = {};
+  pasteAllCols(t).forEach(f => { m[_pnorm(f.label)] = f.key; });
+  if(t.cols === 'vcotc'){
+    Object.assign(m, {
+      '日期':'vdate','date':'vdate',
+      '通道单号':'vch','通道單號':'vch','通道号':'vch','平台单号':'vch','平台订单号':'vch','订单号':'vch','orderno':'vch','orderid':'vch',
+      '商户单号':'vmer','商戶單號':'vmer','商户号':'vmer','商户订单号':'vmer','商戶訂單號':'vmer','merchantno':'vmer','merchantorderno':'vmer',
+      '人民币':'vrmb','人民幣':'vrmb','rmb':'vrmb','cny':'vrmb','金额':'vrmb','金額':'vrmb',
+      'u数量':'vusdt','u':'vusdt','usdt':'vusdt','数量':'vusdt','u数':'vusdt',
+      '汇率':'vrate','匯率':'vrate','rate':'vrate','价格':'vrate',
+      '备注':'vtype','備註':'vtype','类型':'vtype','類型':'vtype','type':'vtype'
+    });
+  }
+  return m;
+}
+function _looksDate(s){ return /^\d{1,4}[\/\-.]\d{1,2}([\/\-.]\d{1,2})?$/.test(String(s||'').trim()); }
+function _cleanNum(v){
+  let s = String(v==null?'':v).trim();
+  if(!s) return s;
+  s = s.replace(/[\uFF10-\uFF19\uFF0E]/g, ch => String.fromCharCode(ch.charCodeAt(0)-0xFEE0));
+  const cleaned = s.replace(/[,\uFF0C\s\uFFE5\u00A5$]|人民币|rmb|元|usdt/gi,'');
+  return /^-?\d+(\.\d+)?$/.test(cleaned) ? cleaned : s;
+}
+function resolvePaste(cells, t){
+  const nameMap = pasteNameMap(t);
+  const first = cells[0] || [];
+  const hits = first.filter(c => nameMap[_pnorm(c)]).length;
+  const isHeader = hits >= 2;
+  let map, skip = 0, mode;
+  if(isHeader){
+    map = first.map(c => nameMap[_pnorm(c)] || null);
+    skip = 1; mode = 'header';
+  } else {
+    const width = Math.max(0, ...cells.map(r => r.length));
+    if(t.cols === 'vcotc'){
+      const order = ['vdate','vch','vmer','vrmb','vusdt','vrate','vtype'];
+      const withDate = (width >= order.length) || _looksDate(first[0]);
+      map = withDate ? order.slice(0, width) : order.slice(1, 1 + width);
+    } else {
+      map = pasteCols(t).map(f => f.key).slice(0, width);
+    }
+    mode = 'pos';
+  }
+  return {map, skip, mode};
+}
+function _keyLabel(t, key){
+  if(!key) return '\u2014\u5ffd\u7565\u2014';
+  const f = colsOf(t).find(x => x.key === key);
+  return f ? f.label : key;
+}
 function openPaste(tid){
   pasteTid = tid;
   const t = findTab(tid);
   const cols = pasteCols(t);
-  const names = cols.map(f => f.label).join(' · ');
-  const note = t.cols === 'vcotc' ? '（日期自动带今天，不用贴）' : '';
+  const names = cols.map(f => f.label).join(' \u00b7 ');
+  const note = t.cols === 'vcotc' ? '\uff08\u6709\u6ca1\u6709\u300c\u65e5\u671f\u300d\u680f\u90fd\u884c\uff0c\u6703\u81ea\u52d5\u5224\u65b7\uff1b\u6c92\u5e36\u5c31\u5e36\u4eca\u5929\uff09' : '';
   let mask = document.getElementById('pasteMask');
   if(!mask){
     mask = document.createElement('div');
@@ -4224,56 +4280,71 @@ function openPaste(tid){
   }
   mask.innerHTML = `
     <div class="paste-box">
-      <div class="paste-hd">📋 批次贴上　<span class="paste-sub">从 Excel 选取储存格复制，贴到下面</span></div>
-      <div class="paste-cols">栏位顺序：${names} <span style="opacity:.7">${note}</span></div>
-      <textarea id="pasteTa" class="paste-ta" placeholder="直接 Ctrl+V 贴上（一列一笔，栏位用 Tab 分隔，Excel 复制过来就是这种格式）"></textarea>
-      <label class="paste-opt"><input type="checkbox" id="pasteHdr"> 第一列是标题，略过不汇入</label>
+      <div class="paste-hd">\ud83d\udccb \u6279\u6b21\u8cbc\u4e0a\u3000<span class="paste-sub">\u5f9e Excel \u9078\u53d6\u5132\u5b58\u683c\u8907\u88fd\uff0c\u8cbc\u5230\u4e0b\u9762</span></div>
+      <div class="paste-cols">\u5efa\u8b70\u680f\u4f4d\uff1a${names} <span style="opacity:.7">${note}</span></div>
+      <div class="paste-cols" style="opacity:.75">\u7b2c\u4e00\u5217\u82e5\u662f\u6a19\u984c\u6703\u81ea\u52d5\u8fa8\u8b58\u5c0d\u61c9\uff0c\u680f\u4f4d\u9806\u5e8f\u4e0d\u540c\u4e5f\u6c92\u95dc\u4fc2\u3002</div>
+      <textarea id="pasteTa" class="paste-ta" placeholder="\u76f4\u63a5 Ctrl+V \u8cbc\u4e0a\uff08\u4e00\u5217\u4e00\u7b46\uff0c\u680f\u4f4d\u7528 Tab \u5206\u9694\uff0cExcel \u8907\u88fd\u904e\u4f86\u5c31\u662f\u9019\u7a2e\u683c\u5f0f\uff09"></textarea>
+      <label class="paste-opt"><input type="checkbox" id="pasteHdr"> \u5f37\u5236\u7565\u904e\u7b2c\u4e00\u5217\uff08\u7576\u5b83\u662f\u6a19\u984c\uff09</label>
       <div id="pastePrev" class="paste-prev"></div>
       <div class="paste-bar">
-        <button class="btn" onclick="closePaste()">取消</button>
+        <button class="btn" onclick="closePaste()">\u53d6\u6d88</button>
         <span class="sp"></span>
-        <button class="btn btn-solid" onclick="doPaste()">汇入</button>
+        <button class="btn btn-solid" onclick="doPaste()">\u532f\u5165</button>
       </div>
     </div>`;
   mask.style.display = 'flex';
   const ta = document.getElementById('pasteTa');
   ta.addEventListener('input', pastePreview);
+  document.getElementById('pasteHdr').addEventListener('change', pastePreview);
   setTimeout(() => ta.focus(), 30);
 }
 function closePaste(){ const m = document.getElementById('pasteMask'); if(m) m.style.display = 'none'; }
 function parsePaste(){
   const raw = document.getElementById('pasteTa').value;
-  const skip = document.getElementById('pasteHdr').checked;
-  let lines = raw.split(/\r?\n/).filter(l => l.trim() !== '');
-  if(skip) lines = lines.slice(1);
-  return lines.map(l => l.split('\t'));
+  return raw.split(/\r?\n/).filter(l => l.trim() !== '').map(l => l.split('\t'));
 }
 function pastePreview(){
-  const rows = parsePaste();
+  const cells = parsePaste();
   const el = document.getElementById('pastePrev');
-  if(!rows.length){ el.innerHTML = ''; return; }
-  const t = findTab(pasteTid), cols = pasteCols(t);
-  const head = cols.map(f => `<th>${esc(f.label)}</th>`).join('');
-  const body = rows.slice(0,5).map(cells =>
-    '<tr>' + cols.map((f,i) => `<td>${esc((cells[i]||'').trim())}</td>`).join('') + '</tr>').join('');
-  el.innerHTML = `<div class="paste-cnt">预览 ${rows.length} 笔（显示前 5）</div>
+  if(!cells.length){ el.innerHTML = ''; return; }
+  const t = findTab(pasteTid);
+  const {map, skip, mode} = resolvePaste(cells, t);
+  const forceSkip = document.getElementById('pasteHdr').checked;
+  const dataRows = cells.slice((skip || forceSkip) ? Math.max(skip,1) : 0);
+  const head = map.map(k => `<th${k?'':' style="opacity:.5"'}>${esc(_keyLabel(t,k))}</th>`).join('');
+  const body = dataRows.slice(0,5).map(cs =>
+    '<tr>' + map.map((k,i) => `<td${k?'':' style="opacity:.5"'}>${esc((cs[i]||'').trim())}</td>`).join('') + '</tr>').join('');
+  const tip = mode === 'header'
+    ? '\u5df2\u4f9d\u6a19\u984c\u81ea\u52d5\u5c0d\u61c9\u680f\u4f4d'
+    : (t.cols === 'vcotc' && map[0] === 'vdate' ? '\u4fa6\u6e2c\u5230\u542b\u65e5\u671f\u680f\uff0c\u5df2\u5c0d\u9f4a' : '\u4f9d\u680f\u4f4d\u9806\u5e8f\u5c0d\u61c9');
+  el.innerHTML = `<div class="paste-cnt">\u9810\u89bd ${dataRows.length} \u7b46\uff08\u986f\u793a\u524d 5\uff09\u00b7 ${tip}</div>
     <div class="paste-tbl"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 function doPaste(){
-  const rows = parsePaste();
-  if(!rows.length){ toast('没有可汇入的资料'); return; }
-  const t = findTab(pasteTid), cols = pasteCols(t);
+  const cells = parsePaste();
+  if(!cells.length){ toast('\u6ca1\u6709\u53ef\u532f\u5165\u7684\u8cc7\u6599'); return; }
+  const t = findTab(pasteTid);
+  const {map, skip} = resolvePaste(cells, t);
+  const forceSkip = document.getElementById('pasteHdr').checked;
+  const dataRows = cells.slice((skip || forceSkip) ? Math.max(skip,1) : 0);
+  if(!dataRows.length){ toast('\u6ca1\u6709\u53ef\u532f\u5165\u7684\u8cc7\u6599'); return; }
+  const numKeys = new Set(colsOf(t).filter(f => f.type === 'num').map(f => f.key));
   const today = new Date().toISOString().slice(0,10);
   beforeRows = clone(t.rows || []);
-  const add = rows.map((cells,ri) => {
+  const add = dataRows.map((cs,ri) => {
     const r = {id:'r' + Date.now() + '_' + ri};
-    cols.forEach((f,i) => { r[f.key] = (cells[i] || '').trim(); });
-    if(t.cols === 'vcotc' && !r.vdate) r.vdate = today;   // 自动带今天
+    map.forEach((k,i) => {
+      if(!k) return;
+      let val = (cs[i] || '').trim();
+      if(numKeys.has(k)) val = _cleanNum(val);
+      r[k] = val;
+    });
+    if(t.cols === 'vcotc' && !r.vdate) r.vdate = today;
     return r;
   });
   (t.rows ||= []).unshift(...add);
   save(); closePaste(); renderBoard();
-  toast(`已汇入 ${add.length} 笔`);
+  toast(`\u5df2\u532f\u5165 ${add.length} \u7b46`);
 }
 
 function focusCard(){
