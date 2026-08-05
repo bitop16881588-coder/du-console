@@ -5010,6 +5010,7 @@ function showAuthEditor(){
         <button class="btn btn-sm" onclick="cloudMigrateUp()">⬆ 上传本机资料到云端</button>
         <button class="btn btn-sm" onclick="importDuData()" style="margin-top:6px">⬇ 导入三方使用状况资料</button>
         <button class="btn btn-sm" onclick="importFoData()" style="margin-top:6px">⬇ 导入 FOUUR 交接记录</button>
+        <button class="btn btn-sm" onclick="clearAccLinkTabs()" style="margin-top:6px;color:#b5364a;border-color:#e3b4bd">🗑 清空 商户帐密＋所需云端连结</button>
         <div style="font-size:11px;color:#8794a6;margin-top:6px">第一次设定时按一次，把目前本机资料变成大家共用的云端资料。</div>
       </div>
     </div>
@@ -5017,6 +5018,19 @@ function showAuthEditor(){
   m.style.display='flex';
 }
 function closeAuthEdit(){ const m=document.getElementById('authEdit'); if(m) m.style.display='none'; }
+function clearAccLinkTabs(){
+  if(!confirm('确定清空「四方商户帐密」和「所需云端连结」两个分页的全部资料吗？\n（含帐号 / 密码 / 网址）\n这会同步删除云端共用的这两页资料，无法复原。')) return;
+  var n = 0;
+  ['ma','lk'].forEach(function(cid){
+    var c = cats.find(function(x){ return x.id === cid; });
+    if(!c) return;
+    (c.tabs || []).forEach(function(t){ n += (t.rows || []).length; t.rows = []; });
+  });
+  save();
+  closeAuthEdit();
+  renderBoard();
+  toast('已清空 ' + n + ' 笔（本机＋云端）');
+}
 function saveAuthEditor(){
   const a={};
   SHIFTS.forEach(x=>{ a[x]={acc:document.getElementById('ae_'+x+'_acc').value.trim(), pw:document.getElementById('ae_'+x+'_pw').value}; });
